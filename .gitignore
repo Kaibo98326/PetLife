@@ -31,3 +31,28 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Maven build output
+/target/
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA project files
+.idea/
+*.iml
+
+# VS Code project files
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Eclipse workspace metadata
+.metadata/
