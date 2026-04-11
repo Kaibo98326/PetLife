@@ -1,0 +1,460 @@
+/*2026.03.17更新樣式*/
+:root {
+    --primary-color: #ff7e2e;
+    --primary-hover: #ea610c;
+    --sidebar-bg: #2c3e50;
+    --header-height: 70px;
+    --border-radius-lg: 1.25rem;
+    --border-radius-md: 0.75rem;
+    --card-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    --warm-bg: #fffaf0;
+}
+/* ===== 全局樣式 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--warm-bg);
+    color: #333;
+}
+
+/* ===== 頂部欄 ===== */
+.header {
+    background: linear-gradient(135deg, #f5771d, #fcc4a6);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+.header-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+/* 新版 logo 額外樣式 */
+.logo-paws {
+    font-size: 1.4rem;
+}
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 1px;
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.logout-btn {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.logout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== 主容器 ===== */
+.main-container {
+    display: flex;
+    height: calc(100vh - 70px);
+}
+
+/* ===== 側邊欄 ===== */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 舊版 sidebar-header 改用變數 */
+.sidebar-header {
+    padding: 1.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+
+
+.menu-list {
+    list-style: none;
+    padding: 0.5rem 0;
+}
+
+.menu-item {
+    padding: 0;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+
+.menu-link:hover {
+    background-color: rgba(249, 115, 22, 0.1);
+    color: #f97316;
+    border-left-color: #f97316;
+}
+
+.menu-link.active {
+    background-color: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+    border-left-color: #f97316;
+    font-weight: 600;
+}
+
+.menu-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* ===== 內容區域 ===== */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-header {
+    background-color: white;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.content-breadcrumb {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.content-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    background-color: #f5f5f5;
+}
+
+.content-placeholder {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    color: #999;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.spinner {
+    border: 4px solid #f0f0f0;
+    border-top: 4px solid #f97316;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== 響應式設計 ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .header-right {
+        gap: 1rem;
+    }
+
+    .user-details {
+        display: none;
+    }
+
+    .content-header {
+        padding: 1rem;
+    }
+
+    .content-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+    }
+
+    .content-area {
+        height: auto;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* ===== 滾動條樣式 ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+}
+
+/* ===== 錯誤提示 ===== */
+.error-message {
+    background-color: #fee;
+    color: #c33;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #c33;
+}
+
+.success-message {
+    background-color: #efe;
+    color: #3c3;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #3c3;
+}
+/* ===== 員工表格樣式 ===== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.data-table th, .data-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+.data-table th {
+    background-color: #f5f5f5;
+}
+.btn-edit, .btn-delete, .btn-add {
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin: 0 4px;
+    display: inline-block;
+}
+.btn-edit { background-color: #4CAF50; color: white; }
+.btn-delete { background-color: #f44336; color: white; }
+.btn-add { background-color: #2196F3; color: white; }
+.no-data-message {
+    color: #999;
+    margin: 1rem 0;
+}
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.employee-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.employee-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.employee-form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-actions {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
+.btn-add {
+    background-color: #2196F3;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add:hover {
+    background-color: #1976D2;
+}
+
+.btn-cancel {
+    background-color: #999;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.btn-cancel:hover {
+    background-color: #777;
+}
+.has-submenu .submenu {
+  display: none;              /* 預設隱藏 */
+  padding-left: 20px;         /* 子選單縮排 */
+  margin-top: 5px;
+}
+
+.has-submenu.open .submenu {
+  display: block;             /* 展開時顯示 */
+}
+
+.menu-link {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.menu-link:hover {
+  background-color: #f0f0f0;
+}
+
+
+
+

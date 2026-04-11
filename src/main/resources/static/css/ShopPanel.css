@@ -1,0 +1,459 @@
+:root {
+    /* 核心色調：改為暖橘與木質咖啡 */
+    --brand-orange: #e67e22;    /* 溫暖琥珀橘 */
+    --brand-brown: #6d4c41;     /* 柔和木質棕 */
+    --brand-red: #d35400;       /* 磚紅（比鮮紅更溫潤） */
+    --bg-gray: #fdfaf5;         /* 背景改為暖奶油色 */
+    --text-main: #5a4a42;       /* 文字改為深咖啡灰，更有質感 */
+    --border-color: #f0e6d6;    /* 邊框改為淡淡的燕麥色 */
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--bg-gray);
+    color: var(--text-main);
+}
+
+/* --- 全域佈局修正 --- */
+/* --- 讓整體佈局變寬 --- */
+.container-fluid {
+    width: 100%;
+    padding-left: 50px;  /* 視個人喜好調整邊距 */
+    padding-right: 50px;
+}
+
+/* 移除原本 CSS 裡的 max-width 限制 */
+.container {
+    max-width: none !important; 
+    width: 95% !important;
+}
+
+/* --------------------------------------------------------------------------------  header 頂端導覽*/
+/* ======================================================================== 這是上層 */
+.shop-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(109, 76, 65, 0.05);
+}
+
+/* --- LOGO 樣式 --- */
+.shop-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+    
+    /* 核心調整：確保容器緊貼左側 */
+    padding-left: 0; 
+    margin-left: -10px; /* 如果覺得還不夠靠左，可以微調負值 */
+}
+
+/* 針對圖片的精確控制 */
+.shop-logo img {
+    height: 10px;       /* 這裡根據你的導覽列高度調整，建議 40px~60px */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* 懸停效果：維持你原本的放大感 */
+.shop-logo:hover {
+    transform: scale(1.05);
+}
+
+/* --- 搜尋框區域 --- */
+.shop-search-form {
+    display: flex !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0;
+}
+
+.search-input {
+    flex-grow: 1 !important;
+    height: 40px;
+    border-radius: 25px 0 0 25px;
+    border: 1px solid var(--border-color);
+    padding-left: 20px;
+    outline: none;
+    background-color: #fff;
+}
+
+.search-input:focus {
+    border-color: var(--brand-orange);
+    box-shadow: none;
+}
+
+.search-submit-btn {
+    width: 60px;
+    height: 40px;
+    border-radius: 0 25px 25px 0;
+    border: 1px solid var(--border-color);
+    border-left: none;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.search-submit-btn:hover {
+    background: #fff8f0;
+    color: var(--brand-orange);
+}
+
+/* --- 右側使用者選單 (購物車、聊聊、登入) --- */
+.shop-user-nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 確保名字不會斷行 */
+.user-greeting {
+    white-space: nowrap; 
+    display: flex;
+    align-items: center;
+}
+
+.nav-icon-item {
+    display: flex;         /* 讓圖示與文字更好對齊 */
+    flex-direction: column; /* 如果你想讓文字在圖示下面，可以用這個；如果維持左右，改回 row */
+    align-items: center;
+    text-align: center;
+    color: #8d7d77; 
+    text-decoration: none;
+    transition: 0.3s;
+    min-width: 60px;       /* 稍微縮小最小寬度，騰出空間 */
+    padding: 0 5px !important;    /* 左右間距再縮小一點 */
+    margin: 0 3px !important;     /* 左右外距也縮小 */
+    white-space: nowrap;          /* 絕對不換行 */
+    font-size: 13px;              /* 稍微調整字體大小 */
+}
+
+.nav-icon-item i {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.nav-icon-item span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.nav-icon-item:hover {
+    color: var(--brand-orange);
+}
+
+/* 讓 Header 內的 Container 寬度一致 */
+.shop-header .container {
+    max-width: none !important; 
+    width: 95% !important;
+}
+
+
+/* ======================================================================== 這是下層 */
+.header-nav {
+    background-color: #fff;
+    width: 100%;
+    /* 確保中間沒有線，底部保留一條細線作為裝飾 */
+    border-top: none !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-menu-list {
+    list-style: none;
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    /* 增加選項間的距離，讓版面看起來更大氣 */
+    gap: 50px; 
+}
+
+.nav-menu-link {
+    display: block;
+    padding: 0px 5px;       /* 增加上下高度 */
+    color: var(--text-main);
+    text-decoration: none !important;
+    font-size: 15px;         /* 放大字體到 20px */
+    font-weight: 500;        /* 強力加粗，符合圖片風格 */
+    position: relative;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-menu-link:hover {
+    color: var(--brand-orange);
+}
+
+/* 滑鼠移上去的底部橘線 (PetPetGo 風格) */
+.nav-menu-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--brand-orange);
+    transition: width 0.3s ease;
+}
+
+.nav-menu-link:hover::after, .nav-menu-link.active::after {
+    width: 100%;
+}
+
+.nav-menu-link.active {
+    color: var(--brand-orange);
+    font-weight: 700;
+}
+
+.nav-menu-list::before,
+.nav-menu-list::after {
+    content: "";
+    flex: 1;             /* 讓這兩條線自動填滿左右剩餘空間 */
+    height: 1px;         /* 極細的線 */
+    background: #e0e0e0; /* 淡淡的灰色 */
+    margin: 0 30px;      /* 跟文字保持一點距離 */
+}
+
+/* -----------------------------------------------------------------------------------------  左方 menu */
+
+/* --- Banner 與 側邊欄 (自動符合比例) --- */
+.shop-hero-section {
+    margin-top: 20px;
+}
+
+.hero-wrapper {
+    display: flex;
+    align-items: stretch; /* 關鍵：強制子元素高度撐滿到一樣長 */
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    min-height: 400px;
+}
+
+.category-sidebar {
+    width: 260px; /* 寬一點比較大氣 */
+    background: white;
+    border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-title {
+    padding: 20px 20px;
+    font-size:20px;
+    font-weight: bold;
+    background: #fafafa;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-nav {
+    max-height: none !important; /* 強制取消高度限制 */
+    overflow-y: visible !important; /* 強制取消滾輪 */
+    display: flex;
+    flex-direction: column;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    padding: 13px 13px; /* 增加上下 Padding，這會同時拉高廣告圖的高度 */
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 15px; /* 稍微放大字體 */
+    transition: all 0.3s ease;
+}
+
+/* 向右的小箭頭 */
+.category-item i {
+    color: #ccc;
+    transition: 0.3s;
+}
+
+
+.category-item:hover, .category-item.is-active {
+    background-color: #fff8f0;
+    color: var(--brand-orange);
+    border-left: 4px solid var(--brand-orange);
+}
+
+.category-item:hover i, .category-item.is-active i {
+    color: var(--brand-orange);
+}
+
+.hero-banner {
+    width: 100%;
+    height: auto;
+}
+
+.hero-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 自動裁切填滿，不縮放變形 */
+}
+
+/* -------------------------------------------------------------------------------------------- 廣告輪播*/
+#shopCarousel {
+    flex: 1; /* 佔滿剩餘寬度 */
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-inner, .carousel-item {
+    height: 100% !important;
+}
+.carousel-item{
+	min-height: 300px;   /* 最小高度 */
+    max-height: 600px;   /* 最大高度 */
+}
+
+/* 4. 圖片裁切處理 */
+.carousel-item img {
+	width: 100%;
+    height: 100% /*!important*/;
+    object-fit: cover /*!important*/;
+}
+
+
+/* 讓輪播文字更有層次感 */
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 10px;
+    bottom: 30px;
+}
+/* -----------------------------------------------------------------------------------------  下方商品展示 */
+/* --- 商品列表標題優化 --- */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-brown);
+    border-left: 5px solid var(--brand-orange);
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+
+/* --- 商品卡片主體 --- */
+.product-card {
+    position: relative; /* 為了讓標籤絕對定位 */
+    border: 1px solid var(--border-color); /* 增加細邊框，白底時更有層次 */
+    border-radius: 12px;
+    background: white;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 確保內容不會超出圓角 */
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--brand-orange); /* 懸停時邊框變色 */
+    box-shadow: 0 15px 30px rgba(230, 126, 34, 0.1) !important;
+}
+
+/* --- 浮動標籤 (類別) --- */
+.product-category-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: rgba(255, 255, 255, 0.85);
+    color: var(--brand-orange);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    backdrop-filter: blur(4px); /* 背景模糊效果，現代感十足 */
+    border: 1px solid var(--border-color);
+    z-index: 2;
+}
+
+/* --- 圖片容器 --- */
+.product-img-wrapper {
+    height: 200px; /* 稍微拉高一點 */
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.05); /* 圖片微放大互動 */
+}
+
+.product-img-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: 0.5s ease;
+}
+
+/* --- 資訊區域 --- */
+.product-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+    margin-bottom: 12px;
+    /* 讓兩行文字後才出現省略號，避免名稱太短留白太多 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    overflow: hidden;
+    height: 44px; 
+}
+
+/* --- 底部價格與按鈕 --- */
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.product-price {
+    color: var(--brand-red);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* 加入購物車按鈕 (小型圓角) */
+.add-to-cart-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--bg-gray);
+    color: var(--brand-orange);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    padding: 0;
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--brand-orange);
+    color: white !important;
+    transform: rotate(15deg); /* 俏皮的小旋轉 */
+}
+

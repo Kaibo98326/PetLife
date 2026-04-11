@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>員工登入</title>
+    <link rel="stylesheet" th:href="@{/css/LoginEmp.css}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="wrapper">
+    <h1>員工登入</h1>
+    <form th:action="@{/employee/login}" method="post">
+        <div class="input-box">
+            <input type="text" name="username" placeholder="帳號" required>
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="input-box">
+            <input type="password" name="password" placeholder="密碼" required>
+            <i class="fas fa-lock"></i>
+        </div>
+        <div class="remember-forgot">
+            <label><input type="checkbox"> 記住我</label>
+        </div>
+        <button type="submit" class="btn">登入</button>
+        <div class="register-link">
+            <p><a th:href="@{/shop/index}">回到賣場</a></p>
+        </div>
+    </form>
+
+    <!-- 登入狀態提示 -->
+    <div th:if="${status == 'login_failed'}" style="color:red; text-align:center;">
+        帳號或密碼錯誤，請再試一次。
+    </div>
+    
+</div>
+</body>
+</html>
+

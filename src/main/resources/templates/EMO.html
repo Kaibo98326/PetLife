@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>員工管理選擇</title>
+    <link rel="stylesheet" th:href="@{/css/AdminPanel.css}">
+</head>
+<body>
+    <div class="employee-options">
+        <h2>員工管理選擇</h2>
+        <div class="card-container">
+            <!-- 員工列表 -->
+            <div class="card" th:onclick="'loadContent(\'員工列表\', \'empList\')'">
+                <div class="card-icon">👥</div>
+                <div class="card-title">員工列表</div>
+                <div class="card-desc">查看所有員工資訊</div>
+            </div>
+            <!-- 角色管理 -->
+            <div class="card" th:onclick="'loadContent(\'角色管理\', \'roleLists\')'">
+                <div class="card-icon">🔑</div>
+                <div class="card-title">角色管理</div>
+                <div class="card-desc">新增、刪除或修改角色</div>
+            </div>
+            <!-- 員工角色管理 -->
+            <div class="card" th:onclick="'loadContent(\'員工角色管理\', \'empRoleList\')'">
+                <div class="card-icon">🛡️</div>
+                <div class="card-title">員工角色管理</div>
+                <div class="card-desc">指派或移除員工角色</div>
+            </div>
+        </div>
+    </div> 
+</body>
+<style>
+        .employee-options {
+            text-align: center;
+            padding: 20px;
+        }
+        .employee-options h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 160px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</html>

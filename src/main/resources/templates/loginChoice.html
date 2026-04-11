@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>登入選擇</title>
+  <!-- 如果有共用的 CSS -->
+  <link rel="stylesheet" th:href="@{/css/NewHomePage.css}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .login-choice-container {
+      max-width: 400px;
+      margin: 5rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .login-choice-container h2 {
+      margin-bottom: 1.5rem;
+    }
+    .login-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+    .emp-btn { background-color: #4CAF50; }
+    .member-btn { background-color: #2196F3; }
+    .login-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="login-choice-container">
+    <h2>請選擇登入身份</h2>
+    <!-- 員工登入 -->
+    <a th:href="@{/loginEmp}" class="login-btn emp-btn">員工登入</a>
+    <!-- 會員登入 -->
+    <a th:href="@{/loginMember}" class="login-btn member-btn">會員登入</a>
+  </div>
+</body>
+</html>
+
+
+

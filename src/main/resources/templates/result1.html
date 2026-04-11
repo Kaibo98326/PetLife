@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>結果提示</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let status = /*[[${status}]]*/ '';
+
+    if (status === 'register_success') {
+        Swal.fire({
+            icon: 'success',
+            title: '註冊成功',
+            text: '歡迎加入會員！',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href = '/loginMember';
+        });
+    } else if (status === 'register_fail') {
+        Swal.fire({
+            icon: 'error',
+            title: '註冊失敗',
+            text: '請再試一次！',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href = 'loginMember';
+        });
+    } else if (status === 'login_success') {
+        Swal.fire({
+            icon: 'success',
+            title: '登入成功',
+            text: '歡迎回來！',
+            confirmButtonText: '回去血拚'
+        }).then(() => {
+            window.location.href = '/shop/index';
+        });
+    } else if (status === 'wrongpassword') {
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: '密碼錯誤',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/loginMember';
+        });
+    } else if (status === 'notfound') {
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: '帳號不存在，請先註冊',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/loginMember';
+        });
+    } else if (status === 'disabled') {
+        Swal.fire({
+            icon: 'warning',
+            title: '帳號已停權',
+            text: '您的帳號目前無法使用，請聯絡客服。',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/shop/index';
+        });
+    } else if (status === 'logout') {
+        Swal.fire({
+            icon: 'info',
+            title: '已登出',
+            text: '期待再次見到您！',
+            confirmButtonText: '回主頁'
+        }).then(() => {
+            window.location.href =  '/shop/index';
+        });
+    } else if (status === 'error') {
+        Swal.fire({
+            icon: 'error',
+            title: '系統錯誤',
+            text: '請稍後再試！',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/loginMember';
+        });
+    } else if (status === 'register_duplicate') {
+        Swal.fire({
+            icon: 'error',
+            title: '註冊失敗',
+            text: '此 Email 或電話已被註冊',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/loginMember';
+        });
+    } else if (status === 'deleted') {
+        Swal.fire({
+            icon: 'error',
+            title: '登入失敗',
+            text: '您的帳號已註銷，請聯絡客服。',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href =  '/shop/index';
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

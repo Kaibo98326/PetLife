@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登入結果</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let status = /*[[${status}]]*/ '';
+    let error = /*[[${error}]]*/ '';
+
+    if (status === 'success') {
+        Swal.fire({
+            title: "登入成功！",
+            text: "歡迎回來！",
+            icon: "success",
+            confirmButtonText: "進入後台"
+        }).then(() => {
+            window.location.href = /*[[@{/employee/center}]]*/ '';
+        });
+    }else if (status === 'logout') {
+        Swal.fire({
+            title: "已登出",
+            text: "您已成功登出系統。",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 2000
+        }).then(() => {
+            window.location.href = /*[[@{/employee/loginEmp}]]*/ '';
+        });
+    } else if (error === 'wrongpassword') {
+        Swal.fire({
+            title: "登入失敗",
+            text: "密碼錯誤，請再試一次。",
+            icon: "error",
+            confirmButtonText: "返回登入"
+        }).then(() => {
+            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+        });
+    } else if (error === 'notfound') {
+        Swal.fire({
+            title: "登入失敗",
+            text: "查無此帳號。",
+            icon: "error",
+            confirmButtonText: "返回登入"
+        }).then(() => {
+            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+        });
+    } else if (error === 'disabled') {
+        Swal.fire({
+            title: "登入失敗",
+            text: "您的帳號已被停權，請聯絡管理員。",
+            icon: "warning",
+            confirmButtonText: "返回登入"
+        }).then(() => {
+            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

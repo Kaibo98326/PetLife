@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>會員中心 - 寵物百貨</title>
+    <link rel="stylesheet" th:href="@{/css/MemberCenter.css}">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">寵物百貨</div>
+        <nav>
+            <a th:href="@{/shop/index}">首頁</a>
+            <a th:href="@{/products}">商品分類</a>
+            <a th:href="@{/member/center}">會員中心</a>
+            <a th:href="@{/contact}">客服</a>
+        </nav>
+    </header>
+
+    <!-- Member Dashboard -->
+    <section class="dashboard">
+        <div class="member-info">
+            <h2>會員中心</h2>
+            <p>會員編號：<span th:text="${memberId}"></span></p>
+            <p>會員名稱：<span th:text="${memberName}"></span></p>
+            <p>目前紅利點數：<span th:text="${currentPoints}"></span></p>
+            <p>今年累積紅利：<span th:text="${yearlyPoints}"></span></p>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/orders} + '\''">📦 訂單紀錄</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/edit} + '\''">👤 個人資料</div>
+            <div class="menu-item">🏠 收件資訊</div>
+            <div class="menu-item">❤️ 我的收藏</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/pet/list} + '\''">🐕 寵物管理</div>
+            <div class="menu-item">💎 紅利點數</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/logout} + '\''">🔒登出</div>
+        </div>
+    </section>
+
+    <!-- Notice -->
+    <section class="notice">
+        <h3>寵物百貨 溫馨提醒</h3>
+        <p>
+            我們不會以任何名義向您索取或核對金融帳戶、信用卡資訊，
+            也不會要求您操作 ATM 或網路銀行匯款。
+            若遇可疑電話請勿理會，並撥打 165 反詐騙專線查證。
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 寵物百貨</p>
+        <p>客服信箱：service@petshop.com</p>
+    </footer>
+</body>
+
+</html>

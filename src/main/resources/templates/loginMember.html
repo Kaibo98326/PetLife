@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- 自訂 CSS -->
+    <link rel="stylesheet" th:href="@{/css/LoginMember.css}">
+    <title>會員登入/註冊</title>
+</head>
+<body>
+<div class="container" id="container">
+
+    <!-- 註冊表單 -->
+    <div class="form-container sign-up">
+        <form id="registerForm" th:action="@{/member/register}" method="post">
+            <h1>🐾建立帳號🐾</h1>
+            <span>或使用電子郵件註冊</span>
+            <div class="input-wrapper">
+                <input type="text" name="memberName" placeholder="姓名" required>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" name="phone" placeholder="電話">
+            </div>
+            <div class="input-wrapper">
+                <input type="email" name="email" placeholder="電子郵件" required>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" name="passwordHash" placeholder="密碼" required>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" name="address" placeholder="地址">
+            </div>
+            <button type="submit">註冊</button>
+        </form>
+    </div>
+
+    <!-- 登入表單 -->
+    <div class="form-container sign-in">
+        <form th:action="@{/member/login}" method="post">
+            <h1>🐕登入</h1>
+            <span>或使用電子郵件登入</span>
+            <input type="email" name="email" placeholder="電子郵件" required>
+            <input type="password" name="password" placeholder="密碼" required>
+
+            <!-- 錯誤訊息顯示 -->
+            <p th:if="${errorMsg != null}" th:text="${errorMsg}" style="color:red; font-size:13px;"></p>
+
+            <a href="#">忘記密碼？</a>
+            <button type="submit">登入</button>
+            <button type="button" th:onclick="|window.location='@{/shop/index}'|">回到賣場</button>
+        </form>
+    </div>
+
+    <!-- 切換區塊 -->
+    <div class="toggle-container">
+        <div class="toggle">
+            <div class="toggle-panel toggle-left">
+                <h1>歡迎回來！</h1>
+                <p>請輸入帳號以使用所有功能</p>
+                <button class="hidden" id="login">登入</button>
+            </div>
+            <div class="toggle-panel toggle-right">
+                <h1>哈囉，新朋友！</h1>
+                <p>立即註冊以使用所有功能</p>
+                <button class="hidden" id="register">註冊</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引用 JS -->
+<script th:src="@{/js/LoginMember.js}"></script>
+</body>
+</html>
