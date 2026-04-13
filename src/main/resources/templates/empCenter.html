@@ -6,7 +6,9 @@
     <title>petDB 後臺管理系統</title>
     <script th:src="@{/js/pet.js}" defer></script>
     <link rel="stylesheet" th:href="@{/css/AdminPanel.css}">
-    <link rel="stylesheet" th:href="@{/css/beauty-embed.css}">
+    <link rel="stylesheet" th:href="@{/css/emplist.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -95,10 +97,9 @@
                 style="width: 100%; height: 100%; border: none; display:none;"></iframe>
         </div>
     </div>
-
     <!-- menuMap -->
     <script th:inline="javascript">
-        const menuMap = {
+        window.menuMap = window.menuMap ||{
             'member': { title: '會員管理', url: '#', type: 'ajax' },
             'permission': { title: '員工管理', url: /*[[@{/employee/EMO}]]*/ '', type: 'ajax' },
             'pet': { title: '寵物管理', url: '#', type: 'ajax' },
@@ -112,7 +113,10 @@
             'promotion': { title: '優惠活動管理', url: '#', type: 'ajax' },
             'empList': { title: '員工列表', url: /*[[@{/employee/list}]]*/'', type: 'ajax' },
             'empAdd': { title: '新增員工', url: /*[[@{/employee/add}]]*/'', type: 'ajax' },
-            'empEdit': { title: '編輯員工', url: /*[[@{/employee/edit}]]*/'', type: 'ajax' }
+            'empEdit': { title: '編輯員工', url: /*[[@{/employee/edit}]]*/'', type: 'ajax' },
+            'empSearch': { title: '員工列表', url: /*[[@{/employee/search}]]*/'', type: 'ajax' },
+            'roleList': { title: '角色管理', url: /*[[@{/role/list}]]*/'', type: 'ajax' },
+            'empRoleList': { title: '員工角色管理', url: /*[[@{/role/empRoleList}]]*/'', type: 'ajax' }
 
         };
 
@@ -196,6 +200,9 @@
         function executeScripts(container) {
             const scripts = container.querySelectorAll('script');
             scripts.forEach(script => {
+                // 避免重複宣告 menuMap 或其他全域變數
+                if (script.textContent.includes('menuMap')) return;
+
                 const newScript = document.createElement('script');
                 newScript.textContent = script.textContent;
                 container.appendChild(newScript);
@@ -251,11 +258,25 @@
                 loadContent('會員管理', 'member');
             }
         });
+        $(document).on('submit', '#empAddForm', function(e){
+            e.preventDefault();
+            $.post('/employee/add', $(this).serialize(), function(res){
+                $('#contentBody').html(res); // 塞回主框架的 contentBody
+                // 可選：更新 breadcrumb/title
+                document.getElementById('contentTitle').textContent = '員工列表';
+                document.getElementById('breadcrumb').textContent = '員工列表';
+            });
+        });
+
     </script>
 
     <!-- 外部 JS 引入 -->
-    <script th:src="@{/js/beauty-dashboard-embed.js}"></script>
+	<script th:src="@{../js/emp.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
 
+		
 </body>
 
 </html>

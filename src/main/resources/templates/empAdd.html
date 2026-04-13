@@ -1,54 +1,44 @@
-<!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>新增員工</title>
-    <link rel="stylesheet" th:href="@{/css/AdminPanel.css}">
-</head>
-<body>
-<div class="card">
-    <div class="card-header">
-        <span class="card-icon">➕</span>
-        <h2>新增員工</h2>
+<!-- empAdd.html -->
+<div th:fragment="addFragment">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-icon">➕</span>
+            <h2>新增員工</h2>
+        </div>
+
+        <form th:action="@{/employee/add}" method="post"
+              onsubmit="return empPostFormThenShow(this, '員工列表', 'empList');"
+              class="styled-form">
+
+            <label>姓名：</label>
+            <input type="text" name="empName" required>
+
+            <label>帳號：</label>
+            <input type="text" name="username" required>
+
+            <label>密碼：</label>
+            <input type="password" name="passwordHash" required>
+
+            <label>電話：</label>
+            <input type="text" name="empPhone">
+
+            <label>地址：</label>
+            <input type="text" name="empAddress">
+
+            <label>緊急聯絡人：</label>
+            <input type="text" name="emergencyContact">
+
+            <label>緊急聯絡人電話：</label>
+            <input type="text" name="emergencyphone">
+
+            <button type="submit" class="btn btn-add">送出</button>
+            <button type="button"
+                    onclick="loadContent('員工列表', 'empList')">
+                回列表
+            </button>
+        </form>
     </div>
-
-    <form th:action="@{/employee/add}" method="post" class="styled-form">
-        <label>姓名：</label>
-        <input type="text" name="empName" required>
-
-        <label>帳號：</label>
-        <input type="text" name="username" required>
-
-        <label>密碼：</label>
-        <input type="password" name="passwordHash" required>
-
-        <label>電話：</label>
-        <input type="text" name="empPhone">
-
-        <label>地址：</label>
-        <input type="text" name="empAddress">
-
-        <label>緊急聯絡人：</label>
-        <input type="text" name="emergencyContact">
-
-        <button type="submit" class="btn btn-add">送出</button>
-    </form>
 </div>
 
-<style>
-.styled-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.styled-form label {
-    font-weight: bold;
-}
-.styled-form input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-</style>
-</body>
-</html>
+
+
