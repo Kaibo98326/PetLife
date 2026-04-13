@@ -37,7 +37,7 @@
             icon: "error",
             confirmButtonText: "返回登入"
         }).then(() => {
-            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+            window.location.href = /*[[@{/employee/loginEmp}]]*/ '';
         });
     } else if (error === 'notfound') {
         Swal.fire({
@@ -46,16 +46,25 @@
             icon: "error",
             confirmButtonText: "返回登入"
         }).then(() => {
-            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+            window.location.href = /*[[@{/employee/loginEmp}]]*/ '';
         });
-    } else if (error === 'disabled') {
+    } else if (error === 'disable') {
         Swal.fire({
             title: "登入失敗",
             text: "您的帳號已被停權，請聯絡管理員。",
             icon: "warning",
             confirmButtonText: "返回登入"
         }).then(() => {
-            window.location.href = /*[[@{/employee/loginPage}]]*/ '';
+            window.location.href = /*[[@{/employee/loginEmp}]]*/ '';
+        });
+    } else if (error === 'delete') {
+        Swal.fire({
+            title: "登入失敗",
+            text: "查無此帳號。",
+            icon: "error",
+            confirmButtonText: "返回登入"
+        }).then(() => {
+            window.location.href = /*[[@{/employee/loginEmp}]]*/ '';
         });
     }
     /*]]>*/
