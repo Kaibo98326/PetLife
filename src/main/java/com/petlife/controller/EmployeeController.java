@@ -1,5 +1,7 @@
 package com.petlife.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,6 +77,13 @@ public class EmployeeController {
 		return "EMO";
 	}
 	
+	//員工清單
+	@GetMapping("/list")
+	public String empList(Model m) {
+		List<Employee> emps = empService.findAll();
+		m.addAttribute("empList" , emps);
+		return "emplist";
+	}
 	
 	
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>員工列表</title>
+    <link rel="stylesheet" th:href="@{/css/AdminPanel.css}">
+</head>
+<body>
+<div class="card">
+    <div class="card-header">
+        <span class="card-icon">👥</span>
+        <h2>員工列表</h2>
+    </div>
+    <!-- 新增員工 -->
+    <button class="btn btn-add" th:onclick="'loadContent(\'新增員工\', \'empAdd\')'">➕ 新增員工</button>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>員工編號</th>
+                <th>姓名</th>
+                <th>帳號</th>
+                <th>狀態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Thymeleaf 迴圈 -->
+            <tr th:each="emp : ${empList}">
+                <td th:text="${emp.empId}">員工編號</td>
+                <td th:text="${emp.empName}">員工姓名</td>
+                <td th:text="${emp.username}">帳號</td>
+                <td th:text="${emp.status}">狀態</td>
+                <td>
+                    <button class="btn btn-edit"
+                            th:onclick="'loadContent(\'編輯員工\', \'empEdit&empId=' + ${emp.empId} + '\')'">✏️ 編輯</button>
+                    <button class="btn btn-delete"
+                            th:onclick="'if(confirm(\'確定要停權嗎?\')) location.href=\'' + @{/employee/delete(empId=${emp.empId})} + '\''">🗑️ 停權</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<style>
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 20px auto;
+}
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.card-icon {
+    font-size: 1.8rem;
+}
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+.styled-table th, .styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.btn-add { background-color: #4CAF50; color: white; margin: 5px; }
+.btn-edit { background-color: #2196F3; color: white; margin: 5px; }
+.btn-delete { background-color: #f44336; color: white; margin: 5px; }
+.btn:hover { opacity: 0.85; transform: scale(1.05); }
+</style>
+</body>
+</html>
