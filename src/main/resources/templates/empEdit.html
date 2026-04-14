@@ -1,0 +1,67 @@
+<!-- empEdit.html -->
+<div th:fragment="editFragment">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-icon">✏️</span>
+            <h2>編輯員工</h2>
+        </div>
+
+        <form th:action="@{/employee/edit}" method="post"
+              onsubmit="return empPostFormThenShow(this, '員工列表', 'empList');">
+
+            <!-- 主鍵 -->
+            <input type="hidden" name="empId" th:value="${emp.empId}">
+
+            <label>姓名：</label>
+            <input type="text" name="empName" th:value="${emp.empName}" required>
+
+            <label>帳號：</label>
+            <input type="text" name="username" th:value="${emp.username}" required>
+
+            <label>電話：</label>
+            <input type="text" name="empPhone" th:value="${emp.empPhone}">
+
+            <label>地址：</label>
+            <input type="text" name="empAddress" th:value="${emp.empAddress}">
+
+            <label>緊急聯絡人：</label>
+            <input type="text" name="emergencyContact" th:value="${emp.emergencyContact}">
+
+            <label>緊急聯絡人電話：</label>
+            <input type="text" name="emergencyphone" th:value="${emp.emergencyphone}">
+
+            <label>狀態：</label>
+            <select name="status" required>
+    				<option value="active" th:selected="${emp.status == 'active'}">active</option>
+    				<option value="disable" th:selected="${emp.status == 'disable'}">disable</option>
+    				<option value="delete" th:selected="${emp.status == 'delete'}">delete</option>
+			</select>
+            <!-- 修改密碼按鈕 -->
+            <button type="button" onclick="togglePasswordField()">修改密碼</button>
+
+            <!-- 密碼欄位，預設隱藏 -->
+            <div id="passwordField" style="display:none;">
+                <label>密碼：</label>
+                <input type="password" name="passwordHash" th:value="${emp.passwordHash}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-edit">更新</button>
+                <button type="button" class="btn btn-back"
+                        onclick="loadContent('員工列表', 'empList')">回列表</button>
+            </div>
+        </form>
+        <script>
+    function togglePasswordField() {
+        const field = document.getElementById('passwordField');
+        field.style.display = (field.style.display === 'none') ? 'block' : 'none';
+    }
+    </script>
+
+        
+    </div>
+</div>
+
+
+
+

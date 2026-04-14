@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.petlife.model.Employee;
@@ -27,18 +29,23 @@ public class EmployeeService {
 		return empRepos.findById(empId).orElse(null);
 	}
 	
-	//查詢所有員工
-	public List<Employee> findAll(){
-		
-		return empRepos.findAll();
-	}
-	
-	//模糊查詢姓名
-	
-	public List<Employee> findByName(String keyword){
-		return empRepos.findByEmpNameContaining(keyword);
-	}
-	
+	// 查詢所有員工 (分頁版)
+    public Page<Employee> findAll(Pageable pageable) {
+        return empRepos.findAll(pageable);
+    }
+
+    // 查詢所有員工 (非分頁版，保留給 add/edit 用)
+    public List<Employee> findAll() {
+        return empRepos.findAll();
+    }
+
+    // 模糊查詢姓名 (分頁版)
+    public Page<Employee> findByNameContaining(String keyword, Pageable pageable) {
+        return empRepos.findByEmpNameContaining(keyword, pageable);
+    }
+
+
+
 	//更新員工狀態
 	public boolean updateStatus(Integer empId, String status) {
 		Employee emp = findById(empId);
@@ -56,11 +63,14 @@ public class EmployeeService {
 		if(emp == null) {
 			return "notfound" ; //查無此號
 		}
-		if("disabled".equals(emp.getStatus())) {
-			return "disabled"; //帳號停權
+		if("disable".equals(emp.getStatus())) {
+			return "disable"; //帳號停權
 		}
 		if(!PasswordUtils.checkPassword(rawPassword, emp.getPasswordHash())) {
 			return "wrongpassword"; //密碼錯誤
+		}
+		if("delete".equals(emp.getStatus())) {
+			return "delete";
 		}
 		
 		//登入成功 ->更新最後登入時間
@@ -71,6 +81,10 @@ public class EmployeeService {
 	
 	public Employee findByUsername(String username) {
 		return empRepos.findByUsername(username);
+	}
+	
+	public Employee update(Employee emp ) {
+		return empRepos.save(emp);
 	}
 	
 	

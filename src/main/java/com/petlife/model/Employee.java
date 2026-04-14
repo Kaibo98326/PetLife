@@ -45,6 +45,9 @@ public class Employee {
 	@Column(name = "emergency_contact" , length = 50)
 	private String emergencyContact;		//緊急聯絡人
 	
+	@Column(name = "emergency_phone",length = 50 )
+	private String emergencyphone;
+	
 	@Column(name = "status" , length = 20)
 	private String status = "active";		//帳號狀態
 	
