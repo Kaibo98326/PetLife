@@ -3,6 +3,7 @@ package com.petlife.controller;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.petlife.model.Member;
+import com.petlife.repository.MemberRepository;
 import com.petlife.service.IMemberService;
+import com.petlife.service.PasswordUtils;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,6 +33,8 @@ public class MemberFontController {
 	
 	@Autowired
 	private IMemberService memberService;
+	@Autowired
+	private MemberRepository memberRepo;
 	
 	//註冊會員
 	@PostMapping("/register")
@@ -95,6 +101,42 @@ public class MemberFontController {
 		//以後可擴充查詢紅利點數訂單紀錄之類的
 		return "memberCenter" ;
 	}
+
+	@GetMapping("/edit")
+    public String editMemberForm(Model model, @RequestParam("id") Integer memberId) {
+        Member member = memberRepo.findById(memberId).orElseThrow();
+        model.addAttribute("member", member);
+        return "memberEdit"; // 對應上面的 Thymeleaf 頁面
+    }
+
+    @PostMapping("/update")
+    public String updateMember(@ModelAttribute Member member ,@RequestParam(required = false ) String password) {
+    		Member dbMember = memberRepo.findById(member.getMemberId()).orElseThrow();
+    		//更新允許修改的欄位
+    		dbMember.setMemberName(member.getMemberName());
+    		dbMember.setEmail(member.getEmail());
+    	    dbMember.setPhone(member.getPhone());
+    	    dbMember.setAddress(member.getAddress());
+        // 如果有密碼欄位，記得加密處理
+        if (password != null && !password.isEmpty()) {
+            member.setPasswordHash(PasswordUtils.hashPassword(password));
+        }
+        memberRepo.save(member);
+        return "redirect:/member/center"; // 修改完成後回會員中心
+    }
+    @PostMapping("/checkPassword")
+    @ResponseBody
+    public Map<String, Boolean> checkPassword(@RequestBody Map<String, String> payload) {
+        Integer memberId = Integer.valueOf(payload.get("memberId"));
+        String oldPassword = payload.get("oldPassword");
+
+        Member member = memberRepo.findById(memberId).orElseThrow();
+        boolean valid = PasswordUtils.checkPassword(oldPassword, member.getPasswordHash());
+
+        return Map.of("valid", valid);
+    }
+
+
 
 
 	
