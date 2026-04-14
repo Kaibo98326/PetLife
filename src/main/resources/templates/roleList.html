@@ -1,0 +1,89 @@
+<div id="roleListContainer" th:fragment="listFragment">
+    <h2>角色管理</h2>
+
+    <!-- 新增角色 -->
+    <form id="createRoleForm" onsubmit="event.preventDefault(); createRole();">
+        <input type="text" name="roleName" placeholder="輸入角色名稱" required>
+        <button type="submit" class="btn btn-primary">新增角色</button>
+    </form>
+
+    <!-- 角色清單 -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>角色編號</th>
+                <th>角色名稱</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="role : ${roles}" th:id="'roleRow-' + ${role.roleId}">
+                <td th:text="${role.roleId}"></td>
+                <td>
+                    <span th:id="'roleNameSpan-' + ${role.roleId}" th:text="${role.roleName}"></span>
+                    <input type="text" th:id="'roleNameInput-' + ${role.roleId}" th:value="${role.roleName}"
+                        style="display:none;">
+                </td>
+                <td>
+                    <button type="button" th:id="'editBtn-' + ${role.roleId}" class="btn btn-warning btn-sm"
+                        th:onclick="|enableEdit(${ role.roleId })|">修改</button>
+                </td>
+                <td>
+                    <button type="button" th:id="'deleteBtn-' + ${role.roleId}" class="btn btn-danger btn-sm"
+                        th:onclick="|deleteRole(${role.roleId})|">刪除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        function createRole() {
+            const formData = new FormData(document.getElementById("createRoleForm"));
+            fetch('/role/create', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(html => {
+                    // 確保這裡的 ID 和 HTML 裡的容器一致
+                    document.getElementById("roleListContainer").innerHTML = html;
+                });
+        }
+        function deleteRole(roleId) {
+            const formData = new FormData();
+            formData.append("roleId", roleId);
+
+            fetch('/role/delete', { method: 'POST', body: formData })
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("roleListContainer").innerHTML = html;
+                });
+        }
+        function enableEdit(roleId) {
+            // 顯示輸入框，隱藏文字
+            document.getElementById("roleNameSpan-" + roleId).style.display = "none";
+            document.getElementById("roleNameInput-" + roleId).style.display = "inline";
+
+            // 修改按鈕 → 保存
+            const btn = document.getElementById("editBtn-" + roleId);
+            btn.textContent = "保存";
+            btn.classList.remove("btn-warning");
+            btn.classList.add("btn-success");
+            btn.onclick = function () { saveRole(roleId); };
+        }
+
+        function saveRole(roleId) {
+            const roleName = document.getElementById("roleNameInput-" + roleId).value;
+            const formData = new FormData();
+            formData.append("roleId", roleId);
+            formData.append("roleName", roleName);
+
+            fetch('/role/edit', { method: 'POST', body: formData })
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("roleListContainer").innerHTML = html;
+                });
+        }
+
+
+    </script>
+</div>

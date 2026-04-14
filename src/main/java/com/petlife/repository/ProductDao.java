@@ -63,7 +63,7 @@ public class ProductDao implements IProductDao{
     }
 
     @Override
-    public boolean deleteById(Integer id) {
+    public  boolean deleteById(Integer id) {
         Product product = session.find(Product.class, id);
         if (product != null) {
             session.remove(product);
