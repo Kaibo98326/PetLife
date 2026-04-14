@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 
 @Repository
 @Transactional
-public class ProductDao implements IProductDao{
+public abstract class ProductDao implements IProductDao{
 	
 	@PersistenceContext
 	private Session session;

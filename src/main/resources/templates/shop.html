@@ -223,8 +223,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
+    <script th:inline="javascript">
         // 確保頁面完全載入後才執行
+        const currentMemberId = /*[[${session.memberId}]]*/ null;
+        
         $(document).ready(function () {
             console.log("JQuery 已就緒，PetLife 購物車腳本啟動！");
 
@@ -237,56 +239,62 @@
 
             // 使用 document 級別的事件委派，確保動態元素也能綁定事件
             $(document).off('click', '.add-to-cart-btn')
-                .on('click', '.add-to-cart-btn', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // 抓取按鈕上的商品資料
-                    var productId = $(this).data("id");
-                    var name = $(this).data("name");
-
-                    console.log("點擊觸發！商品ID:", productId, "商品名稱:", name);
-
-                    if (!productId) {
-                        console.error("錯誤：找不到 data-id 屬性！請檢查 HTML 按鈕標籤。");
-                        return;
-                    }
-
-                    // 發送 AJAX 請求到後端
-                    $.ajax({
-                        url: "/cart/add",   // 這裡改成 Spring Boot Controller 的路徑
-                        type: "POST",
-                        data: {
-                            productId: productId,
-                            quantity: 1
-                        },
-                        success: function (response) {
-                            console.log("後端回傳成功");
-
-                            // 使用 SweetAlert 顯示提示訊息
-                            Swal.fire({
-                                icon: 'success',
-                                title: '加入成功！',
-                                text: '已將 [' + name + '] 放進購物車囉 🐾',
-                                timer: 1500,
-                                showConfirmButton: false
-                            }).then(() => {
-                                let badge = $("#cart-badge");
-                                if (badge.length > 0) {
-                                    let currentCount = parseInt(badge.text());
-                                    badge.text(currentCount + 1); // 每次加 1 件
-                                } else {
-                                    // 如果原本沒有 badge，重整頁面讓標籤生出來
-                                    location.reload();
-                                }
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("AJAX 發送失敗！狀態碼:", xhr.status, "錯誤訊息:", error);
-                            alert("連線失敗，請檢查後端 Controller 是否有啟動。");
-                        }
+            .on('click', '.add-to-cart-btn', function (e) {
+                e.preventDefault();
+                
+                // 1. 檢查是否登入
+                if (!currentMemberId) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '請先登入',
+                        text: '登入後才能將毛孩好物加入購物車喔！',
+                        confirmButtonText: '前往登入'
+                    }).then(() => {
+                        window.location.href = '/loginChoice'; // 跳轉到你的登入頁
                     });
+                    return;
+                }
+
+                var productId = $(this).data("id");
+                var name = $(this).data("name");
+
+                // 2. 發送 AJAX
+                $.ajax({
+                    url: "/api/cart/add/" + currentMemberId, // 自動帶入登入者的 ID
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8", // 必須是 JSON
+                    data: JSON.stringify({
+                        productId: productId,
+                        quantity: 1,
+                        productName: name,
+                        productPrice: 0, // 由後端 Service 查價較安全
+                        subtotal: 0
+                    }),
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '加入成功！',
+                            text: '已將 [' + name + '] 放進購物車 🐾',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // 更新右上角數字
+                            let badge = $("#cart-badge");
+                            if (badge.length > 0) {
+                            	// 抓取目前的數字，如果抓不到（例如空字串）就設為 0
+                                let currentCount = parseInt(badge.text()) || 0;
+                                badge.text(parseInt(badge.text()) + 1);
+                            } else {
+                                location.reload(); 
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error("報錯內容:", xhr.responseText);
+                        Swal.fire('哎呀', '加入失敗，請稍後再試', 'error');
+                    }
                 });
+            });
         });
     </script>
 </body>

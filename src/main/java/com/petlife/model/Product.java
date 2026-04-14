@@ -1,6 +1,7 @@
 package com.petlife.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import jakarta.persistence.*;
 
@@ -25,7 +26,7 @@ public class Product implements Serializable{
 	
 	// 商品價格
 	@Column(name = "product_price" , nullable = false)
-	private Integer productPrice;
+	private BigDecimal productPrice;
 	
 	// 商品描述
 	@Column(name = "product_description" , columnDefinition = "TEXT", length = 2000)
@@ -65,8 +66,8 @@ public class Product implements Serializable{
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
 
-    public Integer getProductPrice() { return productPrice; }
-    public void setProductPrice(Integer productPrice) { this.productPrice = productPrice; }
+    public BigDecimal getProductPrice() { return productPrice; }
+    public void setProductPrice(BigDecimal productPrice) { this.productPrice = productPrice; }
 
     public String getProductDescription() { return productDescription; }
     public void setProductDescription(String productDescription) { this.productDescription = productDescription; }

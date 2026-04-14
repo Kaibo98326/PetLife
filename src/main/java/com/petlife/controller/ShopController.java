@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.petlife.model.Category;
 import com.petlife.model.Product;
+import com.petlife.service.CartService;
 import com.petlife.service.CategoryService;
 import com.petlife.service.ProductService;
 
@@ -24,6 +25,9 @@ public class ShopController {
 	 	@Autowired
 	    private ProductService productService;
 
+	    @Autowired
+	    private CartService cartService; 
+	    
 	    @Autowired
 	    private CategoryService categoryService;
 
@@ -39,13 +43,12 @@ public class ShopController {
 	                        Model model) {
 	    		model.addAttribute("memberId", session.getAttribute("memberId"));
 	    		model.addAttribute("memberName" , session.getAttribute("memberName"));
-	        // 1. 計算購物車總件數
-/*	        Integer memberId = (Integer) session.getAttribute("memberId");
+	        // 1. 計算購物車總件數  115.4.13修改
+	        Integer memberId = (Integer) session.getAttribute("memberId");
 	        if (memberId == null) memberId = 1; // 測試用預設
-	        List<CartItem> cartItems = cartItemService.queryCartItemsByMemberId(memberId);
-	        int totalQty = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
+	        Integer totalQty = cartService.getCartTotalQuantity(memberId);
 	        model.addAttribute("cartTotalQty", totalQty);
-*/
+
 	        // 2. 取得所有分類 (左側選單)
 	        List<Category> categories = categoryService.getAllCategory();
 	        model.addAttribute("category", categories);
