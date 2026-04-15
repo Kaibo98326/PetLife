@@ -69,10 +69,15 @@
     						<li><a class="menu-link" onclick="loadContent('旅館房型管理','hotel_rooms')">🛏️ 旅館房型管理</a></li>
   					</ul>
 				</li>
-				<li class="menu-item"><a class="menu-link"
-					href="#" onclick="loadContent('優惠活動管理','promotion')"> <span
-						class="menu-icon">🎉</span> <span>優惠活動管理</span>
-				</a></li>
+				<li class="menu-item has-submenu">
+  					<a href="javascript:void(0);" class="menu-link" onclick="toggleSubmenu(this)">
+    					<span class="menu-icon">🎉</span> <span>優惠活動管理</span>
+                    </a>
+  					<ul class="submenu">
+                            <li><a class="menu-link" onclick="loadContent('行銷活動管理','discount')">📢 行銷活動管理</a></li>
+    						<li><a class="menu-link" onclick="loadContent('折扣設定','discountSetting')">💰 折扣設定</a></li>
+  					</ul>
+				</li>
             </ul>
         </aside>
 
@@ -110,7 +115,8 @@
             'groomingRecord': { title: '美容預約管理', url: '#', type: 'ajax' },
             'hotel_orders': { title: '旅館訂單管理', url: '#', type: 'ajax' },
             'hotel_rooms': { title: '旅館房型管理', url: '#', type: 'ajax' },
-            'promotion': { title: '優惠活動管理', url: '#', type: 'ajax' },
+            'discount': { title: '行銷活動管理', url: '/discount/index', type: 'ajax' },
+            'discountSetting': { title: '折扣設定', url: '#', type: 'ajax' },
             'empList': { title: '員工列表', url: /*[[@{/employee/list}]]*/'', type: 'ajax' },
             'empAdd': { title: '新增員工', url: /*[[@{/employee/add}]]*/'', type: 'ajax' },
             'empEdit': { title: '編輯員工', url: /*[[@{/employee/edit}]]*/'', type: 'ajax' },

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center mt-5" style="gap: 3rem;">
+        
+        <div class="card text-center shadow-sm border-0" 
+             style="width: 350px; padding: 3rem 1.5rem; border-radius: 15px; cursor: pointer; transition: transform 0.2s;"
+             onmouseover="this.style.transform='scale(1.05)'" 
+             onmouseout="this.style.transform='scale(1)'"
+             onclick="loadContent('活動建檔與維護', 'discountAdd')"> <div style="font-size: 5rem; margin-bottom: 1.5rem;">📝</div>
+            <h4 class="fw-bold mb-3">活動建檔與維護</h4>
+            <p class="text-muted" style="font-size: 0.95rem;">新增、修改與刪除優惠活動資料</p>
+        </div>
+
+        <div class="card text-center shadow-sm border-0" 
+             style="width: 350px; padding: 3rem 1.5rem; border-radius: 15px; cursor: pointer; transition: transform 0.2s;"
+             onmouseover="this.style.transform='scale(1.05)'" 
+             onmouseout="this.style.transform='scale(1)'"
+             onclick="loadContent('活動查詢與管理', 'discountSearch')"> <div style="font-size: 5rem; margin-bottom: 1.5rem;">🔍</div>
+            <h4 class="fw-bold mb-3">活動查詢與管理</h4>
+            <p class="text-muted" style="font-size: 0.95rem;">透過多重條件搜尋與檢視活動狀態</p>
+        </div>
+
+    </div>
+</body>
+</html>
+</html>
