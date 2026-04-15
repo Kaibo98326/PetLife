@@ -18,7 +18,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #ff914d;
+  background-color: #ebb16b;
   color: #fff;
 }
 
@@ -76,8 +76,11 @@ header nav a {
 .notice {
   background-color: #ffe5e5;
   color: #b30000;
-  padding: 20px;
-  margin: 40px 20px;
+  padding: 8px 12px;		/* 內距縮小 */
+  margin: 0;				/* 不要額外外距，緊貼 footer */
+  border-top:1px solid #add;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.85rem;    /* 字體縮小 */
   border-radius: 8px;
 }
 
@@ -85,13 +88,8 @@ header nav a {
   margin-bottom: 10px;
 }
 
-/* Footer */
-footer {
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-}
+
+
 
 /* 錯誤提示樣式 */
 .input-error {
@@ -101,6 +99,56 @@ footer {
 .input-error::placeholder {
   color: red;              /* placeholder 變紅 */
 }
+
+.shop-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+    
+    /* 核心調整：確保容器緊貼左側 */
+    padding-left: 0; 
+    margin-left: -10px; /* 如果覺得還不夠靠左，可以微調負值 */
+}
+
+/* 針對圖片的精確控制 */
+.shop-logo img {
+    height: 10px;       /* 這裡根據你的導覽列高度調整，建議 40px~60px */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* 懸停效果：維持你原本的放大感 */
+.shop-logo:hover {
+    transform: scale(1.05);
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    min-height: 100vh; /* 保證至少一個視窗高度 */
+}
+
+
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    margin-top: auto; /* 讓 footer 自動推到底部 */
+
+}
+
 
 
 

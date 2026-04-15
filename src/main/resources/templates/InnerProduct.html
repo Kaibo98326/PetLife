@@ -1,0 +1,171 @@
+<div class="category-wrapper" style="padding: 15px;">
+<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+	<div class="card-panel">
+		<div class="page-title-area">
+			<div class="title-decorator"></div>
+			<div class="page-header-text">📦 商品管理系統</div>
+		</div>
+
+		<div class="toolbar">
+			<button class="btn-main" onclick="openAddProduct()">＋ 新增商品</button>
+			<div class="search-box">
+				<input type="text" id="ajaxSearchInput" th:value="${searchKeyword}"
+					placeholder="搜尋商品名稱...">
+				<button type="button" class="btn-main" onclick="executeAjaxSearch()">🔍
+					查詢</button>
+			</div>
+		</div>
+
+		<table class="custom-table">
+			<thead>
+				<tr>
+					<th width="8%">編號</th>
+					<th width="35%">商品名稱</th>
+					<th width="12%">價格</th>
+					<th width="10%">庫存</th>
+					<th width="15%">分類</th>
+					<th width="20%">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="p : ${productList}">
+					<td th:text="${p.productId}"
+						style="color: #999; text-align: center;"></td>
+					<td class="product-name-td" th:text="${p.productName}"></td>
+					<td style="text-align: center;"><span class="price-text"
+						th:text="'$' + ${p.productPrice}"></span></td>
+					<td style="text-align: center;" th:text="${p.productStock}"></td>
+					<td style="text-align: center;"><span class="cat-badge"
+						th:text="${p.categoryName}"></span></td>
+					<td>
+						<div class="action-group">
+							<button type="button" class="action-btn edit-btn"
+								th:onclick="editProduct([[${p.productId}]])">修改</button>
+							<button type="button" class="action-btn del-btn"
+								th:onclick="deleteProduct([[${p.productId}]])">刪除</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="pagination-area" th:if="${totalPages > 1}">
+			<button th:if="${currentPage > 1}"
+				th:onclick="|changePage(${currentPage - 1})|" class="btn-main">上一頁</button>
+			<span style="font-size: 0.85rem; color: #666;"> 第 <span
+				th:text="${currentPage}"
+				style="font-weight: bold; color: var(--primary-orange);">1</span> /
+				<span th:text="${totalPages}">1</span> 頁
+			</span>
+			<button th:if="${currentPage < totalPages}"
+				th:onclick="|changePage(${currentPage + 1})|" class="btn-main">下一頁</button>
+		</div>
+	</div>
+</div>
+<script th:inline="javascript">
+	// 1. 修改商品 (確保這個函式名跟 HTML 上的 onclick 一致)
+	function editProduct(id) {
+		console.log("偵測到點擊修改，商品 ID =", id);
+
+		// 使用 Thymeleaf 語法取得基礎路徑，然後手動加上 id
+		// 注意：路徑最後要加上斜線，變成 /innerProduct/edit/10
+		var baseUrl = /*[[@{/innerProduct/edit/}]]*/'/innerProduct/edit/';
+
+		$('#contentBody').load(baseUrl + id, function(response, status, xhr) {
+			if (status === "error") {
+				console.error("載入失敗:", xhr.status, xhr.statusText);
+				alert("目前無法開啟修改頁面 (錯誤碼: " + xhr.status + ")");
+			}
+		});
+	}
+
+	// 2. 開啟新增頁面
+	function openAddProduct() {
+		console.log("正在開啟新增頁面");
+		var url = /*[[@{/innerProduct/prepareAdd}]]*/'/innerProduct/prepareAdd';
+		$('#contentBody').load(url + "?_t=" + new Date().getTime());
+	}
+
+	// 3. 刪除商品
+	function deleteProduct(id) {
+		if (!confirm('確定要將這件寶貝下架嗎？🐾'))
+			return;
+
+		// 💡 取得動態路徑 (後端是 /delete/{id})
+		var deleteUrl = /*[[@{/innerProduct/delete/}]]*/'/innerProduct/delete/';
+
+		$.get(deleteUrl + id, function(res) {
+			if (res === "success") {
+				alert("已成功下架！✨");
+				// 💡 成功後一定要呼叫刷新
+				refreshProductList();
+			} else {
+				alert("下架失敗，請檢查後台日誌。");
+			}
+		}).fail(function() {
+			alert("伺服器連線失敗，請稍後再試。");
+		});
+	}
+
+	// 4. 搜尋功能 (補上原本漏掉的部分)
+	function executeAjaxSearch() {
+    var keyword = $('#ajaxSearchInput').val();
+    var url = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+
+    console.log("正在執行搜尋，關鍵字為：" + keyword);
+
+    // 💡 關鍵修正：
+    // 1. 統一使用網址拼接 (?...)，強制瀏覽器發送 GET 請求。
+    // 2. 參數名必須是 searchKeyword (對應你 Controller 的 @RequestParam)。
+    // 3. 加上 _t 防止瀏覽器讀取舊快取。
+    var fullUrl = url + "?searchKeyword=" + encodeURIComponent(keyword) + "&_t=" + new Date().getTime();
+
+    $('#contentBody').load(fullUrl, function(response, status, xhr) {
+        if (status === "error") {
+            console.error("搜尋失敗，錯誤碼：" + xhr.status);
+            alert("搜尋出錯了，請檢查網路連線。");
+        }
+    });
+}
+
+	// 5. 分頁切換 (修正後的 GET 版本)
+	function changePage(page) {
+	    var keyword = $('#ajaxSearchInput').val();
+	    var url = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+	    
+	    console.log("正在切換分頁，目標頁碼：" + page);
+
+	    // 💡 關鍵：將參數全部拼在網址後面 (?...)，這樣 jQuery 就會乖乖發送 GET
+	    // 同時確保參數名 searchKeyword 與 Controller 一致
+	    var fullUrl = url + "?cp=" + page + "&searchKeyword=" + encodeURIComponent(keyword) + "&_t=" + new Date().getTime();
+
+	    $('#contentBody').load(fullUrl, function(response, status, xhr) {
+	        if (status === "error") {
+	            console.error("分頁切換失敗，錯誤碼：" + xhr.status);
+	            alert("分頁載入失敗，請稍後再試。");
+	        }
+	    });
+	}
+
+	// 6. 刷新列表 (修正 405 錯誤專用版)
+	function refreshProductList() {
+	    console.log("正在刷新列表...");
+	    
+	    // 💡 取得基礎路徑
+	    var baseUrl = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+	    
+	    // 💡 將參數直接拼接到網址後方，強制 jQuery 使用 GET
+	    var fullUrl = baseUrl + "?searchKeyword=&cp=1&_t=" + new Date().getTime();
+	    
+	    $('#contentBody').load(fullUrl, function(response, status, xhr) {
+	        if (status === "success") {
+	            console.log("列表刷新成功 ✅");
+	        } else {
+	            console.error("刷新失敗，錯誤碼：" + xhr.status);
+	            // 如果還是 405，代表你的 Controller 可能有其他限制
+	        }
+	    });
+	}
+
+	console.log("商品管理邏輯已啟動完成！✅");
+</script>
