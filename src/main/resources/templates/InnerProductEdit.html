@@ -1,0 +1,135 @@
+<div class="category-wrapper" style="padding: 20px;">
+<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+    <div class="card-panel">
+        <div class="page-title-area">
+            <div class="title-decorator"></div>
+            <div class="page-header-text">
+                <span class="title-icon">✏️</span>
+                <span>編輯寵物商品</span>
+            </div>
+        </div>
+
+        <form id="ajaxEditProductForm">
+            <input type="hidden" name="productId" th:value="${product.productId}">
+            <input type="hidden" name="oldImage" th:value="${product.productImage}">
+
+            <div class="form-section">
+                <div class="section-legend">基本資訊</div>
+                <div class="st2">
+                    <label class="t1">商品編號：</label>
+                    <span style="color: #888;" th:text="${product.productId} + ' (系統編號)'"></span>
+                </div>
+                <div class="st2">
+                    <label class="t1">商品名稱：</label>
+                    <input type="text" name="productName" class="form-control" th:value="${product.productName}" required>
+                </div>
+                <div class="st2">
+                    <label class="t1">商品分類：</label>
+                    <select name="categoryId" class="form-control">
+                        <option th:each="cat : ${allCategories}" 
+                                th:value="${cat.categoryId}" 
+                                th:text="${cat.categoryName}"
+                                th:selected="${product.categoryId == cat.categoryId}">
+                        </option>
+                    </select>
+                </div>
+                <div class="st2">
+                    <label class="t1">商品狀態：</label>
+                    <select name="productStatus" class="form-control">
+                        <option value="1" th:selected="${product.productStatus == 1}">上架中</option>
+                        <option value="0" th:selected="${product.productStatus == 0}">已下架</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-legend">庫存管理</div>
+                <div class="flex-row">
+                    <div class="st2">
+                        <label class="t1">商品價格：</label>
+                        <input type="number" name="productPrice" class="form-control" th:value="${product.productPrice}">
+                    </div>
+                    <div class="st2">
+                        <label class="t1">庫存數量：</label>
+                        <input type="number" name="productStock" class="form-control" th:value="${product.productStock}">
+                    </div>
+                </div>
+                <div class="flex-row">
+                    <div class="st2">
+                        <label class="t1">低庫存警告：</label>
+                        <input type="number" name="lowStock" class="form-control" th:value="${product.lowStock != null ? product.lowStock : 5}">
+                    </div>
+                    <div class="st2">
+                        <label class="t1">倉庫庫位：</label>
+                        <input type="text" name="storagePosition" class="form-control" th:value="${product.storagePosition}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-legend">商品圖片與詳情</div>
+                <div class="st2" style="align-items: flex-start;">
+                    <label class="t1">更換圖片：</label>
+                    <div style="flex: 1;">
+                        <div class="image-comparison-container">
+                            <div class="image-box">
+                                <div class="image-label">🖼️ 舊圖 (目前)</div>
+                                <img id="oldPreview" class="preview-img" 
+                                     th:src="${product.productImage != null ? '/images/' + product.productImage : '/images/default.png'}">
+                            </div>
+                            <div class="comparison-arrow">➡️</div>
+                            <div class="image-box">
+                                <div class="image-label">✨ 新圖 (預覽)</div>
+                                <div id="newImagePlaceholder" class="new-image-placeholder">選擇檔案預覽</div>
+                                <img id="newPreview" class="preview-img" src="#" style="display: none;">
+                            </div>
+                        </div>
+                        <input type="file" name="file" class="form-control" accept=".jpg,.png" onchange="previewComparisonImage(this)">
+                    </div>
+                </div>
+                <div class="st2" style="align-items: flex-start; margin-top: 20px;">
+                    <label class="t1">商品描述：</label>
+                    <textarea name="productDescription" class="form-control" rows="5" th:text="${product.productDescription}"></textarea>
+                </div>
+            </div>
+
+            <div class="btn-area">
+                <button type="button" class="btn-submit" onclick="submitProductUpdate()">儲存修改</button>
+                <button type="reset" class="btn-reset">重設</button>
+                <button type="button" class="btn-cancel" onclick="backToList()">取消返回</button>
+            </div>
+        </form>
+    </div>
+
+    <script th:inline="javascript">
+        function previewComparisonImage(input) {
+            const placeholder = document.getElementById('newImagePlaceholder');
+            const newPreview = document.getElementById('newPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    newPreview.src = e.target.result;
+                    newPreview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitProductUpdate() {
+            const formData = new FormData(document.getElementById('ajaxEditProductForm'));
+            $.ajax({
+                url: /*[[@{/innerProduct/update}]]*/ '/innerProduct/update',
+                type: 'POST', data: formData, processData: false, contentType: false,
+                success: function(res) {
+                    if(res === "success") { alert("修改成功！🐾"); backToList(); }
+                    else { alert("修改失敗"); }
+                }
+            });
+        }
+
+        function backToList() {
+            $('#contentBody').load(/*[[@{/innerProduct/list}]]*/);
+        }
+    </script>
+</div>

@@ -1,0 +1,108 @@
+<div class="category-wrapper" style="padding: 20px;">
+<link rel="stylesheet" th:href="@{/css/InnerCategory.css}">
+
+	<div class="category-container">
+		<div class="card-panel">
+			<div class="section-title">📂 商品分類管理</div>
+			<div class="search-group">
+				<label>新增分類：</label> <input type="text" id="newCategoryName"
+					placeholder="請輸入欲新增的分類名稱..." required>
+				<button type="button" class="btn-main" onclick="submitQuickAdd()">執行新增</button>
+			</div>
+		</div>
+
+		<div class="card-panel">
+			<div class="section-title">📋 現有分類清單</div>
+			<table class="custom-table">
+				<thead>
+					<tr>
+						<th width="15%">編號</th>
+						<th width="40%">分類名稱</th>
+						<th width="20%">商品數量</th>
+						<th width="25%">管理操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="cat : ${category}">
+						<td th:text="${cat.categoryId}">101</td>
+						<td th:text="${cat.categoryName}" style="font-weight: 500;">分類名稱</td>
+						<td style="text-align: center;"><span class="count-badge"
+							style="cursor: pointer;" th:data-id="${cat.categoryId}"
+							th:data-name="${cat.categoryName}"
+							onclick="handleCountClick(this)"
+							th:text="${(cat.productCount != null ? cat.productCount : 0) + ' 件商品'}">
+								0 件商品 </span>
+						<td><a href="javascript:void(0)"
+							class="action-link edit-link"
+							th:onclick="|editCategory(${cat.categoryId})|">修改</a> <a
+							href="javascript:void(0)" class="action-link del-link"
+							th:onclick="deleteCategory([[${cat.categoryId}]])">刪除</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		function submitQuickAdd() {
+			const name = $('#newCategoryName').val().trim();
+			if (!name)
+				return;
+			$
+					.ajax({
+						url : /*[[@{/innerCategory/insert}]]*/'/innerCategory/insert',
+						type : 'POST',
+						data : {
+							categoryName : name
+						},
+						success : function() {
+							$('#contentBody')
+									.load(
+											/*[[@{/innerCategory/list}]]*/'/innerCategory/list'
+													+ "?_t="
+													+ new Date().getTime());
+						}
+					});
+		}
+		function deleteCategory(id) {
+			if (!confirm("確定要刪除嗎？🐾"))
+				return;
+			$
+					.ajax({
+						url : /*[[@{/innerCategory/delete}]]*/'/innerCategory/delete',
+						type : 'GET',
+						data : {
+							id : id
+						},
+						success : function() {
+							$('#contentBody')
+									.load(
+											/*[[@{/innerCategory/list}]]*/'/innerCategory/list'
+													+ "?_t="
+													+ new Date().getTime());
+						}
+					});
+		}
+		function editCategory(id) {
+			$('#contentBody').load(
+					/*[[@{/innerCategory/edit}]]*/'/innerCategory/edit'
+							+ "?id=" + id + "&_t=" + new Date().getTime());
+		}
+		function handleCountClick(element) {
+		    // 從 data 屬性拿回資料
+		    const categoryId = element.getAttribute('data-id');
+		    const categoryName = element.getAttribute('data-name');
+		    
+		    if (categoryId) {
+		        // 呼叫原本的跳轉邏輯
+		        goToProductByCategory(categoryId, categoryName);
+		    }
+		}
+
+		function goToProductByCategory(categoryId, categoryName) {
+		    console.log("切換至商品管理，篩選分類：" + categoryName);
+		    // 這裡用組長原本的 loadContent
+		    loadContent('商品管理 - ' + categoryName, 'product&categoryId=' + categoryId);
+		}
+	</script>
+</div>

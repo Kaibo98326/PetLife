@@ -1,0 +1,138 @@
+<div class="category-wrapper" style="padding: 20px;">
+<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+    <div class="category-container">
+        <div class="card-panel">
+            <div class="section-title">🐾 新增寵物商品</div>
+
+            <form id="ajaxAddProductForm" enctype="multipart/form-data">
+                
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label>商品名稱</label>
+                        <input type="text" name="productName" id="addProductName" placeholder="請輸入商品名稱" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>商品分類</label>
+                        <select name="categoryId" id="addCategoryId" required>
+                            <option value="">-- 請選擇分類 --</option>
+                            <option th:each="cat : ${allCategories}" 
+                                    th:value="${cat.categoryId}" 
+                                    th:text="${cat.categoryName} + ' (ID: ' + ${cat.categoryId} + ')' ">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>商品價格</label>
+                        <input type="number" name="productPrice" id="addProductPrice" value="0" min="0" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>商品狀態</label>
+                        <select name="productStatus">
+                            <option value="1">上架中</option>
+                            <option value="0">已下架 / 倉庫暫存</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label>庫存數量</label>
+                        <input type="number" name="productStock" id="addProductStock" value="0" min="0" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>低庫存警告</label>
+                        <input type="number" name="lowStock" id="addLowStock" value="5" min="0">
+                    </div>
+
+                    <div class="form-row">
+                        <label>倉庫庫位</label>
+                        <input type="text" name="storagePosition" id="addStoragePosition" placeholder="例如：A-101">
+                    </div>
+
+                    <div class="form-row">
+                        <label>商品圖片</label>
+                        <input type="file" name="file" id="addProductFile" accept=".jpg,.png" onchange="previewImage(this)">
+                        <img id="preview" class="preview-img-box" src="#" alt="預覽圖">
+                    </div>
+
+                    <div class="form-row full-width">
+                        <label>商品描述</label>
+                        <textarea name="productDescription" id="addProductDescription" rows="4" placeholder="請輸入詳細描述..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-secondary" onclick="backToList()">取消返回</button>
+                    <button type="reset" class="btn-secondary" onclick="resetPreview()">清除重填</button>
+                    <button type="button" class="btn-main" onclick="submitProductAdd()">執行新增</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /**
+         * 1. 圖片預覽邏輯
+         */
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                resetPreview();
+            }
+        }
+
+        function resetPreview() {
+            const preview = document.getElementById('preview');
+            preview.src = "#";
+            preview.style.display = 'none';
+        }
+
+        /**
+         * 2. 執行 AJAX 商品新增
+         */
+        function submitProductAdd() {
+            const form = document.getElementById('ajaxAddProductForm');
+            const formData = new FormData(form);
+
+            // 簡易驗證
+            if (!$('#addProductName').val()) { alert("請填寫商品名稱哦！🐾"); return; }
+            if (!$('#addCategoryId').val()) { alert("請選擇商品分類哦！"); return; }
+
+            $.ajax({
+                url: /*[[@{/innerProduct/insert}]]*/ '/innerProduct/insert',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if(response === "success") {
+                        alert("商品新增成功！✨");
+                        backToList();
+                    } else {
+                        alert("新增失敗，請檢查資料。");
+                    }
+                },
+                error: function() {
+                    alert("發送請求失敗，伺服器可能正在維修中。");
+                }
+            });
+        }
+
+        /**
+         * 3. 返回清單
+         */
+        function backToList() {
+            const listUrl = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+            $('#contentBody').load(listUrl + "?_t=" + new Date().getTime());
+        }
+    </script>
+</div>

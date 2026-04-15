@@ -1,0 +1,331 @@
+/* ========================================================================
+   PetLife 商城商品樣式表
+   更新日期: 2026.04.15
+   ======================================================================== */
+
+:root {
+    /* 核心色調：暖橘與木質咖啡 */
+    --brand-orange: #e67e22;    /* 溫暖琥珀橘 */
+    --brand-brown: #6d4c41;     /* 柔和木質棕 */
+    --brand-red: #d35400;       /* 磚紅 */
+    --brand-yellow: #ffcc33;    /* 標籤用亮黃 */
+    --bg-warm: #fdfaf5;         /* 背景暖奶油色 */
+    --text-main: #5a4a42;       /* 深咖啡灰文字 */
+    --border-color: #f0e6d6;    /* 淡淡的燕麥色邊框 */
+}
+
+/* --- 全域設定 --- */
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background-color: var(--bg-warm);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+}
+
+/* 讓整體佈局變寬，符合現代電商感 */
+.container-fluid {
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.container {
+    max-width: 1200px !important; /* 跟一般電商網站一致的黃金寬度 */
+    margin: 0 auto;
+    width: 100%;
+}
+
+
+/* --------------------------------------------------------------------------------  header 頂端導覽*/
+/* ======================================================================== 這是上層 */
+.shop-header {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 0;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(109, 76, 65, 0.05);
+}
+
+/* --- LOGO 樣式 --- */
+.shop-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+    margin-left: -10px;
+}
+
+.shop-logo img {
+    height: 60px !important; /* 修正回顯眼的大小 */
+    width: auto;
+    object-fit: contain;
+}
+
+.shop-logo:hover {
+    transform: scale(1.05);
+}
+
+/* --- 搜尋框區域 --- */
+.shop-search-form {
+    display: flex !important;
+    /* 💡 關鍵：限制最大寬度，不要讓它長得太胖 */
+    max-width: 550px; 
+    width: 100%;
+    margin: 0 auto;   /* 讓它在中間 */
+    padding: 0;
+}
+
+.search-input {
+    flex-grow: 1 !important;
+    height: 42px;    /* 💡 高度微調，通常 40-45px 是最紮實的數字 */
+    border-radius: 25px 0 0 25px; /* 圓角保持一致 */
+    border: 1px solid var(--border-color);
+    padding-left: 20px;
+    font-size: 14px;
+    outline: none;
+    background-color: #fbfbfb; /* 稍微帶點淺灰，更有層次感 */
+}
+
+.search-input:focus {
+    border-color: var(--brand-orange);
+    box-shadow: none;
+}
+
+.search-submit-btn {
+    width: 55px;      /* 縮小按鈕寬度，比例更精緻 */
+    height: 42px;
+    border-radius: 0 25px 25px 0;
+    border: 1px solid var(--border-color);
+    border-left: none;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.search-submit-btn:hover {
+    background: #fff8f0;
+    color: var(--brand-orange);
+}
+
+/* --- 右側使用者選單 (購物車、聊聊、登入) --- */
+.shop-user-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.nav-icon-item {
+    display: flex;         /* 讓圖示與文字更好對齊 */
+    flex-direction: column; /* 如果你想讓文字在圖示下面，可以用這個；如果維持左右，改回 row */
+    align-items: center;
+    text-align: center;
+    color: #8d7d77; 
+    text-decoration: none;
+    transition: 0.3s;
+    min-width: 60px;       /* 稍微縮小最小寬度，騰出空間 */
+    padding: 0 5px !important;    /* 左右間距再縮小一點 */
+    margin: 0 3px !important;     /* 左右外距也縮小 */
+    white-space: nowrap;          /* 絕對不換行 */
+    font-size: 14px;              /* 稍微調整字體大小 */
+}
+
+.nav-icon-item i {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.nav-icon-item span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.nav-icon-item:hover {
+    color: var(--brand-orange);
+}
+
+/* 讓 Header 內的 Container 寬度一致 */
+.shop-header .container {
+    max-width: none !important; 
+    width: 95% !important;
+}
+
+/* 會員資訊與登入區 */
+.user-action-zone {
+    border-left: 2px solid var(--border-color);
+    padding-left: 20px;
+    margin-left: 5px;
+}
+
+.welcome-tag {
+    display: block;
+    font-size: 14px;
+    color: var(--brand-orange);
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.member-link {
+    font-size: 12px;
+    color: #888;
+    text-decoration: none;
+}
+
+.member-link:hover {
+    color: var(--brand-orange);
+}
+
+
+/* ======================================================================== 這是下層 */
+.header-nav {
+    background-color: #fff;
+    width: 100%;
+    border-bottom: 1px solid var(--border-color);
+    margin-top: 5px !important; /* 💡 減少上下兩排之間的距離 (原 mt-3) */
+}
+
+.nav-menu-list {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 5px 0;         /* 💡 減少下層選單的內距 */
+    gap: 35px;              /* 稍微緊縮選項間距 */
+    
+}
+
+.nav-menu-link {
+    color: var(--text-main);
+    text-decoration: none !important;
+    font-size: 16px;
+    font-weight: 500;
+    position: relative;
+    transition: 0.3s;
+}
+
+.nav-menu-link:hover {
+    color: var(--brand-orange);
+}
+
+.nav-menu-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--brand-orange);
+    transition: 0.3s;
+}
+
+.nav-menu-link:hover::after {
+    width: 100%;
+}
+
+.nav-menu-list::before,
+.nav-menu-list::after {
+    content: "";
+    flex: 1;             
+    height: 1px;         
+    background: #e0e0e0; /* 淡淡的灰色線，也可以用 var(--border-color) */
+    margin: 0 40px;      /* 調整線條與文字之間的間距 */
+}
+
+
+
+/* --------------------------------------------------------------------------------  main 商品*/
+.product-detail-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    margin-top: 50px;
+    box-shadow: 0 10px 30px rgba(109, 76, 65, 0.05);
+}
+
+/* 左側大圖 */
+.main-image-wrapper {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.main-image-wrapper img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+/* 右側資訊 */
+.product-category-tag {
+    color: var(--brand-orange);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.product-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--brand-brown);
+    margin-bottom: 15px;
+}
+
+.product-price-large {
+    font-size: 32px;
+    color: var(--brand-red);
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+/* 數量選擇器 */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.btn-qty {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: white;
+    color: var(--brand-brown);
+}
+
+/* 購買按鈕 */
+.btn-buy-now {
+    background-color: var(--brand-orange);
+    color: white;
+    padding: 12px 40px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.btn-buy-now:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+}
+
+.product-description-section {
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 30px;
+}
+
+.desc-title {
+    font-weight: 700;
+    color: var(--brand-brown);
+    margin-bottom: 15px;
+}

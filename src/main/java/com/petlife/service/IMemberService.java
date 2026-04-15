@@ -28,4 +28,6 @@ public interface IMemberService {
     // 查詢單一會員
     Member findById(Integer memberId);
 
+
+
 }

@@ -4,42 +4,45 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.petlife.model.Category;
-import com.petlife.repository.ICategoryDao;
+import com.petlife.repository.CategoryRepository;
 
 @Service
+@Transactional
 public class CategoryService {
-	private final ICategoryDao categoryDao;
 
-    @Autowired
-    public CategoryService(ICategoryDao categoryDao) {
-        this.categoryDao = categoryDao;
+    private final CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
-    // 查全部分類
+//===== 查詢所有分類 =========================================================================================
+    @Transactional(readOnly = true) // 查詢操作設定為唯讀，優化效能
     public List<Category> getAllCategory() {
-        return categoryDao.selectAll();
+        return categoryRepository.findAll();
     }
 
-    // 查單筆分類
+//===== 查詢單筆分類 =========================================================================================
+    @Transactional(readOnly = true)	// 查詢操作可設定為唯讀，優化效能
     public Category getCategoryById(Integer id) {
-        return categoryDao.selectById(id);
+        return categoryRepository.findById(id).orElse(null);
     }
 
-    // 新增分類
-    public String addCategory(Category category) {
-        return categoryDao.insert(category);
+//===== 新增分類 ============================================================================================
+    public Category addCategory(Category category) {
+        return categoryRepository.save(category);
     }
 
-    // 修改分類
+//===== 修改分類 ============================================================================================
     public Category updateCategory(Category category) {
-        return categoryDao.update(category);
+        return categoryRepository.save(category);
     }
 
-    // 刪除分類
-    public boolean deleteCategory(Integer id) {
-        return categoryDao.deleteById(id);
+//===== 刪除分類 ============================================================================================
+    public void deleteCategory(Integer id) {
+        categoryRepository.deleteById(id);
     }
-
 }

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${product.productName} + ' | PetLife毛孩生活'">商品詳情</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" type="text/css" th:href="@{/css/Product.css}">
+</head>
+
+<body>
+	<header class="shop-header sticky-top">
+		<div class="container">
+			<div class="row align-items-center">
+<!-- LOGO -->
+				<div class="col-auto">
+					<a th:href="@{/shop/index}" class="shop-logo"> <img
+						th:src="@{/images/logo01.png}" alt="PetLife Logo">
+					</a>
+				</div>
+<!-- 搜尋框 -->
+				<div class="col px-lg-5">
+					<form th:action="@{/shop/index}" method="get"
+						class="shop-search-form">
+						<div class="input-group">
+							<input type="text" name="keyword"
+								class="form-control search-input" placeholder="搜尋毛孩好物..."
+								th:value="${keyword}">
+							<button type="submit" class="btn search-submit-btn">
+								<i class="fas fa-search text-muted"></i>
+							</button>
+						</div>
+					</form>
+				</div>
+<!-- 頂端右側 -->				
+				<div class="col-auto">
+					<nav class="shop-user-nav d-flex align-items-center">
+<!-- 購物車 -->   						
+						<a th:href="@{/cart}"
+							class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
+							<i class="fas fa-shopping-cart"></i> <span
+							style="font-size: 13px; color: #5a4a42;">購物車</span> <span
+							id="cart-badge" th:if="${cartTotalQty > 0}"
+							th:text="${cartTotalQty}"
+							class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+							style="font-size: 0.7rem;"></span>
+<!-- 聊聊 -->							
+						</a> <a href="#"
+							class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
+							<i class="far fa-comment-dots"
+							style="font-size: 1.2rem; color: #666;"></i> <span
+							style="font-size: 13px; color: #5a4a42;">聊聊</span>
+						</a>
+<!-- 登入判斷 -->
+	<!-- 已登入 -->						
+						<div class="user-action-zone">
+							<div th:if="${memberId != null}"
+								class="d-flex align-items-center">
+								<div class="user-greeting-box me-3 text-end">
+									<span class="welcome-tag"> <i class="fas fa-paw"></i> <strong
+										th:text="${memberName}"></strong> 你好！
+									</span> <a th:href="@{/member/center}" class="member-link">會員中心</a>
+								</div>
+								<a th:href="@{/member/logout}"
+									class="nav-icon-item d-flex flex-column align-items-center text-decoration-none text-danger">
+									<i class="fas fa-sign-out-alt" style="font-size: 1.2rem;"></i>
+									<span style="font-size: 13px;">登出</span>
+								</a>
+							</div>
+	<!-- 尚未登入 -->							
+							<div th:unless="${memberId != null}">
+								<a th:href="@{/loginChoice}"
+									class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
+									<i class="far fa-user-circle"
+									style="font-size: 1.2rem; color: #666;"></i> <span
+									style="font-size: 13px; color: #5a4a42;">登入 / 註冊</span>
+								</a>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+			<nav class="header-nav">
+				<div class="container">
+					<ul class="nav-menu-list">
+						<li><a th:href="@{/shop/index(all=true)}"
+							class="nav-menu-link">全部商品</a></li>
+						<li><a th:href="@{/shop(catId=1)}" class="nav-menu-link">🐱
+								貓貓專區</a></li>
+						<li><a th:href="@{/shop(catId=2)}" class="nav-menu-link">🐶
+								狗狗專區</a></li>
+						<li><a href="#" class="nav-menu-link">🛁 寵物美容</a></li>
+						<li><a href="#" class="nav-menu-link">🏠 寵物旅館</a></li>
+						<li><a href="#" class="nav-menu-link">🔥 限時特惠</a></li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</header>
+
+	<div class="container">
+		<div class="product-detail-container">
+			<div class="row g-5">
+				<div class="col-md-6">
+					<div class="main-image-wrapper">
+						<img th:src="@{/images/{img}(img=${product.productImage})}"
+							th:alt="${product.productName}" class="img-fluid rounded">
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a th:href="@{/shop}"
+								style="color: #999;">首頁</a></li>
+							<li class="breadcrumb-item active"
+								th:text="${product.categoryName}">分類</li>
+						</ol>
+					</nav>
+
+					<span class="product-category-tag"
+						th:text="'# ' + ${product.categoryName}"># 分類</span>
+					<h1 class="product-title" th:text="${product.productName}">商品名稱</h1>
+
+					<div class="product-price-large"
+						th:text="'$ ' + ${product.productPrice}">$ 0</div>
+
+					<div class="mb-4">
+						<label class="form-label fw-bold">規格選擇</label> <select
+							class="form-select rounded-pill">
+							<option>預設規格</option>
+						</select>
+					</div>
+
+					<label class="form-label fw-bold">數量</label>
+					<div class="quantity-control d-flex align-items-center gap-2">
+						<button type="button" class="btn btn-outline-secondary btn-qty"
+							id="minus-btn">-</button>
+						<input type="number" id="buy-quantity" value="1" min="1"
+							class="form-control text-center rounded-pill"
+							style="width: 80px;">
+						<button type="button" class="btn btn-outline-secondary btn-qty"
+							id="plus-btn">+</button>
+					</div>
+
+					<div class="d-flex gap-3 mt-4">
+						<button type="button" id="direct-buy-btn"
+							th:data-pid="${product.productId}"
+							class="btn btn-warning w-100 rounded-pill fw-bold">立即購買</button>
+						<button type="button" id="add-to-cart-detail"
+							class="btn btn-outline-dark w-100 rounded-pill fw-bold">加入購物車</button>
+					</div>
+
+					<div class="product-description-section mt-5">
+						<h5 class="desc-title border-bottom pb-2">商品介紹</h5>
+						<p class="text-muted mt-3"
+							style="line-height: 1.8; white-space: pre-wrap;"
+							th:text="${product.productDescription}">商品描述內容</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		// 使用 Thymeleaf 內聯變數取得路徑與 ID
+		const contextPath = /*[[@{/}]]*/'/';
+		const productId = /*[[${product.productId}]]*/'';
+		/*]]>*/
+
+		$(document).ready(
+				function() {
+					// 數量增減邏輯
+					$("#minus-btn").click(function() {
+						let qty = parseInt($("#buy-quantity").val());
+						if (qty > 1)
+							$("#buy-quantity").val(qty - 1);
+					});
+					$("#plus-btn").click(function() {
+						let qty = parseInt($("#buy-quantity").val());
+						$("#buy-quantity").val(qty + 1);
+					});
+
+					// 立即購買 (跳轉至購物車)
+					$("#direct-buy-btn").click(
+							function() {
+								const pId = $(this).data("pid");
+								const qty = $("#buy-quantity").val();
+								if (!pId || qty <= 0)
+									return;
+								// 這裡的路徑改為 /cart/add (假設你未來的路徑)
+								window.location.href = contextPath
+										+ "cart/add?productId=" + pId
+										+ "&quantity=" + qty;
+							});
+
+					// 加入購物車 (AJAX)
+					$("#add-to-cart-detail").click(
+							function() {
+								const qty = parseInt($("#buy-quantity").val());
+								if (isNaN(qty) || qty <= 0) {
+									alert("數量必須大於 0 哦！");
+									return;
+								}
+
+								$.ajax({
+									// 注意：這裡先保留原有的路徑，待購物車同學完成後再統一修改
+									url : contextPath + "CartServlet",
+									type : "POST",
+									data : {
+										action : "add",
+										productId : productId,
+										quantity : qty
+									},
+									success : function(response) {
+										alert("已將 " + qty + " 件商品加入購物車！🐾");
+
+										// 動態更新購物車紅點數字
+										let badge = $("#cart-badge");
+										if (badge.length > 0) {
+											let currentCount = parseInt(badge
+													.text()) || 0;
+											badge.text(currentCount + qty);
+										} else {
+											// 如果原本沒紅點，點了之後應該出現 (重新整理最快)
+											location.reload();
+										}
+									},
+									error : function() {
+										alert("加入購物車失敗，請稍後再試。");
+									}
+								});
+							});
+				});
+	</script>
+</body>
+</html>
