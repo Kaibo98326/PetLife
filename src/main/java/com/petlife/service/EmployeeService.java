@@ -87,6 +87,14 @@ public class EmployeeService {
 		return empRepos.save(emp);
 	}
 	
-	
+	public boolean markAsDelete(Integer empId, String status) {
+		Employee emp = findById(empId);
+		if(emp !=null) {
+			emp.setStatus(status);
+			empRepos.save(emp);
+			return true;
+		}
+		return false;
+	}
 	
 }
