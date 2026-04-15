@@ -75,10 +75,12 @@
            			readonly class="form-control">
 				</div>
 
-				<!-- 最後登入時間 (隱藏不可修改) -->
-				<input type="hidden" id="lastLogin" name="lastLogin"
-       			th:value="${member.lastLogin != null ? #temporals.format(member.lastLogin, 'yyyy-MM-dd HH:mm:ss') : ''}">
-
+				
+				<!-- 最後登入時間 (只顯示，不送出) -->
+				<div class="mb-3">
+    					<label>最後登入時間</label>
+    					<input type="text" th:value="${member.lastLogin != null ? #temporals.format(member.lastLogin, 'yyyy-MM-dd HH:mm:ss') : ''}" readonly class="form-control">
+				</div>
 
                 <!-- 驗證舊密碼 -->
                 <div class="mb-3">
