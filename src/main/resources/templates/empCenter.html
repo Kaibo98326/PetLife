@@ -15,7 +15,7 @@
     <!-- 頂部欄 -->
     <div class="header">
         <div class="header-left">
-            <div class="header-logo">🐾 petDB 後臺管理</div>
+            <div class="header-logo">🐾 PetLife 後臺管理系統</div>
         </div>
         <div class="header-right">
             <div class="user-info">
@@ -45,7 +45,7 @@
   					<a href="javascript:void(0);" class="menu-link" onclick="toggleSubmenu(this)">
     					<span class="menu-icon">📦</span> <span>商品管理</span></a>
   					<ul class="submenu">
-    						<li><a class="menu-link" onclick="loadContent('商品類別管理','category')">📂 商品類別管理</a></li>
+    						<li><a class="menu-link" onclick="loadContent('商品類別管理', 'category&_t=' + new Date().getTime());">📂 商品類別管理</a></li>
     						<li><a class="menu-link" onclick="loadContent('商品管理','product')">🛒 商品管理</a></li>
   					</ul>
 				</li>
@@ -105,8 +105,8 @@
             'permission': { title: '員工管理', url: /*[[@{/employee/EMO}]]*/ '', type: 'ajax' },
             'pet': { title: '寵物管理', url: '#', type: 'ajax' },
             'order': { title: '訂單管理', url: '#', type: 'iframe' },
-            'category': { title: '商品類別管理', url: '#', type: 'iframe' },
-            'product': { title: '商品管理', url: '#', type: 'iframe' },
+            'category': { title: '商品類別管理', url: /*[[@{/innerCategory/list}]]*/'', type: 'ajax' },
+            'product': { title: '商品管理', url: /*[[@{/innerProduct/list}]]*/ '', type: 'ajax' },
             'groomingItem': { title: '美容項目管理', url: '#', type: 'ajax' },
             'groomingRecord': { title: '美容預約管理', url: '#', type: 'ajax' },
             'hotel_orders': { title: '旅館訂單管理', url: '#', type: 'ajax' },
