@@ -53,6 +53,7 @@ public class CartItem implements Serializable {
 	@Column(name = "discount_amount")
     private BigDecimal discountAmount;
 	
-	@Column(name = "subtotal", insertable = false, updatable = false) @NonNull
-    private BigDecimal subtotal;
+	@Column(name = "subtotal", insertable = false, updatable = false)
+	@org.hibernate.annotations.Generated
+	private BigDecimal subtotal;
 }

@@ -1,0 +1,116 @@
+body {
+    background-color: #fcfcfc;
+    font-family: "Microsoft JhengHei", sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.success-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* 頂部橘色 Banner */
+.header-banner {
+    background-color: #ff8c00;
+    color: white;
+    padding: 20px 30px;
+    border-radius: 5px 5px 0 0;
+}
+
+.header-banner h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+/* 訂單資訊格線 */
+.info-grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-grid td {
+    padding: 15px 20px;
+    border: 1px solid #f0f0f0;
+}
+
+.info-grid .label {
+    background-color: #fff8f0; /* 極淡橘色背景 */
+    width: 15%;
+    font-weight: bold;
+}
+
+.status-text {
+    color: #28a745; /* 綠色處理中 */
+}
+
+/* 購買清單標題 */
+.list-title {
+    padding: 30px 20px 10px 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* 商品表格 */
+.item-list {
+    width: 96%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.item-list th {
+    border-top: 2px solid #ff8c00;
+    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    background-color: #fafafa;
+}
+
+.item-list td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.item-list .text-left {
+    text-align: left;
+}
+
+.fw-bold {
+    font-weight: bold;
+}
+
+/* 總額區域 */
+.total-label {
+    text-align: right;
+    padding: 20px;
+}
+
+.total-amount {
+    color: #d9534f;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 按鈕區域 */
+.button-area {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.btn-orange {
+    background-color: #ff8c00;
+    color: white;
+    text-decoration: none;
+    padding: 10px 40px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.btn-orange:hover {
+    background-color: #e67e00;
+}

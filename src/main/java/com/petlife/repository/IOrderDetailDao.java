@@ -28,4 +28,6 @@ public interface IOrderDetailDao extends JpaRepository<OrderDetail, OrderDetailI
 			+ "JOIN product p ON c.product_id = p.product_id " + "WHERE c.cart_id = :cartId", nativeQuery = true)
 	void transferCartToOrderDetails(@Param("orderId") int orderId, @Param("cartId") Integer cartId);
 
+	// 透過 orderBean 裡的 orderId 查詢
+	List<OrderDetail> findByOrderBean_OrderId(Integer orderId);
 }

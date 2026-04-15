@@ -43,7 +43,7 @@
     <div class="col-auto">
      <nav class="shop-user-nav d-flex align-items-center">
 <!-- 購物車 -->         
-      <a th:href="@{/cart}"
+      <a th:href="@{/api/cart/cart}"
        class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
        <i class="fas fa-shopping-cart"></i> <span
        style="font-size: 13px; color: #5a4a42;">購物車</span> <span
@@ -277,12 +277,13 @@
                     
                     // 發送 AJAX 請求到後端
                     $.ajax({
-                        url: "/cart/add",
+                    	url: "/api/cart/add/" + "[[${memberId}]]",
                         type: "POST",
-                        data: {
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
                             productId: productId,
                             quantity: 1
-                        },
+                        }),
                         success: function (response) {
                             Swal.fire({
                                 icon: 'success',

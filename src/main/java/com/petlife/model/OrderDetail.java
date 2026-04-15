@@ -53,4 +53,13 @@ public class OrderDetail implements Serializable {
     
     @Column(name = "subtotal") @NonNull
     private BigDecimal subtotal;
+
+	public void setOrderId(Integer orderId) {
+		
+	}
+
+	public void setPrice(@NonNull BigDecimal productPrice2) {
+		// TODO Auto-generated method stub
+		
+	}
 }

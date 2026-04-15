@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.petlife.model.CartItem;
 import com.petlife.model.Category;
 import com.petlife.model.Product;
 import com.petlife.service.CartService;
@@ -27,13 +28,10 @@ public class ShopController {
 	    private ProductService productService;
 
 	    @Autowired
-	    private CartService cartService; 
-	    
-	    @Autowired
 	    private CategoryService categoryService;
 
-	    //@Autowired
-	    //private CartItemService cartItemService; // 取代原本的 CartItemDao
+	    @Autowired
+	    private CartService cartService;
 
 // ===== 【商城首頁】 前台主頁面 支援：1. 全部商品 2. 分類篩選 3. 關鍵字搜尋 ============================================
 	    
@@ -44,12 +42,6 @@ public class ShopController {
 	                        @RequestParam(value = "all", required = false) String all,
 	                        HttpSession session,
 	                        Model model) {
-
-	    		model.addAttribute("memberId", session.getAttribute("memberId"));
-	    		model.addAttribute("memberName" , session.getAttribute("memberName"));
-	        // 1. 計算購物車總件數  115.4.13修改
-	        Integer memberId = (Integer) session.getAttribute("memberId");
-
 	    	
 	    	
 // ===== 顯示 登入 會員名稱資訊 ==============================================================================
@@ -59,20 +51,15 @@ public class ShopController {
 	        model.addAttribute("cartTotalQty", session.getAttribute("cartTotalQty") != null ? session.getAttribute("cartTotalQty") : 0);
 
 	        // 1. 計算購物車總件數
-/*	        Integer memberId = (Integer) session.getAttribute("memberId");
->>>>>>> main
+	        Integer memberId = (Integer) session.getAttribute("memberId");
 	        if (memberId == null) memberId = 1; // 測試用預設
-	        Integer totalQty = cartService.getCartTotalQuantity(memberId);
+	        List<CartItem> cartItems = cartService.queryCartItemsByMemberId(memberId);
+	        int totalQty = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
 	        model.addAttribute("cartTotalQty", totalQty);
-<<<<<<< HEAD
 
-	        // 2. 取得所有分類 (左側選單)
-=======
-*/
 	        
 // ===== 取得所有分類 (左側 menu 選單) =======================================================================
 	        
-
 	        List<Category> categories = categoryService.getAllCategory();
 	        model.addAttribute("category", categories);
 	        
