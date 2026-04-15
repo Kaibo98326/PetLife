@@ -1,6 +1,6 @@
 package com.petlife.service;
 
-<<<<<<< HEAD
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import com.petlife.model.CartItem;
 import com.petlife.model.Product;
 import com.petlife.repository.ICartDao;
 import com.petlife.repository.ICartItemDao;
-import com.petlife.repository.IProductDao;
+import com.petlife.repository.ProductRepository;
 
 @Service
 @Transactional
@@ -28,7 +28,7 @@ public class CartService {
     private ICartItemDao cartItemDao;
 
     @Autowired
-    private IProductDao productDao;
+    private ProductRepository pr;
     
     // 取得或創建購物車
     public Cart getOrCreateCart(Integer memberId) {
@@ -49,7 +49,7 @@ public class CartService {
         Integer cartId = cart.getCartId();
 
         // --- 關鍵修正：從資料庫抓取真實的商品資訊 ---
-        Product realProduct = productDao.findById(newItem.getProductId())
+        Product realProduct = pr.findById(newItem.getProductId())
                 .orElseThrow(() -> new RuntimeException("找不到該商品"));
         
         // 用真實的價格與名稱覆蓋掉前端傳來的不明數值
@@ -109,23 +109,4 @@ public class CartService {
                     .sum();
     }
 
-=======
-import org.springframework.stereotype.Service;
-
-/**
- * 【臨時模擬用】
- * 等小吉 將此檔案刪除或覆蓋。
- */
-@Service
-public class CartService {
-
-    /**
-     * 模擬計算購物車總件數
-     * 暫時回傳 0，確保前台 ProductDetail 頁面能正常顯示
-     */
-    public int getTotalQuantityByMemberId(Integer memberId) {
-        // 先回傳 0 或是隨便一個數字（例如 5），讓你在 Demo 時畫面好看一點
-        return 0; 
-    }
->>>>>>> main
 }

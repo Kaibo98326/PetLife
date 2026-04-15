@@ -20,11 +20,8 @@ public class Member {
 	@Column(name = "member_id")
 	private Integer memberId;	//會員編號
 	
-<<<<<<< HEAD
+
 	@Column(name = "member_name" ,nullable = false)
-=======
-	@Column(name = "member_name", nullable = false)
->>>>>>> main
 	private String memberName;	//會員姓名
 	
 	private String phone;		//電話
@@ -32,25 +29,18 @@ public class Member {
 	@Column(nullable = false ,unique = true)
 	private String email;		//登入帳號(e-mail)
 	
-<<<<<<< HEAD
+
 	@Column(name = "password_hash",nullable = false)
-=======
-	@Column(name ="password_hash" , nullable = false)
->>>>>>> main
 	@JsonIgnore
 	private String passwordHash; //雜湊密碼
 	
 	private String address;
 	private String provider;
-<<<<<<< HEAD
-	
-	@Column(name="provider_user_id")
-	private String providerUserId;
-	
-=======
+
+
 	@Column(name = "provider_user_id")
 	private String providerUserId;
->>>>>>> main
+
 	@Column(name = "account_status")
 	private String accountStatus;
 	

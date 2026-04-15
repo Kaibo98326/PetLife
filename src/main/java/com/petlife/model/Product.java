@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data 							// 自動產生 Getter, Setter, toString, equals, hashCode
 @NoArgsConstructor 				// 自動產生無參數建構子
 @AllArgsConstructor 				// 自動產生全參數建構子
-
 public class Product implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -62,7 +61,7 @@ public class Product implements Serializable{
 //關聯分類名稱 (非資料庫欄位，用於 join 顯示)，使用 @Transient 告訴 JPA 這個欄位不需要持久化到資料庫
     @Transient
     private String categoryName;
-<<<<<<< HEAD
+
     
     // Getter / Setter
     public Integer getProductId() { return productId; }
@@ -98,8 +97,4 @@ public class Product implements Serializable{
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
-	
-=======
-   
->>>>>>> main
 }

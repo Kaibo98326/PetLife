@@ -45,7 +45,7 @@ public class ProductDetailController {
 
 		// --- 若已登入會員，則即時查詢最新購物車數量 ---
 		if (memberId != null) {
-			int totalQty = cartService.getTotalQuantityByMemberId(memberId);
+			int totalQty = cartService.getCartTotalQuantity(memberId);
 			model.addAttribute("cartTotalQty", totalQty);
 		}
 

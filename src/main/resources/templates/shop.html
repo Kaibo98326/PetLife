@@ -5,436 +5,254 @@
 <meta charset="UTF-8">
 <title>PetLife 首頁</title>
 <link rel="stylesheet"
-	href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+ href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+ href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css"
-	th:href="@{/css/ShopPanel.css?v=124}">
+ th:href="@{/css/ShopPanel.css?v=124}">
 </head>
 
 <body>
 <!-- 上層頂端導覽 -->
-	<header class="shop-header sticky-top">
-		<div class="container">
-			<div class="row align-items-center">
+ <header class="shop-header sticky-top">
+  <div class="container">
+   <div class="row align-items-center">
 <!-- LOGO -->
-				<div class="col-auto">
-					<a th:href="@{/shop/index}" class="shop-logo"> <img
-						th:src="@{/images/logo01.png}" alt="PetLife Logo">
-					</a>
-				</div>
+    <div class="col-auto">
+     <a th:href="@{/shop/index}" class="shop-logo"> <img
+      th:src="@{/images/logo01.png}" alt="PetLife Logo">
+     </a>
+    </div>
 <!-- 搜尋框 -->
-				<div class="col px-lg-5">
-					<form th:action="@{/shop/index}" method="get"
-						class="shop-search-form">
-						<div class="input-group">
-							<input type="text" name="keyword"
-								class="form-control search-input" placeholder="搜尋毛孩好物..."
-								th:value="${keyword}">
-							<button type="submit" class="btn search-submit-btn">
-								<i class="fas fa-search text-muted"></i>
-							</button>
-						</div>
-					</form>
-				</div>
-<!-- 頂端右側 -->				
-				<div class="col-auto">
-					<nav class="shop-user-nav d-flex align-items-center">
-<!-- 購物車 -->   						
-						<a th:href="@{/cart}"
-							class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
-							<i class="fas fa-shopping-cart"></i> <span
-							style="font-size: 13px; color: #5a4a42;">購物車</span> <span
-							id="cart-badge" th:if="${cartTotalQty > 0}"
-							th:text="${cartTotalQty}"
-							class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-							style="font-size: 0.7rem;"></span>
-<!-- 聊聊 -->							
-						</a> <a href="#"
-							class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
-							<i class="far fa-comment-dots"
-							style="font-size: 1.2rem; color: #666;"></i> <span
-							style="font-size: 13px; color: #5a4a42;">聊聊</span>
-						</a>
+    <div class="col px-lg-5">
+     <form th:action="@{/shop/index}" method="get"
+      class="shop-search-form">
+      <div class="input-group">
+       <input type="text" name="keyword"
+        class="form-control search-input" placeholder="搜尋毛孩好物..."
+        th:value="${keyword}">
+       <button type="submit" class="btn search-submit-btn">
+        <i class="fas fa-search text-muted"></i>
+       </button>
+      </div>
+     </form>
+    </div>
+<!-- 頂端右側 -->    
+    <div class="col-auto">
+     <nav class="shop-user-nav d-flex align-items-center">
+<!-- 購物車 -->         
+      <a th:href="@{/cart}"
+       class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
+       <i class="fas fa-shopping-cart"></i> <span
+       style="font-size: 13px; color: #5a4a42;">購物車</span> <span
+       id="cart-badge" th:if="${cartTotalQty > 0}"
+       th:text="${cartTotalQty}"
+       class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+       style="font-size: 0.7rem;"></span>
+<!-- 聊聊 -->       
+      </a> <a href="#"
+       class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
+       <i class="far fa-comment-dots"
+       style="font-size: 1.2rem; color: #666;"></i> <span
+       style="font-size: 13px; color: #5a4a42;">聊聊</span>
+      </a>
 <!-- 登入判斷 -->
-	<!-- 已登入 -->						
-						<div class="user-action-zone">
-							<div th:if="${memberId != null}"
-								class="d-flex align-items-center">
-								<div class="user-greeting-box me-3 text-end">
-									<span class="welcome-tag"> <i class="fas fa-paw"></i> <strong
-										th:text="${memberName}"></strong> 你好！
-									</span> <a th:href="@{/member/center}" class="member-link">會員中心</a>
-								</div>
-								<a th:href="@{/member/logout}"
-									class="nav-icon-item d-flex flex-column align-items-center text-decoration-none text-danger">
-									<i class="fas fa-sign-out-alt" style="font-size: 1.2rem;"></i>
-									<span style="font-size: 13px;">登出</span>
-								</a>
-							</div>
-	<!-- 尚未登入 -->							
-							<div th:unless="${memberId != null}">
-								<a th:href="@{/loginChoice}"
-									class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
-									<i class="far fa-user-circle"
-									style="font-size: 1.2rem; color: #666;"></i> <span
-									style="font-size: 13px; color: #5a4a42;">登入 / 註冊</span>
-								</a>
-							</div>
-						</div>
-					</nav>
-				</div>
-			</div>
-<!-- 上層分類目錄 --> 			
-			<nav class="header-nav mt-3">
-				<div class="container">
-					<ul class="nav-menu-list">
-						<li><a th:href="@{/shop/index(all='true')}" class="nav-menu-link">全部商品</a></li>
-						<li><a th:href="@{/shop/index(catId=1)}"
-							class="nav-menu-link">🐱 貓貓專區</a></li>
-						<li><a th:href="@{/shop/index(catId=2)}"
-							class="nav-menu-link">🐶 狗狗專區</a></li>
-						<li><a th:href="@{/beauty-booking}" class="nav-menu-link">🛁
-								寵物美容</a></li>
-						<li><a th:href="@{/stay/selectPet}" class="nav-menu-link">🏠
-								寵物旅館</a></li>
-						<li><a href="#" class="nav-menu-link">🔥 限時特惠</a></li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-	</header>
-	
+ <!-- 已登入 -->      
+      <div class="user-action-zone">
+       <div th:if="${memberId != null}"
+        class="d-flex align-items-center">
+        <div class="user-greeting-box me-3 text-end">
+         <span class="welcome-tag"> <i class="fas fa-paw"></i> <strong
+          th:text="${memberName}"></strong> 你好！
+         </span> <a th:href="@{/member/center}" class="member-link">會員中心</a>
+        </div>
+        <a th:href="@{/member/logout}"
+         class="nav-icon-item d-flex flex-column align-items-center text-decoration-none text-danger">
+         <i class="fas fa-sign-out-alt" style="font-size: 1.2rem;"></i>
+         <span style="font-size: 13px;">登出</span>
+        </a>
+       </div>
+ <!-- 尚未登入 -->       
+       <div th:unless="${memberId != null}">
+        <a th:href="@{/loginChoice}"
+         class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
+         <i class="far fa-user-circle"
+         style="font-size: 1.2rem; color: #666;"></i> <span
+         style="font-size: 13px; color: #5a4a42;">登入 / 註冊</span>
+        </a>
+       </div>
+      </div>
+     </nav>
+    </div>
+   </div>
+<!-- 上層分類目錄 -->    
+   <nav class="header-nav mt-3">
+    <div class="container">
+     <ul class="nav-menu-list">
+      <li><a th:href="@{/shop/index(all='true')}" class="nav-menu-link">全部商品</a></li>
+      <li><a th:href="@{/shop/index(catId=1)}"
+       class="nav-menu-link">🐱 貓貓專區</a></li>
+      <li><a th:href="@{/shop/index(catId=2)}"
+       class="nav-menu-link">🐶 狗狗專區</a></li>
+      <li><a th:href="@{/beauty-booking}" class="nav-menu-link">🛁
+        寵物美容</a></li>
+      <li><a th:href="@{/stay/selectPet}" class="nav-menu-link">🏠
+        寵物旅館</a></li>
+      <li><a href="#" class="nav-menu-link">🔥 限時特惠</a></li>
+     </ul>
+    </div>
+   </nav>
+  </div>
+ </header>
+ 
 <!-- 左方 menu 分類 -->    
-	<main class="shop-hero-section">
-		<div class="container">
-			<div class="hero-wrapper"
-				th:if="${catId == null && (keyword == null || keyword == '') && hideCarousel == null}">
-				<aside class="category-sidebar shadow-sm">
-					<div class="sidebar-title">
-						<i class="fas fa-bars me-2"></i>毛孩商品總覽
-					</div>
-					<nav class="sidebar-nav">
-						<a th:href="@{/shop/index(all='true')}" 
-							class="category-item"><span>全部商品</span><i
-							class="fas fa-chevron-right small"></i>
-						</a> <a th:each="cat : ${category}"
-							th:href="@{/shop/index(catId=${cat.categoryId})}"
-							th:classappend="${catId == cat.categoryId} ? 'is-active'"
-							class="category-item"> <span th:text="${cat.categoryName}"></span><i
-							class="fas fa-chevron-right small"></i>
-						</a>
-					</nav>
-				</aside>
-<!-- 廣告輪播 -->				
-				<div id="shopCarousel"
-					class="carousel slide shadow-sm rounded-3 overflow-hidden"
-					data-bs-ride="carousel">
-					<div class="carousel-indicators">
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="0" class="active"></button>
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="1"></button>
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="2"></button>
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="3"></button>
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="4"></button>
-						<button type="button" data-bs-target="#shopCarousel"
-							data-bs-slide-to="5"></button>
-					</div>
-					<div class="carousel-inner">
-						<div class="carousel-item active" data-bs-interval="2000">
-							<img th:src="@{/images/ad01.jpg}" alt="廣告輪播01"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-						<div class="carousel-item" data-bs-interval="2000">
-							<img th:src="@{/images/ad02.jpg}" alt="廣告輪播02"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-						<div class="carousel-item" data-bs-interval="2000">
-							<img th:src="@{/images/ad03.jpg}" alt="廣告輪播03"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-						<div class="carousel-item" data-bs-interval="2000">
-							<img th:src="@{/images/ad04.jpg}" alt="廣告輪播04"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-						<div class="carousel-item" data-bs-interval="2000">
-							<img th:src="@{/images/ad05.jpg}" alt="廣告輪播05"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-						<div class="carousel-item" data-bs-interval="2000">
-							<img th:src="@{/images/ad06.jpg}" alt="廣告輪播06"
-								class="d-block w-100 img-fluid"
-								style="object-fit: cover; height: auto; max-height: 500px;">
-						</div>
-					</div>
-					<button class="carousel-control-prev" type="button"
-						data-bs-target="#shopCarousel" data-bs-slide="prev">
-						<span class="carousel-control-prev-icon"></span>
-					</button>
-					<button class="carousel-control-next" type="button"
-						data-bs-target="#shopCarousel" data-bs-slide="next">
-						<span class="carousel-control-next-icon"></span>
-					</button>
-				</div>
-			</div>
+ <main class="shop-hero-section">
+  <div class="container">
+   <div class="hero-wrapper"
+    th:if="${catId == null && (keyword == null || keyword == '') && hideCarousel == null}">
+    <aside class="category-sidebar shadow-sm">
+     <div class="sidebar-title">
+      <i class="fas fa-bars me-2"></i>毛孩商品總覽
+     </div>
+     <nav class="sidebar-nav">
+      <a th:href="@{/shop/index(all='true')}" 
+       class="category-item"><span>全部商品</span><i
+       class="fas fa-chevron-right small"></i>
+      </a> <a th:each="cat : ${category}"
+       th:href="@{/shop/index(catId=${cat.categoryId})}"
+       th:classappend="${catId == cat.categoryId} ? 'is-active'"
+       class="category-item"> <span th:text="${cat.categoryName}"></span><i
+       class="fas fa-chevron-right small"></i>
+      </a>
+     </nav>
+    </aside>
+<!-- 廣告輪播 -->    
+    <div id="shopCarousel"
+     class="carousel slide shadow-sm rounded-3 overflow-hidden"
+     data-bs-ride="carousel">
+     <div class="carousel-indicators">
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="0" class="active"></button>
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="1"></button>
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="2"></button>
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="3"></button>
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="4"></button>
+      <button type="button" data-bs-target="#shopCarousel"
+       data-bs-slide-to="5"></button>
+     </div>
+     <div class="carousel-inner">
+      <div class="carousel-item active" data-bs-interval="2000">
+       <img th:src="@{/images/ad01.jpg}" alt="廣告輪播01"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+      <div class="carousel-item" data-bs-interval="2000">
+       <img th:src="@{/images/ad02.jpg}" alt="廣告輪播02"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+      <div class="carousel-item" data-bs-interval="2000">
+       <img th:src="@{/images/ad03.jpg}" alt="廣告輪播03"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+      <div class="carousel-item" data-bs-interval="2000">
+       <img th:src="@{/images/ad04.jpg}" alt="廣告輪播04"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+      <div class="carousel-item" data-bs-interval="2000">
+       <img th:src="@{/images/ad05.jpg}" alt="廣告輪播05"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+      <div class="carousel-item" data-bs-interval="2000">
+       <img th:src="@{/images/ad06.jpg}" alt="廣告輪播06"
+        class="d-block w-100 img-fluid"
+        style="object-fit: cover; height: auto; max-height: 500px;">
+      </div>
+     </div>
+     <button class="carousel-control-prev" type="button"
+      data-bs-target="#shopCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+     </button>
+     <button class="carousel-control-next" type="button"
+      data-bs-target="#shopCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+     </button>
+    </div>
+   </div>
 
-			<nav th:if="${catId != null || (keyword != null && keyword != '')}"
-				aria-label="breadcrumb" class="py-3">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a th:href="@{/shop/index}"
-						class="text-decoration-none text-muted">商城首頁</a></li>
-					<li class="breadcrumb-item active" aria-current="page"
-						th:text="${searchMsg}">搜尋結果</li>
-				</ol>
-			</nav>
-		</div>
-	</main>
+   <nav th:if="${catId != null || (keyword != null && keyword != '')}"
+    aria-label="breadcrumb" class="py-3">
+    <ol class="breadcrumb">
+     <li class="breadcrumb-item"><a th:href="@{/shop/index}"
+      class="text-decoration-none text-muted">商城首頁</a></li>
+     <li class="breadcrumb-item active" aria-current="page"
+      th:text="${searchMsg}">搜尋結果</li>
+    </ol>
+   </nav>
+  </div>
+ </main>
 <!-- 商品列表區 -->   
-	<section class="container product-section py-5">
-		<div
-			class="section-header d-flex justify-content-between align-items-center mb-4">
-			<h4 class="section-title">
-				<span th:if="${searchMsg != null}"> <span
-					th:text="${searchMsg}"></span> <small class="text-muted"
-					style="font-size: 0.9rem;"> (共 <span
-						th:text="${#lists.size(products)}"></span> 件)
-				</small>
-				</span> <span th:if="${searchMsg == null}">精選好物</span>
-			</h4>
-		</div>
+ <section class="container product-section py-5">
+  <div
+   class="section-header d-flex justify-content-between align-items-center mb-4">
+   <h4 class="section-title">
+    <span th:if="${searchMsg != null}"> <span
+     th:text="${searchMsg}"></span> <small class="text-muted"
+     style="font-size: 0.9rem;"> (共 <span
+      th:text="${#lists.size(products)}"></span> 件)
+    </small>
+    </span> <span th:if="${searchMsg == null}">精選好物</span>
+   </h4>
+  </div>
 <!-- 商品卡片列表 -->
-		<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
-			<div class="col" th:each="p : ${products}">
-				<article class="product-card shadow-sm" style="position: relative;">
-					<div class="product-category-badge"
-						th:text="${p.categoryName != null ? p.categoryName : '寵物好物'}"></div>
+  <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+   <div class="col" th:each="p : ${products}">
+    <article class="product-card shadow-sm" style="position: relative;">
+     <div class="product-category-badge"
+      th:text="${p.categoryName != null ? p.categoryName : '寵物好物'}"></div>
 
-					<a th:href="@{'/product/detail?id=' + ${p.productId}}"
-						class="text-decoration-none" style="color: inherit;">
-						<div class="product-img-wrapper">
-							<img
-								th:src="${p.productImage != null ? '/images/' + p.productImage : '/images/logo01.png'}"
-								th:alt="${p.productName}">
-						</div>
-						<div class="product-info">
-							<h6 class="product-name" th:text="${p.productName}"></h6>
-						</div>
-					</a>
+     <a th:href="@{'/product/detail?id=' + ${p.productId}}"
+      class="text-decoration-none" style="color: inherit;">
+      <div class="product-img-wrapper">
+       <img
+        th:src="${p.productImage != null ? '/images/' + p.productImage : '/images/logo01.png'}"
+        th:alt="${p.productName}">
+      </div>
+      <div class="product-info">
+       <h6 class="product-name" th:text="${p.productName}"></h6>
+      </div>
+     </a>
 <!-- 商品價格與加入購物車按鈕 -->
-					<div class="product-info pt-0">
-						<div class="product-footer">
-							<span class="product-price">$ <span
-								th:text="${p.productPrice}"></span></span>
-							<button type="button" class="btn add-to-cart-btn"
-								th:attr="data-id=${p.productId}, data-name=${p.productName}">
-								<i class="fas fa-shopping-basket"></i>
-							</button>
-						</div>
-					</div>
-				</article>
-			</div>
-		</div>
-	</section>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     <div class="product-info pt-0">
+      <div class="product-footer">
+       <span class="product-price">$ <span
+        th:text="${p.productPrice}"></span></span>
+       <button type="button" class="btn add-to-cart-btn"
+        th:attr="data-id=${p.productId}, data-name=${p.productName}">
+        <i class="fas fa-shopping-basket"></i>
+       </button>
+      </div>
+     </div>
+    </article>
+   </div>
+  </div>
+ </section>
+ <script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<<<<<<< HEAD
-                        <!-- 聊聊 -->
-                        <a href="#" class="nav-icon-item">
-                            <i class="far fa-comment-dots"></i><span>聊聊</span>
-                        </a>
-
-                        <!-- 登入判斷 -->
-                        <!-- 已登入 -->
-                        <div th:if="${memberId != null}">
-                            <span class="user-greeting me-3 text-muted" style="font-size: 0.9rem;">
-                                <i class="fas fa-paw text-warning"></i>
-                                <strong th:text="${memberName}"></strong> 你好！
-                            </span>
-                            <a th:href="@{/member/center}" class="nav-icon-item">
-                                <i class="fas fa-user-check"></i><span>會員中心</span>
-                            </a>
-                            <a th:href="@{/member/logout}" class="nav-icon-item ms-2 text-danger">
-                                <i class="fas fa-sign-out-alt"></i><span>登出</span>
-                            </a>
-                        </div>
-
-                        <!-- 未登入 -->
-                        <div th:unless="${memberId != null}">
-                            <a th:href="@{/loginChoice}" class="nav-icon-item">
-                                <i class="far fa-user-circle"></i><span>登入 / 註冊</span>
-                            </a>
-                        </div>
-
-
-                    </nav>
-                </div>
-            </div>
-            <!-- 下層導覽 -->
-            <nav class="header-nav">
-                <div class="container">
-                    <ul class="nav-menu-list">
-                        <li><a th:href="@{/shop}" class="nav-menu-link">全部商品</a></li>
-                        <li><a th:href="@{/shop?catId=1}" class="nav-menu-link">🐱 貓貓專區</a></li>
-                        <li><a th:href="@{/shop?catId=2}" class="nav-menu-link">🐶 狗狗專區</a></li>
-                        <li><a th:href="@{/beauty-booking}" class="nav-menu-link">🛁 寵物美容</a></li>
-                        <li><a th:href="@{/stay/selectPet}" class="nav-menu-link">🏠 寵物旅館</a></li>
-                        <li><a href="#" class="nav-menu-link">🔥 限時特惠</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </header>
-    <main class="shop-hero-section">
-        <div class="container">
-            <div class="hero-wrapper">
-                <!-- 左方分類 -->
-                <aside class="category-sidebar shadow-sm">
-                    <div class="sidebar-title">
-                        <i class="fas fa-bars me-2"></i>毛孩商品總覽
-                    </div>
-                    <nav class="sidebar-nav">
-                        <a th:href="@{/shop}" th:classappend="${catId == null} ? 'is-active'" class="category-item">
-                            <span>全部商品</span><i class="fas fa-chevron-right small"></i>
-                        </a>
-                        <a th:each="cat : ${category}" th:href="@{'/shop?catId=' + ${cat.categoryId}}"
-                            th:classappend="${catId == cat.categoryId} ? 'is-active'" class="category-item">
-                            <span th:text="${cat.categoryName}"></span><i class="fas fa-chevron-right small"></i>
-                        </a>
-                    </nav>
-                </aside>
-
-                <!-- 廣告輪播 -->
-                <div id="shopCarousel" class="carousel slide shadow-sm rounded-3 overflow-hidden"
-                    data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="0"
-                            class="active"></button>
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="1"></button>
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="2"></button>
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="3"></button>
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="4"></button>
-                        <button type="button" data-bs-target="#shopCarousel" data-bs-slide-to="5"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" data-bs-interval="2000">
-                            <img th:src="@{/images/ad01.jpg}" alt="廣告輪播01" class="d-block w-100 img-fluid"
-                                style="object-fit: cover; height: auto; max-height: 500px;">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img th:src="@{/images/ad02.jpg}" alt="廣告輪播02" class="d-block w-100 img-fluid" 
-                                style="object-fit: cover; height: auto; max-height: 500px;">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img th:src="@{/images/ad03.jpg}" alt="廣告輪播03" class="d-block w-100 img-fluid"
-                                style="object-fit: cover;height: auto; max-height: 500px;">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img th:src="@{/images/ad04.jpg}" alt="廣告輪播04" class="d-block w-100 img-fluid"
-                                style="object-fit: cover;height: auto; max-height: 500px;">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img th:src="@{/images/ad05.jpg}" alt="廣告輪播05" class="d-block w-100 img-fluid"
-                                style="object-fit: cover;height: auto; max-height: 500px;">
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img th:src="@{/images/ad06.jpg}" alt="廣告輪播06" class="d-block w-100 img-fluid"
-                                style="object-fit: cover;height: auto; max-height: 500px;">
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#shopCarousel"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#shopCarousel"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </main>
-    <!-- 商品列表區 -->
-    <section class="container product-section py-5">
-        <div class="section-header d-flex justify-content-between align-items-center mb-4">
-            <h4 class="section-title">
-                <!-- 判斷是否有搜尋訊息 -->
-                <span th:if="${searchMsg != null}">
-                    <!-- 顯示搜尋訊息 -->
-                    <span th:text="${searchMsg}"></span>
-                    <!-- 顯示商品總數 -->
-                    <small class="text-muted" style="font-size: 0.9rem;">
-                        (共 <span th:text="${#lists.size(products)}"></span> 件)
-                    </small>
-                </span>
-                <!-- 如果沒有搜尋訊息，顯示預設文字 -->
-                <span th:if="${searchMsg == null}">精選好物</span>
-            </h4>
-        </div>
-
-        <!-- 商品卡片列表 -->
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
-            <!-- 迴圈顯示每一個商品 -->
-            <div class="col" th:each="p : ${products}">
-                <article class="product-card shadow-sm" style="position: relative;">
-                    <!-- 商品分類標籤 -->
-                    <div class="product-category-badge" th:text="${p.categoryName}"></div>
-
-                    <!-- 商品連結：點擊進入商品詳細頁 -->
-                    <a th:href="@{'/product/detail?id=' + ${p.productId}}" class="text-decoration-none"
-                        style="color: inherit;">
-                        <div class="product-img-wrapper">
-                            <!-- 商品圖片 -->
-                            <img th:src="@{'/images/' + ${p.productImage}}" th:alt="${p.productName}">
-                        </div>
-                        <div class="product-info">
-                            <!-- 商品名稱 -->
-                            <h6 class="product-name" th:text="${p.productName}"></h6>
-                        </div>
-                    </a>
-
-                    <!-- 商品價格與加入購物車按鈕 -->
-                    <div class="product-info pt-0">
-                        <div class="product-footer">
-                            <!-- 商品價格 -->
-                            <span class="product-price">$ <span th:text="${p.productPrice}"></span></span>
-                            <!-- 加入購物車按鈕，帶商品ID與名稱 -->
-                            <button type="button" class="btn add-to-cart-btn"
-                                th:attr="data-id=${p.productId}, data-name=${p.productName}">
-                                <i class="fas fa-shopping-basket"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-    <!-- 外部 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script th:inline="javascript">
-        // 確保頁面完全載入後才執行
-        const currentMemberId = /*[[${session.memberId}]]*/ null;
-        
-=======
-	<script>
+ 	<script>
 // 確保頁面完全載入後才執行
->>>>>>> main
         $(document).ready(function () {
             console.log("JQuery 已就緒，PetLife 購物車腳本啟動！");
             
@@ -447,20 +265,6 @@
          	
        	  	// 使用 document 級別的事件委派，確保動態元素也能綁定事件
             $(document).off('click', '.add-to-cart-btn')
-<<<<<<< HEAD
-            .on('click', '.add-to-cart-btn', function (e) {
-                e.preventDefault();
-                
-                // 1. 檢查是否登入
-                if (!currentMemberId) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: '請先登入',
-                        text: '登入後才能將毛孩好物加入購物車喔！',
-                        confirmButtonText: '前往登入'
-                    }).then(() => {
-                        window.location.href = '/loginChoice'; // 跳轉到你的登入頁
-=======
                 .on('click', '.add-to-cart-btn', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -499,51 +303,8 @@
                         error: function (xhr, status, error) {
                             alert("連線失敗，請檢查後端 Controller 是否有啟動。");
                         }
->>>>>>> main
                     });
-                    return;
-                }
-
-                var productId = $(this).data("id");
-                var name = $(this).data("name");
-
-                // 2. 發送 AJAX
-                $.ajax({
-                    url: "/api/cart/add/" + currentMemberId, // 自動帶入登入者的 ID
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8", // 必須是 JSON
-                    data: JSON.stringify({
-                        productId: productId,
-                        quantity: 1,
-                        productName: name,
-                        productPrice: 0, // 由後端 Service 查價較安全
-                        subtotal: 0
-                    }),
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '加入成功！',
-                            text: '已將 [' + name + '] 放進購物車 🐾',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // 更新右上角數字
-                            let badge = $("#cart-badge");
-                            if (badge.length > 0) {
-                            	// 抓取目前的數字，如果抓不到（例如空字串）就設為 0
-                                let currentCount = parseInt(badge.text()) || 0;
-                                badge.text(parseInt(badge.text()) + 1);
-                            } else {
-                                location.reload(); 
-                            }
-                        });
-                    },
-                    error: function (xhr) {
-                        console.error("報錯內容:", xhr.responseText);
-                        Swal.fire('哎呀', '加入失敗，請稍後再試', 'error');
-                    }
                 });
-            });
         });
     </script>
 </body>

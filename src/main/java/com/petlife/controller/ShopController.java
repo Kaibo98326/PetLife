@@ -44,12 +44,12 @@ public class ShopController {
 	                        @RequestParam(value = "all", required = false) String all,
 	                        HttpSession session,
 	                        Model model) {
-<<<<<<< HEAD
+
 	    		model.addAttribute("memberId", session.getAttribute("memberId"));
 	    		model.addAttribute("memberName" , session.getAttribute("memberName"));
 	        // 1. 計算購物車總件數  115.4.13修改
 	        Integer memberId = (Integer) session.getAttribute("memberId");
-=======
+
 	    	
 	    	
 // ===== 顯示 登入 會員名稱資訊 ==============================================================================
@@ -72,7 +72,7 @@ public class ShopController {
 	        
 // ===== 取得所有分類 (左側 menu 選單) =======================================================================
 	        
->>>>>>> main
+
 	        List<Category> categories = categoryService.getAllCategory();
 	        model.addAttribute("category", categories);
 	        
