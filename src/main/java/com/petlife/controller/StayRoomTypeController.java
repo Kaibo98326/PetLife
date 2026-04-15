@@ -24,6 +24,7 @@ public class StayRoomTypeController {
 	@Autowired
 	private StayRoomTypeService stayRoomTypeService;
 	
+	// 王子(果果?)
 	@GetMapping
     public String Page() {
         return "hotelTypes";

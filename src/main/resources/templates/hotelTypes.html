@@ -8,12 +8,12 @@
     <div style="padding: 20px">
       <h2>🛏️ 旅館房型管理</h2>
 
-      <!-- 新增表單 -->
+      <!-- 新增房型表單 -->
       <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px">
         <h4>新增房型</h4>
         <input type="text" id="inputRoomName" placeholder="房型名稱" />
-        <input type="number" id="inputRoomPrice" placeholder="價格" />
-        <input type="text" id="inputRoomDescription" placeholder="描述" />
+        <input type="number" id="inputRoomTypePrice" placeholder="價格" />
+        <input type="text" id="inputRoomTypeDescription" placeholder="描述" />
         <input type="number" id="inputCapacity" placeholder="容量" />
         <button onclick="createRoomType()">➕ 新增</button>
       </div>
@@ -24,7 +24,7 @@
           <tr>
             <th>ID</th>
             <th>房型名稱</th>
-            <th>價格</th>
+            <th>房型價格/Day</th>
             <th>描述</th>
             <th style="width: 60px; text-align: center">容量</th>
             <th>操作</th>
@@ -37,7 +37,7 @@
     </div>
 
     <script>
-      // 取得所有房型並渲染表格
+      // 取得所有房型並渲染tbody
       async function loadRoomTypes() {
         const res = await fetch("/hotel/types/data");
         const data = await res.json();
@@ -64,8 +64,8 @@
       async function createRoomType() {
         const data = {
           roomName: document.getElementById("inputRoomName").value,
-          roomPrice: document.getElementById("inputRoomPrice").value,
-          roomDescription: document.getElementById("inputRoomDescription").value,
+          roomPrice: document.getElementById("inputRoomTypePrice").value,
+          roomDescription: document.getElementById("inputRoomTypeDescription").value,
           capacity: document.getElementById("inputCapacity").value,
         };
 
@@ -77,9 +77,9 @@
         await loadRoomTypes();
 
         //拉完了就清空表單
-        document.getElementById("inputRoomName").value = "";
-        document.getElementById("inputRoomPrice").value = "";
-        document.getElementById("inputRoomDescription").value = "";
+        document.getElementById("inputRoomTypeName").value = "";
+        document.getElementById("inputRoomTypePrice").value = "";
+        document.getElementById("inputRoomTypeDescription").value = "";
         document.getElementById("inputCapacity").value = "";
       }
 

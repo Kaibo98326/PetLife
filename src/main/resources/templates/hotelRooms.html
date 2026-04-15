@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.or">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旅館房間管理</title>
+  </head>
+  <body>
+    <div style="padding: 20px">
+      <h2>🚪 旅館房間管理</h2>
+
+      <!-- 新增房間表單 -->
+      <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px">
+        <h4>新增房間</h4>
+
+        <!-- 選擇房型 -->
+        <select id="inputRoomTypeId">
+          <option value="">請選擇房型</option>
+          <!-- JavaScript 會動態在這裡插入 <option> -->
+        </select>
+
+        <!-- 房間狀態 -->
+        <select id="inputRoomStatus">
+          <option value="空房">空房</option>
+          <option value="使用中">使用中</option>
+          <option value="維修中">維修中</option>
+          <option value="停用">停用</option>
+        </select>
+      </div>
+
+      <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>房間名稱</th>
+            <th>房間價格/Day</th>
+            <th>狀態</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="roomsTableBody">
+          <!-- JavaScript 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      //取得所有房間 & 渲染tbody
+      async function loadRooms() {
+        const res = await fetch("/hotel/rooms/data");
+        const data = await res.json(); //這行是res轉成json?
+        const tbody = document.getElementById("roomsTableBody");
+        tbody.innerHTML = ""; //跟Vue的ref()一樣 創立一個空物件
+        data.forEach((room) => {
+          //<td>${type.roomTypeId}0${type.roomId} </td>
+          //希望顯示的是 101 102 203...
+          //然後能編輯的就只有roomStatus 希望可以用下拉是選單來選
+          //刪除不太確定
+          tbody.innerHTML += `
+            <tr id="row-${type.roomId}" style="border-bottom: 1px solid black;">
+                <td>${type.roomTypeId}0${type.roomId} </td>
+                <td>${type.roomStatus}</td>
+                <td>
+                    <button onclick="editRow(${type.roomStatus})">✏️ 編輯</button>
+                    <button onclick="deleteRoom(${type.roomTypeId})">🗑️ 刪除</button>
+                </td>
+            </tr>`;
+        });
+      }
+
+      // C Room
+      async function createRoom() {
+        const data = {
+          room,
+        };
+      }
+    </script>
+  </body>
+</html>
