@@ -100,7 +100,8 @@
     <!-- menuMap -->
     <script th:inline="javascript">
         window.menuMap = window.menuMap ||{
-            'member': { title: '會員管理', url: '#', type: 'ajax' },
+            'member': { title: '會員管理', url: /*[[@{/members/list}]]*/'', type: 'ajax' },
+            'memberSearch': { title: '會員管理', url: /*[[@{/members/search}]]*/'', type: 'ajax' },
             'permission': { title: '員工管理', url: /*[[@{/employee/EMO}]]*/ '', type: 'ajax' },
             'pet': { title: '寵物管理', url: '#', type: 'ajax' },
             'order': { title: '訂單管理', url: '#', type: 'iframe' },
