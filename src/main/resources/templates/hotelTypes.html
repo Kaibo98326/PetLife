@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>旅館房型管理</title>
+  </head>
+  <body>
+    <div style="padding: 20px">
+      <h2>🛏️ 旅館房型管理</h2>
+
+      <!-- 新增表單 -->
+      <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px">
+        <h4>新增房型</h4>
+        <input type="text" id="inputRoomName" placeholder="房型名稱" />
+        <input type="number" id="inputRoomPrice" placeholder="價格" />
+        <input type="text" id="inputRoomDescription" placeholder="描述" />
+        <input type="number" id="inputCapacity" placeholder="容量" />
+        <button onclick="createRoomType()">➕ 新增</button>
+      </div>
+
+      <!-- 資料表格 -->
+      <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>房型名稱</th>
+            <th>價格</th>
+            <th>描述</th>
+            <th style="width: 60px; text-align: center">容量</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="roomTypeTableBody">
+          <!-- JavaScript 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // 取得所有房型並渲染表格
+      async function loadRoomTypes() {
+        const res = await fetch("/hotel/types/data");
+        const data = await res.json();
+        const tbody = document.getElementById("roomTypeTableBody");
+        tbody.innerHTML = "";
+        data.forEach((type) => {
+          tbody.innerHTML += `
+    <tr id="row-${type.roomTypeId}" style="border-bottom: 1px solid black;">
+        <td>${type.roomTypeId}</td>
+        <td>${type.roomName}</td>
+        <td>${type.roomPrice}</td>
+        <td>${type.roomDescription}</td>
+        <td style="text-align:center; width:60px">${type.capacity}</td>
+        <td>
+            <button onclick="editRow(${type.roomTypeId}, '${type.roomName}', 
+                ${type.roomPrice}, '${type.roomDescription}', ${type.capacity})">✏️ 編輯</button>
+            <button onclick="deleteRoomType(${type.roomTypeId})">🗑️ 刪除</button>
+        </td>
+    </tr>`;
+        });
+      }
+
+      // C RoomTypes
+      async function createRoomType() {
+        const data = {
+          roomName: document.getElementById("inputRoomName").value,
+          roomPrice: document.getElementById("inputRoomPrice").value,
+          roomDescription: document.getElementById("inputRoomDescription").value,
+          capacity: document.getElementById("inputCapacity").value,
+        };
+
+        const res = await fetch("/hotel/types", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRoomTypes();
+
+        //拉完了就清空表單
+        document.getElementById("inputRoomName").value = "";
+        document.getElementById("inputRoomPrice").value = "";
+        document.getElementById("inputRoomDescription").value = "";
+        document.getElementById("inputCapacity").value = "";
+      }
+
+      // U RoomTypes inline Edit
+      function editRow(id, name, price, desc, capacity) {
+        // 找到這一行（用 id 屬性）
+        const row = document.getElementById(`row-${id}`);
+
+        // 把整行換成可編輯的 input 版本
+        row.innerHTML = `
+        <td>${id}</td>
+        <td><input id="edit-name"  value="${name}"     /></td>
+        <td><input id="edit-price" value="${price}"    type="number" /></td>
+        <td><input id="edit-desc"  value="${desc}"     /></td>
+        <td><input id="edit-cap"   value="${capacity}" type="number" style="width:50px; text-align:center" /></td>
+        <td>
+            <button onclick="confirmEdit(${id})">✅ 確認</button>
+            <button onclick="loadRoomTypes()">❌ 取消</button>
+        </td>
+    `;
+      }
+      async function confirmEdit(id) {
+        const data = {
+          roomName: document.getElementById("edit-name").value,
+          roomPrice: document.getElementById("edit-price").value,
+          roomDescription: document.getElementById("edit-desc").value,
+          capacity: document.getElementById("edit-cap").value,
+        };
+        await fetch(`/hotel/types/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRoomTypes();
+      }
+
+      // D RoomTypes
+      async function deleteRoomType(id) {
+        // 彈出 警告視窗 (confirm 保留字所以改 confirmed)
+        const confirmed = confirm("ㄟㄟㄟ 你要刪掉房型嗎?");
+        if (!confirmed) return;
+
+        //確定才刪
+        const res = await fetch(`/hotel/types/${id}`, {
+          method: "DELETE",
+        });
+        await loadRoomTypes();
+      }
+
+      // 頁面一載入就執行渲染畫面
+      loadRoomTypes();
+    </script>
+  </body>
+</html>
