@@ -1,0 +1,238 @@
+/* ========================================================================
+   PetLife 後台 商品 樣式表
+   更新日期: 2026.04.15
+   ======================================================================== */
+
+
+/* --- 1. 全域變數定義 --- */
+:root {
+    --primary-yellow: #ffcc33;
+    --primary-orange: #e67e22;
+    --text-dark: #5d4037;
+    --bg-light: #fffaf0;
+    --bg-table-hover: #fffdf9;
+    --border-color: #ffe0b2;
+    --blue-action: #3498db;
+    --red-action: #e74c3c;
+    --gray-secondary: #666;
+}
+
+/* --- 2. 基礎容器與佈局 --- */
+.category-wrapper, .category-container {
+    padding: 20px;
+    font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    color: var(--text-dark);
+}
+
+.card-panel {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* --- 3. 標題與裝飾條 --- */
+.page-title-area, .section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-left: 12px;
+    border-left: 5px solid var(--primary-yellow);
+}
+
+.title-decorator {
+    display: none; /* 結構合併後，裝飾改用父層 border-left */
+}
+
+.page-header-text, .section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-orange);
+    gap: 8px;
+}
+
+/* --- 4. 表單與輸入系統 --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-row, .st2 {
+    margin-bottom: 20px;
+}
+
+.form-row.full-width {
+    grid-column: span 2;
+}
+
+.form-row label, .t1 {
+    display: block;
+    width: 130px;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+/* 針對水平排列的 st2 */
+.st2 {
+    display: flex;
+    align-items: center;
+}
+
+.form-control, 
+.form-row input, .form-row select, .form-row textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-control:focus, input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-yellow);
+    box-shadow: 0 0 0 3px rgba(255, 204, 51, 0.1);
+}
+
+/* --- 5. 表格樣式系統 (清單與檢視) --- */
+.custom-table, .data-table, .view-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th, .data-table thead th {
+    background-color: var(--bg-light);
+    color: var(--primary-orange);
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid var(--primary-yellow);
+    font-size: 0.95rem;
+}
+
+.custom-table td, .data-table td, .view-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.view-table td {
+    border: 1px solid #eee;
+}
+
+.custom-table tr:hover, .data-table tr:hover {
+    background-color: var(--bg-table-hover);
+}
+
+.label-cell {
+    background-color: #fff5e6;
+    font-weight: bold;
+    color: var(--text-dark);
+    text-align: right;
+    width: 150px;
+}
+
+.product-name-td {
+    text-align: left !important;
+    font-weight: 500;
+}
+
+/* --- 6. 按鈕與導覽列 --- */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.btn-main, .btn-submit {
+    background-color: var(--primary-yellow);
+    color: var(--text-dark);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-main:hover, .btn-submit:hover {
+    background-color: var(--primary-orange);
+    color: white;
+}
+
+.btn-secondary, .btn-back, .btn-reset, .btn-cancel {
+    background-color: #eee;
+    color: var(--gray-secondary);
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-secondary:hover, .btn-cancel:hover {
+    background-color: #ddd;
+}
+
+/* 操作小按鈕 */
+.action-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.edit-btn { color: var(--blue-action); }
+.del-btn { color: var(--red-action); }
+.action-btn:hover { text-decoration: underline; opacity: 0.8; }
+
+/* --- 7. 特殊組件 (標籤、圖片預覽、分頁) --- */
+.cat-badge, .count-badge, .badge {
+    background: #fdf2d0;
+    color: var(--primary-orange);
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.preview-img-box, .preview-img {
+    max-width: 200px;
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+    padding: 5px;
+    background-color: #fff;
+}
+
+.image-comparison-container {
+    border: 2px dashed #f5ca93;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+}
+
+.pagination-area {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}

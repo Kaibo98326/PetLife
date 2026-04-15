@@ -1,5 +1,5 @@
 /* ========================================================================
-   PetLife 商城主樣式表
+   PetLife 商城商品樣式表
    更新日期: 2026.04.15
    ======================================================================== */
 
@@ -36,6 +36,8 @@ body {
     width: 100%;
 }
 
+
+/* --------------------------------------------------------------------------------  header 頂端導覽*/
 /* ======================================================================== 這是上層 */
 .shop-header {
     background: white;
@@ -176,6 +178,7 @@ body {
     color: var(--brand-orange);
 }
 
+
 /* ======================================================================== 這是下層 */
 .header-nav {
     background-color: #fff;
@@ -232,153 +235,97 @@ body {
     margin: 0 40px;      /* 調整線條與文字之間的間距 */
 }
 
-/* --- 5. 左側 Menu 與 廣告輪播 --- */
-.shop-hero-section {
-    margin-top: 20px;
+
+
+/* --------------------------------------------------------------------------------  main 商品*/
+.product-detail-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    margin-top: 50px;
+    box-shadow: 0 10px 30px rgba(109, 76, 65, 0.05);
 }
 
-.hero-wrapper {
-    display: flex;
-    align-items: stretch;
-    background: white;
-    border-radius: 12px;
+/* 左側大圖 */
+.main-image-wrapper {
+    background: #fff;
+    border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
 }
 
-.category-sidebar {
-    width: 210px;
-    background: white;
-    border-right: 1px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.sidebar-title {
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    background: #fafafa;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.category-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px 12px 25px;
-    color: var(--text-main);
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-.category-item:hover, .category-item.is-active {
-    background-color: #fff8f0;
-    color: var(--brand-orange);
-    border-left: 4px solid var(--brand-orange);
-}
-
-#shopCarousel {
-    flex: 1;
-}
-
-.carousel-item img {
+.main-image-wrapper img {
     width: 100%;
-    height: 420px;
-    object-fit: cover;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 
-/* --- 6. 商品卡片列表 --- */
-.section-title {
-    font-size: 1.5rem;
+/* 右側資訊 */
+.product-category-tag {
+    color: var(--brand-orange);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.product-title {
+    font-size: 28px;
     font-weight: 700;
     color: var(--brand-brown);
-    border-left: 5px solid var(--brand-orange);
-    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+.product-price-large {
+    font-size: 32px;
+    color: var(--brand-red);
+    font-weight: 800;
     margin-bottom: 25px;
 }
 
-.product-card {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background: white;
-    transition: 0.3s;
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 20px rgba(230, 126, 34, 0.1);
-    border-color: var(--brand-orange);
-}
-
-.product-category-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: var(--brand-yellow);
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    z-index: 5;
-}
-
-.product-img-wrapper {
-    width: 100%;
-    aspect-ratio: 1/1;
-    padding: 15px;
+/* 數量選擇器 */
+.quantity-control {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
 }
 
-.product-img-wrapper img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.product-info {
-    padding: 15px;
-    flex-grow: 1;
-}
-
-.product-name {
-    font-size: 15px;
-    height: 44px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-.product-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px 15px;
-}
-
-.product-price {
-    color: var(--brand-red);
-    font-size: 1.2rem;
-    font-weight: 800;
-}
-
-.add-to-cart-btn {
-    width: 35px;
-    height: 35px;
+.btn-qty {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: var(--bg-warm);
     border: 1px solid var(--border-color);
-    color: var(--brand-orange);
+    background: white;
+    color: var(--brand-brown);
+}
+
+/* 購買按鈕 */
+.btn-buy-now {
+    background-color: var(--brand-orange);
+    color: white;
+    padding: 12px 40px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 15px;
     transition: 0.3s;
 }
 
-.add-to-cart-btn:hover {
-    background: var(--brand-orange);
-    color: white !important;
+.btn-buy-now:hover {
+    background-color: #d35400;
+    transform: translateY(-2px);
+}
+
+.product-description-section {
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 30px;
+}
+
+.desc-title {
+    font-weight: 700;
+    color: var(--brand-brown);
+    margin-bottom: 15px;
 }

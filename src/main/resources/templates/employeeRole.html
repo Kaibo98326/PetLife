@@ -1,0 +1,68 @@
+<form id="bindRoleForm" onsubmit="event.preventDefault(); bindRole();">
+    <!-- 選擇員工 -->
+    <label for="empSelect">選擇員工：</label>
+    <select name="empId" id="empSelect" required>
+        <option value="">-- 請選擇員工 --</option>
+        <option th:each="emp : ${employees}" th:value="${emp.empId}" th:text="${emp.empName}"></option>
+    </select>
+
+    <!-- 選擇角色 -->
+    <label for="roleSelect">選擇角色：</label>
+    <select name="roleId" id="roleSelect" required>
+        <option value="">-- 請選擇角色 --</option>
+        <option th:each="role : ${roles}" th:value="${role.roleId}" th:text="${role.roleName}"></option>
+    </select>
+
+    <button type="submit" class="btn btn-primary">綁定角色</button>
+</form>
+
+<!-- 員工角色清單 -->
+<div id="employeeRoleContainer" th:fragment="roleBindFragment">
+    <h3>員工角色清單</h3>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>員工名稱</th>
+                <th>角色名稱</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="er : ${empRoles}">
+                <td th:text="${er.employee.empName}"></td>
+                <td th:text="${er.role.roleName}"></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm"
+                            th:onclick="|removeRole(${er.employee.empId}, ${er.role.roleId})|">移除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script type="text/javascript">
+    function bindRole() {
+        const formData = new FormData(document.getElementById("bindRoleForm"));
+
+        fetch('/role/assign', { method: 'POST', body: formData })
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("employeeRoleContainer").innerHTML = html;
+            });
+    }
+
+    function removeRole(empId, roleId) {
+        const formData = new FormData();
+        formData.append("empId", empId);
+        formData.append("roleId", roleId);
+
+        fetch('/role/remove', { method: 'POST', body: formData })
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("employeeRoleContainer").innerHTML = html;
+            });
+    }
+
+    </script>
+</div>
+
+
+
