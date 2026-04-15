@@ -116,12 +116,12 @@ public class MemberFontController {
     		dbMember.setMemberName(member.getMemberName());
     		dbMember.setEmail(member.getEmail());
     	    dbMember.setPhone(member.getPhone());
-    	    dbMember.setAddress(member.getAddress());
-        // 如果有密碼欄位，記得加密處理
+    	    dbMember.setAddress(member.getAddress());        
+    	    // 如果有密碼欄位，記得加密處理
         if (password != null && !password.isEmpty()) {
-            member.setPasswordHash(PasswordUtils.hashPassword(password));
+            dbMember.setPasswordHash(PasswordUtils.hashPassword(password));
         }
-        memberRepo.save(member);
+        memberRepo.save(dbMember);
         return "redirect:/member/center"; // 修改完成後回會員中心
     }
     @PostMapping("/checkPassword")
