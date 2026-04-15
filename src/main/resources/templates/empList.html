@@ -34,13 +34,11 @@
                     <!-- 編輯按鈕 -->
                     <button class="btn btn-sm btn-warning"
                             th:onclick="|loadContent('編輯員工', 'empEdit&empId=' + ${emp.empId})|">
-                        編輯
-                    </button>
+                        編輯</button>
                     <!-- 刪除按鈕 -->
                     <button class="btn btn-sm btn-danger ms-1"
                             th:onclick="|deleteEmployee(${emp.empId})|">
-                        刪除
-                    </button>
+                        刪除</button>
                 </td>
             </tr>
         </tbody>
@@ -94,6 +92,22 @@
         const page = element.getAttribute("data-page");
         loadContent('員工列表', 'empSearch&empName=' + encodeURIComponent(keyword) + '&page=' + page);
     }
+	
+    function deleteEmployee(empId) {
+        if (confirm("確定要刪除員工 #" + empId + " 嗎？")) {
+            fetch('/employee/delete/' + empId, {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    alert("員工已標記為刪除");
+                    loadContent('員工列表', 'empList'); // 重新載入列表
+                } else {
+                    alert("操作失敗");
+                }
+            });
+        }
+    }
+
 
 
     </script>
