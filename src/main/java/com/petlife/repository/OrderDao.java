@@ -31,7 +31,7 @@ public class OrderDao {
 	}
 
 	public List<Order> queryHistoryAllOrder(Integer memberId) {
-		return orderRepository.findByMemberIdOrderByOrderDateDesc(memberId);
+		return orderRepository.findByMemberIdOrderByOrderIdDesc(memberId);
 	}
 
 	public List<Order> queryAllOrdersForAdmin() {

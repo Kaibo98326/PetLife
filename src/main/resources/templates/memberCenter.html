@@ -40,7 +40,7 @@
         </div>
 
         <div class="menu-grid">
-            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/orders} + '\''">📦 訂單紀錄</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/api/order/orders} + '\''">📦 訂單紀錄</div>
             <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/edit(id=${memberId})} + '\''">👤 個人資料</div>
             <div class="menu-item">🏠 收件資訊</div>
             <div class="menu-item">❤️ 我的收藏</div>
