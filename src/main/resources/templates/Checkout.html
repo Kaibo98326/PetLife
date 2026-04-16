@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>填寫配送資訊 | PetLife</title>
+    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="success-container">
+    <div class="header-banner">
+        <h2><i class="fas fa-paw"></i> 填寫配送資訊</h2>
+    </div>
+
+    <form th:action="@{/api/order/create}" method="POST" id="checkoutForm">
+        <table class="info-grid">
+            <tr>
+                <td class="label">收件人姓名</td>
+                <td><input type="text" name="orderName" th:value="${member.memberName}" style="width: 100%; border: 1px solid #ddd; padding: 5px;"></td>
+                <td class="label">聯絡電話</td>
+                <td><input type="text" name="orderPhone" th:value="${member.phone}" style="width: 100%; border: 1px solid #ddd; padding: 5px;"></td>
+            </tr>
+            <tr>
+                <td class="label">配送地址</td>
+                <td colspan="3">
+                    <input type="text" name="orderAddress" th:value="${member.address}" style="width: 100%; border: 1px solid #ddd; padding: 5px;">
+                </td>
+            </tr>
+            <tr>
+                <td class="label">付款方式</td>
+                <td>
+                    <select name="orderPayment" style="width: 100%; border: 1px solid #ddd; padding: 5px;">
+                        <option value="信用卡">信用卡</option>
+                        <option value="貨到付款">貨到付款</option>
+                    </select>
+                </td>
+                <td class="label">訂單狀態</td>
+                <td class="status-text">處理中</td>
+            </tr>
+            <tr>
+                <td class="label">訂單備註</td>
+                <td colspan="3">
+                    <textarea name="orderNote" placeholder="有什麼想告訴毛孩店員的嗎？" style="width: 100%; border: 1px solid #ddd; padding: 5px; height: 60px;"></textarea>
+                </td>
+            </tr>
+        </table>
+
+        <div class="list-title">
+            <i class="far fa-file-alt"></i> 訂單摘要
+        </div>
+
+        <div style="padding: 0 20px 20px 20px;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <span>會員名稱</span>
+                <span th:text="${member.memberName}">chi</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <span>訂單日期</span>
+                <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy/MM/dd a h:mm:ss')}"></span>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid #eee;">
+            
+            <div class="total-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span class="total-label" style="font-size: 18px;">應付總額：</span>
+                <span class="total-amount" th:text="'$ ' + ${totalAmount}">$ 678.00</span>
+            </div>
+        </div>
+
+        <input type="hidden" name="cartId" th:value="${cartId}">
+        
+        <div class="button-area">
+            <button type="submit" class="btn-orange" style="border: none; cursor: pointer;">確認下單</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
