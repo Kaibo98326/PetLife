@@ -11,7 +11,7 @@
       <!-- 新增房型表單 -->
       <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px">
         <h4>新增房型</h4>
-        <input type="text" id="inputRoomName" placeholder="房型名稱" />
+        <input type="text" id="inputRoomTypeName" placeholder="房型名稱" />
         <input type="number" id="inputRoomTypePrice" placeholder="價格" />
         <input type="text" id="inputRoomTypeDescription" placeholder="描述" />
         <input type="number" id="inputCapacity" placeholder="容量" />
@@ -63,7 +63,7 @@
       // C RoomTypes
       async function createRoomType() {
         const data = {
-          roomName: document.getElementById("inputRoomName").value,
+          roomName: document.getElementById("inputRoomTypeName").value,
           roomPrice: document.getElementById("inputRoomTypePrice").value,
           roomDescription: document.getElementById("inputRoomTypeDescription").value,
           capacity: document.getElementById("inputCapacity").value,

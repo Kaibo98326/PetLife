@@ -23,9 +23,11 @@
         <select id="inputRoomStatus">
           <option value="空房">空房</option>
           <option value="使用中">使用中</option>
-          <option value="維修中">維修中</option>
-          <option value="停用">停用</option>
+          <option value="預約中">預約中</option>
         </select>
+
+        <!-- 按鈕 -->
+        <button onclick="createRoom()">➕ 新增</button>
       </div>
 
       <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse">
@@ -45,24 +47,40 @@
     </div>
 
     <script>
+      // init
+      async function init() {
+        await loadRoomOptions(); // 下拉選單
+        await loadRooms();
+      }
+
+      // 載入房型 → 填入 <select> 下拉選單
+      async function loadRoomTypeOptions() {
+        const res = await fetch("/hotel/types/data");
+        const data = await res.json();
+        const select = document.getElementById("inputRoomTypeId");
+        data.forEach((type) => {
+          select.innerHTML += `<option value="${type.roomTypeId}">
+            ${type.roomName} (NT$${type.roomPrice})
+        </option>`;
+        });
+      }
+
       //取得所有房間 & 渲染tbody
       async function loadRooms() {
         const res = await fetch("/hotel/rooms/data");
-        const data = await res.json(); //這行是res轉成json?
+        //fetch() 回傳狀態碼、body(文字) => res
+        const data = await res.json();
+        // res 被 json parse(解析)成 JS物件(矩陣) => data
         const tbody = document.getElementById("roomsTableBody");
-        tbody.innerHTML = ""; //跟Vue的ref()一樣 創立一個空物件
+        tbody.innerHTML = "";
         data.forEach((room) => {
-          //<td>${type.roomTypeId}0${type.roomId} </td>
-          //希望顯示的是 101 102 203...
-          //然後能編輯的就只有roomStatus 希望可以用下拉是選單來選
-          //刪除不太確定
           tbody.innerHTML += `
-            <tr id="row-${type.roomId}" style="border-bottom: 1px solid black;">
-                <td>${type.roomTypeId}0${type.roomId} </td>
-                <td>${type.roomStatus}</td>
+            <tr id="row-${room.roomId}" style="border-bottom: 1px solid black;">
+                <td>${room.stayRoomType.roomTypeId}0${type.roomId} </td>
+                <td>${room.roomStatus}</td>
                 <td>
-                    <button onclick="editRow(${type.roomStatus})">✏️ 編輯</button>
-                    <button onclick="deleteRoom(${type.roomTypeId})">🗑️ 刪除</button>
+                    <button onclick="editRow(${room.roomStatus})">✏️ 編輯</button>
+                    <button onclick="deleteRoom(${room.roomId})">🗑️ 刪除</button>
                 </td>
             </tr>`;
         });
@@ -71,9 +89,60 @@
       // C Room
       async function createRoom() {
         const data = {
-          room,
+          stayRoomType: {
+            roomTypeId: document.getElementById("inputRoomTypeId").value,
+          },
+          roomStatus: document.getElementById("inputRoomStatus").value,
         };
+        await fetch("/hotel/rooms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // 告訴後端 這是JSON格式的資料
+          body: JSON.stringify(data),
+          // 把 data(JS物件) 轉成 JSON(文字物件) 才能放進 body
+        });
+        await loadRooms();
       }
+
+      // inline Eidt
+      function editRow(id, currentStatus) {
+        const row = document.getElementById(`row-${id}`);
+        row.innerHTML = `
+        <td>...</td>
+        <td>
+          <select id="edit-status">
+             <option value="空房"     ${currentStatus === "空房" ? "selected" : ""}>空房</option>
+             <option value="使用中"     ${currentStatus === "使用中" ? "selected" : ""}>使用中</option>
+             <option value="預約中"     ${currentStatus === "預約中" ? "selected" : ""}>預約中</option>
+          </select>
+        </td>
+        <td>
+            <button onclick="confirmEdit(${id})">✅ 確認</button>
+            <button onclick="loadRooms()">❌ 取消</button>
+        </td>`;
+      }
+
+      async function confirmEdit(id) {
+        const data = {
+          roomStatus: document.getElementById("edit-status").value,
+        };
+        await fetch(`/hotel/rooms/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRooms();
+      }
+
+      //soft delete
+      async function deleteRoom(id) {
+        const confirmed = confirm("停用此房間?");
+        if (iconfirmed) return;
+        await fetch(`/hotel/rooms/${id}`, { method: "DELETE" });
+        await loadRooms();
+      }
+
+      init();
     </script>
   </body>
 </html>
