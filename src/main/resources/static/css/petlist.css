@@ -1,0 +1,69 @@
+@charset "UTF-8";
+
+/* 寵物清單容器 */
+.order-container {
+    padding: 30px;
+    max-width: 95%;
+    margin: 20px auto;
+}
+
+header {
+    position: relative;
+    z-index: 100; /* 確保 header 在最上層 */
+    background-color: #ebb16b !important; /* 固定背景色 */
+}
+
+.order-container {
+    margin-top: 60px; /* 與 header 保持距離 */
+}
+
+
+
+/* 寵物卡片 */
+.order-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 500px;
+    min-height: 220px;      /* 卡片高度更大 */
+    display: flex;          /* 橫向排列 */
+    align-items: center;    /* 垂直置中 */
+    justify-content: space-between; /* 左中右分布 */
+}
+
+.pet-photo img {
+    border-radius: 8px;
+}
+
+.pet-info {
+    flex-grow: 1;           /* 中間區塊自動撐開 */
+    font-size: 1rem;
+}
+
+.pet-actions {
+    min-width: 140px;       /* 固定寬度，按鈕靠右 */
+}
+
+
+
+/* hover 效果 */
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 卡片內文字 */
+.order-card strong {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* row 排版 */
+.order-card .row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
