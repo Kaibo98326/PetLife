@@ -2,6 +2,8 @@ package com.petlife.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -44,6 +46,7 @@ public class Member {
 	@Column(name = "account_status")
 	private String accountStatus;
 	
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "register_time")
 	private LocalDateTime registerTime;
 	

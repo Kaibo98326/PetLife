@@ -1,5 +1,7 @@
 package com.petlife.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +57,28 @@ public class MemberServiceImpl implements IMemService{
         member.setPasswordHash(hashedPassword); // 直接更新，不做認證
         return save(member);
     }
+    
+    @Override
+    public String login(String email, String password) {
+        Member member = memberRepo.findByEmail(email).orElse(null);
+
+        if (member == null) {
+            return "notfound";
+        }
+        if ("disabled".equals(member.getAccountStatus())) {
+            return "disabled";
+        }
+        if ("deleted".equals(member.getAccountStatus())) {
+            return "deleted";
+        }
+        if (PasswordUtils.checkPassword(password, member.getPasswordHash())) {
+            member.setLastLogin(LocalDateTime.now());
+            memberRepo.save(member);
+            return "login_success";
+        }
+        return "wrongpassword";
+    }
+
 
 
 

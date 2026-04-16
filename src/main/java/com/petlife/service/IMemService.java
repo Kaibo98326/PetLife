@@ -17,4 +17,6 @@ public interface IMemService {
     Member findById(Integer id);
     //儲存會員
     Member save(Member member);
+    
+	String login(String email, String password);
 }

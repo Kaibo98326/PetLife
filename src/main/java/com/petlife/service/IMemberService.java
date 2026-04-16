@@ -7,13 +7,14 @@ import com.petlife.model.Member;
 public interface IMemberService {
 	
 	// 註冊會員
-    Member register(Member member);
+    String  register(Member member);
 
     // 登入會員
-    Member login(String email, String password);
+    String login(String email, String password);
 
     // 更新會員資料
-    Member update(Member member);
+    String updateMember(Integer id, Member updatedMember);
+
 
     // 軟刪除會員
     boolean softDelete(Integer memberId);
@@ -28,6 +29,6 @@ public interface IMemberService {
     // 查詢單一會員
     Member findById(Integer memberId);
 
-
+    Member findByEmail(String  email);
 
 }
