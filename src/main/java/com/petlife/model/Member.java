@@ -22,7 +22,8 @@ public class Member {
 	@Column(name = "member_id")
 	private Integer memberId;	//會員編號
 	
-	@Column(name = "member_name", nullable = false)
+
+	@Column(name = "member_name" ,nullable = false)
 	private String memberName;	//會員姓名
 	
 	private String phone;		//電話
@@ -30,20 +31,25 @@ public class Member {
 	@Column(nullable = false ,unique = true)
 	private String email;		//登入帳號(e-mail)
 	
-	@Column(name ="password_hash" , nullable = false)
+
+	@Column(name = "password_hash",nullable = false)
 	@JsonIgnore
 	private String passwordHash; //雜湊密碼
 	
 	private String address;
 	private String provider;
+
+
 	@Column(name = "provider_user_id")
 	private String providerUserId;
+
 	@Column(name = "account_status")
 	private String accountStatus;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "register_time")
 	private LocalDateTime registerTime;
+	
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLogin;
 	

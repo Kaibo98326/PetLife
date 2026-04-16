@@ -56,3 +56,67 @@ function initPetTableEvents() {
 	    };
 	});
 }
+/* --- 訂單管理專用邏輯 --- */
+
+/* --- 儲存功能修正版 --- */
+function handleOrderEdit(btn, orderId) {
+    const row = document.getElementById(`row-${orderId}`);
+    const fields = row.querySelectorAll('.edit-input-orange');
+    
+    if (btn.innerText === "修改") {
+        fields.forEach(f => f.disabled = false);
+        btn.innerText = "儲存";
+        btn.classList.replace("btn-orange-action", "btn-success");
+        row.style.backgroundColor = "#FFFDE7"; 
+    } else {
+        // 確保這兩行有抓到值
+        const status = row.querySelector('[data-field="orderStatus"]').value;
+        const payment = row.querySelector('[data-field="orderPayment"]').value;
+
+        // 使用絕對路徑 /api/...
+        fetch(`/api/order/updateOrder/${orderId}`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' 
+            },
+            body: JSON.stringify({ 
+                orderStatus: status, 
+                orderPayment: payment 
+            })
+        })
+        .then(res => {
+            if (res.ok) {
+                alert('修改成功！');
+                fields.forEach(f => f.disabled = true);
+                btn.innerText = "修改";
+                btn.classList.replace("btn-success", "btn-orange-action");
+                row.style.backgroundColor = ""; 
+            } else {
+                // 如果失敗，印出狀態碼看看是 403 (權限) 還是 400 (格式錯誤)
+                console.error("儲存失敗，狀態碼:", res.status);
+                alert('儲存失敗，狀態碼: ' + res.status);
+            }
+        })
+        .catch(err => console.error("Fetch 錯誤:", err));
+    }
+}
+
+/* --- 2. 處理刪除 --- */
+function handleOrderDelete(orderId) {
+    if (confirm(`確定要刪除訂單 #${orderId} 嗎？`)) {
+		fetch(`/api/order/deleteOrder/${orderId}`, {
+		    method: 'DELETE'
+		})
+        .then(res => {
+            if (res.ok) {
+                const row = document.getElementById(`row-${orderId}`);
+                row.style.opacity = "0";
+                setTimeout(() => row.remove(), 500);
+                alert('刪除成功');
+            } else {
+                alert('刪除失敗');
+            }
+        });
+    }
+}

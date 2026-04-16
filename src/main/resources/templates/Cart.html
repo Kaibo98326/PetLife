@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>petDB 購物車</title>
+<link rel="stylesheet" th:href="@{/css/cart.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+	<div class="cart-card">
+		<h2 class="cart-title">🛒 我的購物車</h2>
+
+		<table class="cart-table">
+			<thead>
+				<tr>
+					<th>商品名稱</th>
+					<th>單價</th>
+					<th>數量</th>
+					<th>小計</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="item : ${cartItems}">
+					<td style="text-align: left;" th:text="${item.productName}">商品名稱</td>
+					<td class="price-text" th:text="'$' + ${item.productPrice}">$0</td>
+					<td>
+						<button class="btn-qty"
+							th:onclick="'changeQty(' + ${item.itemId} + ', -1)'">-</button> <span
+						th:id="'qty-' + ${item.itemId}"
+						style="padding: 0 10px; font-weight: bold;"
+						th:text="${item.quantity}">1</span>
+
+						<button class="btn-qty"
+							th:onclick="'changeQty(' + ${item.itemId} + ', 1)'">+</button>
+					</td>
+					<td class="price-text" th:text="'$' + ${item.subtotal}">$0</td>
+					<td>
+						<button class="btn-del"
+							th:onclick="'deleteItem(' + ${item.itemId} + ')'">
+							<i class="fas fa-trash-can"></i> 刪除
+						</button>
+					</td>
+				</tr>
+
+				<tr th:if="${#lists.isEmpty(cartItems)}">
+					<td colspan="5" class="empty-msg">💡 目前購物車是空的喔！</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="total-section" th:if="${not #lists.isEmpty(cartItems)}">
+			總計金額：<span class="price-text" th:text="'$' + ${totalAmount}">$0</span>
+
+			<div
+				style="display: flex; justify-content: flex-end; gap: 10px; align-items: center; margin-top: 15px;">
+
+				<button type="button" class="btn-orange"
+					th:onclick="|location.href='@{/shop/index}'|"
+					style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
+					<i class="fa-solid fa-house" style="margin-right: 8px;"></i>返回首頁
+				</button>
+
+				<form th:action="@{/api/checkout/page}" method="GET"
+					style="margin: 0; display: flex;">
+
+					<input type="hidden" name="cartId"
+						th:value="${cartItems[0].cartId}">
+
+					<button type="submit" class="btn-orange"
+						style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
+						<i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i>前往結帳
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<form id="actionForm" th:action="@{/api/cart/update}" method="POST"
+		style="display: none;">
+		<input type="hidden" id="formItemId" name="itemId"> <input
+			type="hidden" id="formQty" name="quantity"> <input
+			type="hidden" id="formAction" name="action">
+	</form>
+
+	<script th:inline="javascript">
+		function changeQty(itemId, delta) {
+			// 直接從 HTML 元素中抓取目前的顯示數字
+			const qtySpan = document.getElementById('qty-' + itemId);
+			const currentQty = parseInt(qtySpan.innerText);
+
+			// 計算新數量
+			const newQty = currentQty + parseInt(delta);
+
+			// 防呆：如果數量小於 1，詢問是否刪除
+			if (newQty <= 0) {
+				deleteItem(itemId);
+				return;
+			}
+
+			// 將新數量填入隱藏表單並送出
+			document.getElementById('formItemId').value = itemId;
+			document.getElementById('formQty').value = newQty;
+			document.getElementById('formAction').value = 'update';
+			document.getElementById('actionForm').submit();
+		}
+
+		function deleteItem(itemId) {
+			if (confirm('確定要移除這項商品嗎？')) {
+				document.getElementById('formItemId').value = itemId;
+				document.getElementById('formQty').value = 0; // 數量不重要，因為後端判斷delete
+				document.getElementById('formAction').value = 'delete';
+				document.getElementById('actionForm').submit();
+			}
+		}
+	</script>
+</body>
+</html>

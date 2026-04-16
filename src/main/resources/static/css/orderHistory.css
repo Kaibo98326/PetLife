@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+/* 訂單頁面專用容器 */
+.order-container {
+	padding: 30px;
+	max-width: 95%; /* 視窗放大時，容器會佔滿 95% 寬度 */
+	margin: 20px auto;
+}
+
+/* 訂單卡片：長條型設計 */
+.order-card {
+	background-color: #ffffff;
+	border-radius: 12px;
+	padding: 25px 40px;
+	margin-bottom: 20px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
+}
+
+/* 懸停效果：滑鼠移上去時有微動感 */
+.order-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 卡片內文字標題顏色優化 */
+.order-card strong {
+	color: #555;
+	font-size: 0.9rem;
+}
+
+/* 確保 Bootstrap 的 row 在超寬螢幕下不會縮在一起 */
+.order-card .row {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+/* 狀態標籤樣式微調 */
+.badge {
+	padding: 8px 12px;
+	font-weight: 500;
+}

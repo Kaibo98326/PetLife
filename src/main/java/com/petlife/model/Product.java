@@ -1,6 +1,7 @@
 package com.petlife.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Data 							// 自動產生 Getter, Setter, toString, equals, hashCode
 @NoArgsConstructor 				// 自動產生無參數建構子
 @AllArgsConstructor 				// 自動產生全參數建構子
-
 public class Product implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -32,7 +32,7 @@ public class Product implements Serializable{
 	
 //商品價格
 	@Column(name = "product_price" , nullable = false)
-	private Integer productPrice;
+	private BigDecimal productPrice;
 	
 //商品描述
 	@Column(name = "product_description" , columnDefinition = "TEXT", length = 2000)
@@ -61,5 +61,40 @@ public class Product implements Serializable{
 //關聯分類名稱 (非資料庫欄位，用於 join 顯示)，使用 @Transient 告訴 JPA 這個欄位不需要持久化到資料庫
     @Transient
     private String categoryName;
-   
+
+    
+    // Getter / Setter
+    public Integer getProductId() { return productId; }
+    public void setProductId(Integer productId) { this.productId = productId; }
+
+    public Integer getCategoryId() { return categoryId; }
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
+
+    public BigDecimal getProductPrice() { return productPrice; }
+    public void setProductPrice(BigDecimal productPrice) { this.productPrice = productPrice; }
+
+    public String getProductDescription() { return productDescription; }
+    public void setProductDescription(String productDescription) { this.productDescription = productDescription; }
+
+    public String getProductImage() { return productImage; }
+    public void setProductImage(String productImage) { this.productImage = productImage; }
+
+    public Integer getProductStock() { return productStock; }
+    public void setProductStock(Integer productStock) { this.productStock = productStock; }
+
+    public Integer getLowStock() { return lowStock; }
+    public void setLowStock(Integer lowStock) { this.lowStock = lowStock; }
+
+    public String getStoragePosition() { return storagePosition; }
+    public void setStoragePosition(String storagePosition) { this.storagePosition = storagePosition; }
+
+    public Integer getProductStatus() { return productStatus; }
+    public void setProductStatus(Integer productStatus) { this.productStatus = productStatus; }
+
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>訂單成立 | PetLife</title>
+    <link rel="stylesheet" th:href="@{/css/OrderSuccess.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="success-container">
+        <div class="header-banner">
+            <h2><i class="fas fa-paw"></i> 訂單成立！感謝您的支持</h2>
+        </div>
+        
+        <div class="info-section">
+            <div class="section-title">📦 配送資訊</div>
+            <table class="info-table">
+                <tr>
+                    <td class="label">訂單編號</td>
+                    <td th:text="'#' + ${orderMain.orderId}" style="color:var(--pet-orange); font-weight:bold;"></td>
+                    <td class="label">成立時間</td>
+                    <td th:text="${orderMain.orderDate}"></td>
+                </tr>
+                <tr>
+                    <td class="label">收件人</td>
+                    <td th:text="${orderMain.orderName}"></td>
+                    <td class="label">配送地址</td>
+                    <td th:text="${orderMain.orderAddress}"></td>
+                </tr>
+            </table>
+
+            <div class="section-title">🛒 購買清單</div>
+            <table class="item-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding-left: 20px;">項目</th>
+                        <th>數量</th>
+                        <th style="text-align: right; padding-right: 20px;">小計</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${orderItems}">
+                        <td style="text-align: left; padding-left: 20px;" th:text="${item.productName}"></td>
+                        <td th:text="${item.quantity}"></td>
+                        <td style="text-align: right; padding-right: 20px; font-weight:bold;" th:text="'$ ' + ${item.subtotal}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-box">
+                <span style="font-weight: bold;">應付總額：</span>
+                <span class="total-price" th:text="'$ ' + ${orderMain.orderTotal}"></span>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a th:href="@{/shop/index}" class="btn-orange">回到首頁</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
