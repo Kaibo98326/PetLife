@@ -1,5 +1,7 @@
 package com.petlife.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +24,9 @@ public interface PetRepository extends JpaRepository<Pet, Integer>{
 	
 	// 查某會員的寵物，排除已刪除
     List<Pet> findByMemberMemberIdAndStatusNot(Integer memberId, String status);
-
+    
+    Page<Pet> findByPetName(String keyword , Pageable pageable);
+    
+    Page<Pet> findByMemberMemberId(Integer memberId, Pageable pageable);
 	
 }

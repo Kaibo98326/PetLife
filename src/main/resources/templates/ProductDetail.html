@@ -105,8 +105,9 @@
 			<div class="row g-5">
 				<div class="col-md-6">
 					<div class="main-image-wrapper">
-						<img th:src="@{/images/{img}(img=${product.productImage})}"
-							th:alt="${product.productName}" class="img-fluid rounded">
+						<img th:src="@{'/' + ${product.productImage}}"
+     						th:alt="${product.productName}" class="img-fluid rounded">
+ 	
 					</div>
 				</div>
 

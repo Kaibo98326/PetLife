@@ -14,6 +14,9 @@ header {
 }
 
 .order-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 30px;
     margin-top: 60px; /* 與 header 保持距離 */
 }
 
@@ -27,7 +30,8 @@ header {
     margin-bottom: 25px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    width: 500px;
+    max-width: 100%;
+    width: 100%;
     min-height: 220px;      /* 卡片高度更大 */
     display: flex;          /* 橫向排列 */
     align-items: center;    /* 垂直置中 */
@@ -35,15 +39,16 @@ header {
 }
 
 .pet-photo img {
-    border-radius: 8px;
+    flex: 0 0 25%;
 }
 
 .pet-info {
-    flex-grow: 1;           /* 中間區塊自動撐開 */
-    font-size: 1rem;
+     flex: 0 0 50% ;                 /* 中間區塊自動撐開 */
+    
 }
 
 .pet-actions {
+    flex: 0 0 20% ;
     min-width: 140px;       /* 固定寬度，按鈕靠右 */
 }
 
@@ -66,4 +71,23 @@ header {
     display: flex;
     align-items: center;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .order-card{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .pet-photo , .pet-info , .pet-actions{
+        flex: 0 0 100%;
+        text-align: left;
+        margin-bottom: 15px;
+    }
+    .pet-actions{
+        text-align: center;
+    
+    }
+
+
+
 }

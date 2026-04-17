@@ -8,6 +8,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,14 +52,14 @@ public class PetController {
 		
 		if(!file.isEmpty()) {
 			
-			String uploadDir = "src/main/resources/static/images/";
+			String uploadDir = "C:/uploads/images/pets/";
 			String fileName = UUID.randomUUID() +"_" + file.getOriginalFilename();
 			
 			Path path = Paths.get(uploadDir + fileName);
 			Files.createDirectories(path.getParent());
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			
-			pet.setPetPhoto("images/" + fileName);
+			pet.setPetPhoto("images/pets/" + fileName);
 		}
 		
 		pet.setStatus("active");
@@ -89,7 +91,7 @@ public class PetController {
 
 	
 	//修改寵物資料
-	@PostMapping("update/{id}")
+	@PostMapping("/update/{id}")
 	public String updatePet(@PathVariable Integer id,
 							@ModelAttribute Pet pet,
 							@RequestParam("file") MultipartFile file,
@@ -105,13 +107,13 @@ public class PetController {
 			existPet.setMedicalHistory(pet.getMedicalHistory());
 			
 			if(!file.isEmpty()) {
-				String uploadDir = "src/main/resources/static/images/";
+				String uploadDir = "C:/uploads/images/pets/";
 				String fileName = UUID.randomUUID() +"_" + file.getOriginalFilename();
 				Path path = Paths.get(uploadDir + fileName);
 				Files.createDirectories(path.getParent());
 				Files.copy(file.getInputStream(), path , StandardCopyOption.REPLACE_EXISTING);
 				
-				existPet.setPetPhoto("images/" + fileName);
+				existPet.setPetPhoto("images/pets/" + fileName);
 			}
 			
 			petService.savePet(existPet);
@@ -133,6 +135,69 @@ public class PetController {
 		}
 		return ResponseEntity.badRequest().body("刪除失敗");
 	}
+	
+	//員工端用搜尋所有寵物
+	// 寵物清單 (分頁)
+    @GetMapping("/admin/list")
+    public String petList(@RequestParam(defaultValue = "0") int page, Model m) {
+        int pageSize = 10;
+        Page<Pet> petPage = petService.getAllPets(page, pageSize);
+
+        m.addAttribute("petList", petPage.getContent());
+        m.addAttribute("currentPage", page);
+        m.addAttribute("totalPages", petPage.getTotalPages());
+
+        return "adminPetList :: listFragment";
+    }
+
+
+    
+    // 模糊查詢寵物名稱
+    @GetMapping("/admin/search")
+    public String searchPetByName(@RequestParam(value = "petName", required = false) String name,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  Model m) {
+        if (name == null || name.isBlank()) {
+            return petList(page, m);
+        }
+
+        int safePage = page < 0 ? 0 : page;
+        int pageSize = 10;
+
+        Page<Pet> petPage = petService.searchPetsByName(name, safePage, pageSize);
+
+        m.addAttribute("petList", petPage.getContent());
+        m.addAttribute("currentPage", safePage);
+        m.addAttribute("totalPages", petPage.getTotalPages());
+        m.addAttribute("searchKeyword", name);
+
+        return "adminPetList :: listFragment";
+    }
+    
+    // 查主人 ID 的寵物
+    @GetMapping("/admin/searchByMember")
+    public String searchPetByMember(@RequestParam(value = "memberId", required = false) Integer memberId,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    Model m) {
+        if (memberId == null) {
+            return petList(page, m);
+        }
+
+        int safePage = page < 0 ? 0 : page;
+        int pageSize = 10;
+
+        Page<Pet> petPage = petService.findPetsByMemberId(memberId, safePage, pageSize);
+
+        m.addAttribute("petList", petPage.getContent());
+        m.addAttribute("currentPage", safePage);
+        m.addAttribute("totalPages", petPage.getTotalPages());
+        m.addAttribute("searchMemberId", memberId);
+
+        return "adminPetList :: listFragment";
+    }
+
+	//後台新增寵物表單
+	
 	
 
 	

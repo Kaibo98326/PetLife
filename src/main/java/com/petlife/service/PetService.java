@@ -3,6 +3,9 @@ package com.petlife.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.petlife.model.Pet;
@@ -59,9 +62,19 @@ public class PetService {
 	}
 	
 	//模糊搜尋寵物名稱
-	public List<Pet> searchPetsByName(String keyword){
-		return petRepository.findByPetName(keyword);
+	public Page<Pet> searchPetsByName(String keyword ,int page , int size){
+		Pageable pageable = PageRequest.of(page, size);
+		
+		return petRepository.findByPetName(keyword , pageable); 
 	}
+	
+	//查詢主人ID的寵物(分頁)
+	public Page<Pet> findPetsByMemberId(Integer memberId, int page, int size) {
+	    Pageable pageable = PageRequest.of(page, size);
+	    return petRepository.findByMemberMemberId(memberId, pageable);
+	}
+
+
 	
 	//查詢某會員的所有有效寵物(排除軟刪除)
 	public List<Pet> findActivePetsByMemberId(Integer memberId){
@@ -79,7 +92,13 @@ public class PetService {
 		}
 		return false;
 	}
-
+	
+	
+	//後端分頁查詢所有寵物
+	public Page<Pet> getAllPets(int page , int size){
+		Pageable pageable = PageRequest.of(page, size);
+		return petRepository.findAll(pageable);
+	}
 
 	
 	

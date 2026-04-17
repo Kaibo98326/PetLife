@@ -29,42 +29,52 @@
 
         </h2>
         <!-- 如果沒有寵物 -->
-        <div th:if="${#lists.isEmpty(pets)}" class="text-center py-5">
-            <p>目前還沒有任何寵物紀錄喔！</p>
-            <a th:href="@{/pets/addForm}" class="btn btn-warning">新增寵物</a>
-        </div>
+        <div class="row">
+            <div th:if="${#lists.isEmpty(pets)}" class="text-center py-5">
+                <p>目前還沒有任何寵物紀錄喔！</p>
+                <a th:href="@{/pets/addForm/{memberId}(memberId=${memberId})}" class="btn btn-warning">新增寵物</a>
+            </div>
 
-        <!-- 有寵物清單 -->
-        <div th:unless="${#lists.isEmpty(pets)}">
-            <div th:each="pet : ${pets}" class="order-card d-flex align-items-center justify-content-between">
-                <!-- 左邊：寵物照片 -->
-                <div class="pet-photo">
-                    <img th:src="@{'/' + ${pet.petPhoto}}" alt="寵物照片" class="img-thumbnail" style="max-width:180px;">
-                </div>
+            <!-- 有寵物清單 -->
+            <div th:unless="${#lists.isEmpty(pets)}">
+                <div th:each="pet : ${pets}" class="card mb-3 shadow-sm">
+                    <div class="row g-0 align-items-center">
 
-                <!-- 中間：寵物資訊 -->
-                <div class="pet-info flex-grow-1 px-4">
-                    <p><strong>名稱：</strong><span th:text="${pet.petName}"></span></p>
-                    <p><strong>品種：</strong><span th:text="${pet.breed}"></span></p>
-                    <p><strong>種類：</strong><span th:text="${pet.species}"></span></p>
-                    <p><strong>年齡：</strong><span th:text="${pet.age}"></span></p>
-                    <p><strong>體重(kg)：</strong><span th:text="${pet.weight}"></span></p>
-                    <p><strong>備註：</strong><span th:text="${pet.medicalHistory}"></span></p>
-                </div>
+                        <!-- 左邊：寵物照片 -->
+                        <div class="col-auto">
+                            <img th:src="@{'/' + ${pet.petPhoto}}" alt="寵物照片" class="img-fluid rounded-start"
+                                style="max-width:220px;">
+                        </div>
 
-                <!-- 右邊：操作按鈕 -->
-                <div class="pet-actions text-end">
-                    <div class="btn-group">
-                        <button class="btn btn-primary btn-sm px-3 fw-bold shadow-sm"
-                            th:onclick="|window.location.href='@{/pets/edit/{id}(id=${pet.petId})}'|">
-                            修改
-                        </button>
-                        <button class="btn btn-danger btn-sm px-3 fw-bold shadow-sm"
-                            th:onclick="|deletePet(${pet.petId}, ${pet.member.memberId})|">
-                            刪除
-                        </button>
+                        <!-- 中間：寵物資訊 -->
+                        <div class="col">
+                            <div class="card-body">
+                                <p><strong>名稱：</strong><span th:text="${pet.petName}"></span></p>
+                                <p><strong>品種：</strong><span th:text="${pet.breed}"></span></p>
+                                <p><strong>種類：</strong><span th:text="${pet.species}"></span></p>
+                                <p><strong>年齡：</strong><span th:text="${pet.age}"></span></p>
+                                <p><strong>體重(kg)：</strong><span th:text="${pet.weight}"></span></p>
+                                <p><strong>備註：</strong><span th:text="${pet.medicalHistory}"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- 右邊：操作按鈕 -->
+                        <div class="col-auto text-end pe-3">
+                            <div class="btn-group-vertical">
+                                <button class="btn btn-primary btn-sm fw-bold shadow-sm"
+                                    th:onclick="|window.location.href='@{/pets/edit/{id}(id=${pet.petId})}'|">
+                                    修改
+                                </button>
+                                <button class="btn btn-danger btn-sm fw-bold shadow-sm"
+                                    th:onclick="|deletePet(${pet.petId}, ${pet.member.memberId})|">
+                                    刪除
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </section>
