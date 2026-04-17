@@ -1,0 +1,113 @@
+/*  優惠活動管理系統 專屬樣式表 (discount.css) */
+@charset "UTF-8";
+
+/* 深色統計數據列 (外層容器) */
+.stats-bar-dark { 
+    background-color: #212529; /* 深灰色背景 */
+    color: #fff;               /* 白色文字 */
+    padding: 10px 25px;        /* 內邊距：上下 10px，左右 25px */
+    border-radius: 6px;        /* 邊框圓角 6px */
+    display: flex;             /* 使用 Flexbox 彈性排版 */
+    justify-content: flex-end; /* 內容統一靠右對齊 */
+    align-items: center;       /* 垂直居中對齊 */
+    gap: 30px;                 /* 內部每個數據項目之間的間距為 30px */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* 底部加上輕微陰影，增加立體感 */
+}
+
+/* 單個統計數據項目 (容器) */
+.stats-item { 
+    display: flex;             /* 使用 Flexbox 排版 */
+    flex-direction: column;    /* 垂直排列 (上標題、下數值) */
+    text-align: left;          /* 文字靠左對齊 */
+}
+
+/* 統計項目的副標題 / 說明文字 */
+.stats-item span { 
+    font-size: 0.75rem;        /* 字體稍小 */
+    color: #aaa;               /* 淺灰色文字，降低視覺比重 */
+    margin-bottom: 2px;        /* 與下方的數值保持 2px 的距離 */
+}
+
+/* 統計項目的主要數值 */
+.stats-item strong { 
+    font-size: 1.1rem;         /* 字體較大，突出重點 */
+    font-weight: normal;       /* 雖然使用 strong 標籤，但取消粗體效果 */
+    letter-spacing: 1px;       /* 增加字元間距，讓數字更好閱讀 */
+}
+
+
+/* =========================================
+   深色篩選下拉選單區塊 (Filter Dropdown)
+========================================= */
+
+/* 下拉選單外層容器 (浮動視窗) */
+.dark-filter-dropdown { 
+    width: 450px;              /* 固定選單寬度為 450px */
+    background-color: #1e1e1e; /* 極深的背景色 */
+    color: #eee;               /* 接近白色的文字 */
+    border: 1px solid #444;    /* 深灰色邊框 */
+    padding: 20px;             /* 內部四周留白 20px */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6); /* 較強烈的陰影，凸顯它在最上層 */
+    z-index: 1050;             /* 設定很高的層級，確保不會被其他元素遮擋 */
+}
+
+/* 下拉選單中的區塊標題 */
+.dark-filter-dropdown .filter-title { 
+    font-size: 0.9rem;         /* 字體大小適中 */
+    color: #ccc;               /* 灰色文字 */
+    margin-bottom: 8px;        /* 底部與下方內容保持距離 */
+}
+
+/* 篩選用的按鈕 (未選取狀態) */
+.dark-btn { 
+    background-color: transparent; /* 背景透明 */
+    color: #aaa;               /* 灰色文字 */
+    border: 1px solid #555;    /* 深灰邊框 */
+    padding: 5px 15px;         /* 控制按鈕的大小 (內邊距) */
+    font-size: 0.8rem;         /* 較小的字體 */
+    border-radius: 4px;        /* 微圓角 */
+    margin-right: 5px;         /* 右側間隔 (讓並排的按鈕分開) */
+    margin-bottom: 10px;       /* 底部間隔 (當按鈕多到換行時使用) */
+    transition: 0.2s;          /* 設定 0.2秒 的漸變動畫時間，讓游標移入時更順暢 */
+}
+
+/* 篩選按鈕的滑鼠懸停 (hover) 與 已選取狀態 (active) */
+.dark-btn:hover, .dark-btn.active { 
+    border-color: #fff;        /* 邊框變亮為白色 */
+    color: #fff;               /* 文字也變亮為白色，凸顯互動感 */
+}
+
+
+/* =========================================
+   狀態指示燈區塊 (Status Dot)
+========================================= */
+
+/* 基礎圓點樣式 (用於文字旁邊的小點點) */
+.status-dot { 
+    display: inline-block;     /* 允許設定長寬，且可以和文字並行在同一行 */
+    width: 8px;                /* 寬 8px */
+    height: 8px;               /* 高 8px */
+    border-radius: 50%;        /* 設定 50% 圓角，變成正圓形 */
+    margin-right: 5px;         /* 與右邊的文字隔開 5px */
+}
+
+/* 各種圓點顏色定義 (可搭配 .status-dot 使用) */
+.bg-red { background-color: #ff4d4f; }       /* 紅色：通常代表錯誤或失敗 */
+.bg-green { background-color: #52c41a; }     /* 綠色：通常代表成功或運行中 */
+.bg-yellow { background-color: #fadb14; }    /* 黃色：通常代表警告或處理中 */
+.bg-white-dot { background-color: #fff; }    /* 白色：一般中性狀態 */
+
+
+/* =========================================
+   日期輸入框區塊 (Date Input)
+========================================= */
+
+/* 深色日期輸入框 */
+.date-input-dark { 
+    background-color: #333;    /* 深灰色背景 */
+    border: 1px solid #555;    /* 邊框顏色 */
+    color: #fff;               /* 輸入的文字顯示為白色 */
+    padding: 2px 5px;          /* 內部些微留白 */
+    border-radius: 3px;        /* 輕微圓角 */
+    font-size: 0.8rem;         /* 字體大小 */
+}

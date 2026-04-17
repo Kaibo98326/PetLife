@@ -2,29 +2,234 @@
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    
+    <link rel="stylesheet" th:href="@{/css/discount.css}">
+    
 </head>
 <body>
-    <div class="d-flex justify-content-center align-items-center mt-5" style="gap: 3rem;">
-        
-        <div class="card text-center shadow-sm border-0" 
-             style="width: 350px; padding: 3rem 1.5rem; border-radius: 15px; cursor: pointer; transition: transform 0.2s;"
-             onmouseover="this.style.transform='scale(1.05)'" 
-             onmouseout="this.style.transform='scale(1)'"
-             onclick="loadContent('活動建檔與維護', 'discountAdd')"> <div style="font-size: 5rem; margin-bottom: 1.5rem;">📝</div>
-            <h4 class="fw-bold mb-3">活動建檔與維護</h4>
-            <p class="text-muted" style="font-size: 0.95rem;">新增、修改與刪除優惠活動資料</p>
+    <div class="container-fluid py-3">
+
+        <div id="listView">
+            <div class="d-flex justify-content-end mb-2">
+                <div class="stats-bar-dark">
+                    <div class="stats-item">
+                        <span>總活動數</span>
+                        <strong id="totalCount">0</strong>
+                    </div>
+                    <div class="stats-item">
+                        <span>搜尋結果</span>
+                        <strong id="searchCount">0</strong>
+                    </div>
+                    <div class="stats-item">
+                        <span>最後更新</span>
+                        <strong id="lastUpdateTime">--:--:--</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex gap-2 position-relative">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 搜尋活動名稱..." style="width: 250px;" onkeyup="handleSearch()">
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            進階篩選條件
+                        </button>
+                        <div class="dropdown-menu dark-filter-dropdown mt-2">
+                            <div class="d-flex justify-content-between border-bottom border-secondary pb-2 mb-3">
+                                <span>進階篩選條件</span>
+                                <span class="text-muted" style="cursor: pointer;" onclick="document.querySelector('.dropdown-toggle').click()">[ X ]</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="filter-title">活動狀態 (Status)</div>
+                                <button class="dark-btn active">全部</button>
+                                <button class="dark-btn"><span class="status-dot bg-red"></span>已停用</button>
+                                <button class="dark-btn"><span class="status-dot bg-green"></span>進行中</button>
+                                <button class="dark-btn"><span class="status-dot bg-yellow"></span>即將開始</button>
+                                <button class="dark-btn"><span class="status-dot bg-white-dot"></span>已結束</button>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="filter-title">活動類型 (Type)</div>
+                                <button class="dark-btn active">全部</button>
+                                <button class="dark-btn">滿額折扣</button>
+                                <button class="dark-btn">百分比</button>
+                                <button class="dark-btn">買 N 送 M</button>
+                                <button class="dark-btn">滿件組合</button>
+                                <button class="dark-btn">條件加購</button>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="filter-title">參與資格 (Eligibility)</div>
+                                <button class="dark-btn active">全部</button>
+                                <button class="dark-btn">會員專屬</button>
+                                <button class="dark-btn">一般</button>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="filter-title">活動期間 (Period)</div>
+                                <div>
+                                    [ 📅 <input type="date" class="date-input-dark"> ] 
+                                    <span class="mx-2 text-muted">~</span> 
+                                    [ 📅 <input type="date" class="date-input-dark"> ]
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between border-top border-secondary pt-3">
+                                <span class="text-muted" style="cursor:pointer;">[ 🗑️ 清除條件 ]</span>
+                                <span class="text-info" style="cursor:pointer;" onclick="document.querySelector('.dropdown-toggle').click()">[ 🔍 套用 ]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success fw-bold" onclick="openAddModal()">
+                    ➕ 新增活動
+                </button>
+            </div>
+
+            <div class="table-responsive bg-white rounded shadow-sm border p-3">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>編號</th>
+                            <th>狀態</th>
+                            <th>活動名稱</th>
+                            <th>折扣類別</th>
+                            <th>活動期間</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="card text-center shadow-sm border-0" 
-             style="width: 350px; padding: 3rem 1.5rem; border-radius: 15px; cursor: pointer; transition: transform 0.2s;"
-             onmouseover="this.style.transform='scale(1.05)'" 
-             onmouseout="this.style.transform='scale(1)'"
-             onclick="loadContent('活動查詢與管理', 'discountSearch')"> <div style="font-size: 5rem; margin-bottom: 1.5rem;">🔍</div>
-            <h4 class="fw-bold mb-3">活動查詢與管理</h4>
-            <p class="text-muted" style="font-size: 0.95rem;">透過多重條件搜尋與檢視活動狀態</p>
+        <div class="modal fade" id="formModal" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl"> 
+                <div class="modal-content">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold" id="formModalTitle">✨ 新增優惠活動</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <ul class="nav nav-tabs px-4 pt-3 bg-light" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active fw-bold" id="rules-tab" data-bs-toggle="tab" data-bs-target="#rules" type="button">📜 活動規則</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link fw-bold" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button">📦 適用商品清單</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content p-4">
+                            <div class="tab-pane fade show active" id="rules">
+                                <form id="activityForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label class="form-label text-muted">狀態 <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="status" required>
+                                                <option value="active">啟用</option>
+                                                <option value="inactive">停用</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label class="form-label text-muted">活動名稱 <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="discount_name" maxlength="100" required placeholder="請輸入活動名稱 (最多 100 字)">
+                                            <div id="nameError" class="text-danger small mt-1" style="display:none;">請填寫活動名稱！</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">折扣類型 <span class="text-danger">*</span></label>
+                                        <select class="form-select border-primary" id="discount_type_id" required onchange="renderDynamicFields()">
+                                            <option value="" selected disabled>請選擇折扣類型</option>
+                                            <option value="1">百分比折扣 (打折)</option>
+                                            <option value="2">滿額折扣 (折現)</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="dynamicFieldsArea" class="p-3 bg-light rounded mb-3 border" style="display:none;">
+                                        <div class="row align-items-end">
+                                            <div class="col-md-4">
+                                                <label class="form-label text-muted">最低消費金額 (<span id="minAmountType">元</span>)</label>
+                                                <input type="number" class="form-control" id="minimum_purchase_amount" min="0" step="1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold" id="valueLabel">折扣值</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" id="discount_value" min="0" step="1" required>
+                                                    <span class="input-group-text" id="valueAddon"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="is_member">
+                                                    <label class="form-check-label fw-bold">限定會員專屬</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted mt-2 d-block" id="valueHint"></small>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted">開始日期 <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" id="start_date" required onchange="updateEndDateMin()">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted">結束日期 <span class="text-danger">*</span></label>
+                                            <input type="date" class="form-control" id="end_date" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label text-muted">活動描述 <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="discount_description" rows="3" maxlength="500" required oninput="updateCharCount()"></textarea>
+                                        <div class="text-end small text-muted mt-1"><span id="charCount">0</span> / 500</div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="products">
+                                <div class="alert alert-info border-0 shadow-sm">
+                                    ℹ️ 未來將在此處新增商品關聯列表 (主商品與加購品)。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary px-4" id="saveBtn" onclick="saveActivity()">儲存並發布</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="viewModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold">👁️ 活動詳情 </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <tr><th width="20%" class="bg-light">活動名稱</th><td id="v_name"></td></tr>
+                            <tr><th class="bg-light">狀態</th><td id="v_status"></td></tr>
+                            <tr><th class="bg-light">活動期間</th><td id="v_period"></td></tr>
+                            <tr><th class="bg-light">折扣設定</th><td id="v_discount"></td></tr>
+                            <tr><th class="bg-light">活動描述</th><td id="v_desc"></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
+
+    <script th:src="@{/js/discount.js}"></script>
 </body>
-</html>
 </html>
