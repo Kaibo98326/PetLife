@@ -38,7 +38,7 @@ public class StayRoomService {
 	    return stayRoomRepository.findById(stayRoomId)
 	            .map(room -> {	                
 	                // 步驟二：把狀態設為「停用」
-	                room.setRoomStatus("停用中");
+	                room.setRoomStatus("停用");
 	                // 步驟三：存回資料庫
 	                stayRoomRepository.save(room);
 	                return true;  // 成功
