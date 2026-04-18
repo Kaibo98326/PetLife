@@ -21,7 +21,7 @@
 
         <!-- 房間狀態 -->
         <select id="inputRoomStatus">
-          <option value="空房">空房</option>
+          <option value="可入住">可入住</option>
           <option value="使用中">使用中</option>
           <option value="預約中">預約中</option>
         </select>
@@ -49,7 +49,7 @@
     <script>
       // init
       async function init() {
-        await loadRoomOptions(); // 下拉選單
+        await loadRoomTypeOptions(); // 下拉選單
         await loadRooms();
       }
 
@@ -58,9 +58,9 @@
         const res = await fetch("/hotel/types/data");
         const data = await res.json();
         const select = document.getElementById("inputRoomTypeId");
-        data.forEach((type) => {
-          select.innerHTML += `<option value="${type.roomTypeId}">
-            ${type.roomName} (NT$${type.roomPrice})
+        data.forEach((room) => {
+          select.innerHTML += `<option value="${room.roomTypeId.roomTypeId}">
+            ${room.roomName} (NT$${room.roomPrice})
         </option>`;
         });
       }
@@ -76,10 +76,12 @@
         data.forEach((room) => {
           tbody.innerHTML += `
             <tr id="row-${room.roomId}" style="border-bottom: 1px solid black;">
-                <td>${room.stayRoomType.roomTypeId}0${type.roomId} </td>
+                <td>${room.roomId}</td>
+                <td>${room.stayRoomType.roomTypeId}0${room.roomId} </td>
+                <td>${room.stayRoomType.roomPrice}</td>
                 <td>${room.roomStatus}</td>
                 <td>
-                    <button onclick="editRow(${room.roomStatus})">✏️ 編輯</button>
+                    <button onclick="editRow(${room.roomId},${room.roomStatus})">✏️ 編輯</button>
                     <button onclick="deleteRoom(${room.roomId})">🗑️ 刪除</button>
                 </td>
             </tr>`;
@@ -111,7 +113,7 @@
         <td>...</td>
         <td>
           <select id="edit-status">
-             <option value="空房"     ${currentStatus === "空房" ? "selected" : ""}>空房</option>
+             <option value="可入住"     ${currentStatus === "可入住" ? "selected" : ""}>可入住</option>
              <option value="使用中"     ${currentStatus === "使用中" ? "selected" : ""}>使用中</option>
              <option value="預約中"     ${currentStatus === "預約中" ? "selected" : ""}>預約中</option>
           </select>
@@ -137,7 +139,7 @@
       //soft delete
       async function deleteRoom(id) {
         const confirmed = confirm("停用此房間?");
-        if (iconfirmed) return;
+        if (!confirmed) return;
         await fetch(`/hotel/rooms/${id}`, { method: "DELETE" });
         await loadRooms();
       }
