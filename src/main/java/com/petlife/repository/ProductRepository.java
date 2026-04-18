@@ -31,4 +31,16 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT COUNT(p) FROM Product p WHERE p.productName LIKE %:kw%")
     long countByKeyword(@Param("kw") String keyword);
+    
+
+//===== 庫存預警查詢 ======================================================================================
+    
+    @Query("SELECT p FROM Product p WHERE p.productStock <= p.lowStock ORDER BY p.productId DESC")
+    Page<Product> findLowStock(Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.productStock <= p.lowStock")
+    long countLowStock();
+    
 }
+
+

@@ -1,5 +1,5 @@
 <div class="category-wrapper" style="padding: 15px;">
-<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+	<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
 	<div class="card-panel">
 		<div class="page-title-area">
 			<div class="title-decorator"></div>
@@ -8,6 +8,13 @@
 
 		<div class="toolbar">
 			<button class="btn-main" onclick="openAddProduct()">＋ 新增商品</button>
+			<div class="warning-badge-wrapper"
+				style="display: inline-block; position: relative; margin-left: 10px;">
+				<button class="btn-warning" onclick="filterLowStock()">
+					庫存警告</button>
+				<span id="lowStockBadge" class="badge-danger"
+					th:if="${lowStockCount > 0}" th:text="${lowStockCount}">0</span>
+			</div>
 			<div class="search-box">
 				<input type="text" id="ajaxSearchInput" th:value="${searchKeyword}"
 					placeholder="搜尋商品名稱...">
@@ -19,19 +26,42 @@
 		<table class="custom-table">
 			<thead>
 				<tr>
-					<th width="8%">編號</th>
-					<th width="35%">商品名稱</th>
-					<th width="12%">價格</th>
-					<th width="10%">庫存</th>
-					<th width="15%">分類</th>
-					<th width="20%">操作</th>
+					<th width="8%">狀態</th>
+					<th width="8%">商品</th>
+					<th width="32%">商品名稱</th>
+					<th width="14%">價格</th>
+					<th width="8%">庫存</th>
+					<th width="12%">分類</th>
+					<th width="18%">操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="p : ${productList}">
-					<td th:text="${p.productId}"
-						style="color: #999; text-align: center;"></td>
-					<td class="product-name-td" th:text="${p.productName}"></td>
+					<td style="text-align: center;"><span
+						th:if="${p.productStatus == 1}" class="status-badge status-on">上架中</span>
+						<span th:unless="${p.productStatus == 1}"
+						class="status-badge status-off">已下架</span></td>
+					<td style="text-align: center;">
+						<div class="list-img-container">
+							<img th:if="${not #strings.isEmpty(p.productImage)}"
+								th:src="@{/images/{img}(img=${p.productImage})}"
+								class="list-thumb-mini">
+
+							<div class="img-hover-preview">
+								<img th:src="@{/images/{img}(img=${p.productImage})}" />
+								<div class="hover-caption" th:text="${p.productName}"></div>
+							</div>
+
+							<span th:unless="${not #strings.isEmpty(p.productImage)}"
+								class="no-img-text">無圖</span>
+						</div>
+					</td>
+					<td class="product-name-td">
+						<div class="name-with-id">
+							<span class="product-id-tag" th:text="'#' + ${p.productId}"></span>
+							<span class="main-name-text" th:text="${p.productName}"></span>
+						</div>
+					</td>
 					<td style="text-align: center;"><span class="price-text"
 						th:text="'$' + ${p.productPrice}"></span></td>
 					<td style="text-align: center;" th:text="${p.productStock}"></td>
@@ -109,63 +139,102 @@
 
 	// 4. 搜尋功能 (補上原本漏掉的部分)
 	function executeAjaxSearch() {
-    var keyword = $('#ajaxSearchInput').val();
-    var url = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+		var keyword = $('#ajaxSearchInput').val();
+		var url = /*[[@{/innerProduct/list}]]*/'/innerProduct/list';
 
-    console.log("正在執行搜尋，關鍵字為：" + keyword);
+		console.log("正在執行搜尋，關鍵字為：" + keyword);
 
-    // 💡 關鍵修正：
-    // 1. 統一使用網址拼接 (?...)，強制瀏覽器發送 GET 請求。
-    // 2. 參數名必須是 searchKeyword (對應你 Controller 的 @RequestParam)。
-    // 3. 加上 _t 防止瀏覽器讀取舊快取。
-    var fullUrl = url + "?searchKeyword=" + encodeURIComponent(keyword) + "&_t=" + new Date().getTime();
+		// 💡 關鍵修正：
+		// 1. 統一使用網址拼接 (?...)，強制瀏覽器發送 GET 請求。
+		// 2. 參數名必須是 searchKeyword (對應你 Controller 的 @RequestParam)。
+		// 3. 加上 _t 防止瀏覽器讀取舊快取。
+		var fullUrl = url + "?searchKeyword=" + encodeURIComponent(keyword)
+				+ "&_t=" + new Date().getTime();
 
-    $('#contentBody').load(fullUrl, function(response, status, xhr) {
-        if (status === "error") {
-            console.error("搜尋失敗，錯誤碼：" + xhr.status);
-            alert("搜尋出錯了，請檢查網路連線。");
-        }
-    });
-}
+		$('#contentBody').load(fullUrl, function(response, status, xhr) {
+			if (status === "error") {
+				console.error("搜尋失敗，錯誤碼：" + xhr.status);
+				alert("搜尋出錯了，請檢查網路連線。");
+			}
+		});
+	}
 
 	// 5. 分頁切換 (修正後的 GET 版本)
 	function changePage(page) {
-	    var keyword = $('#ajaxSearchInput').val();
-	    var url = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
-	    
-	    console.log("正在切換分頁，目標頁碼：" + page);
+		var keyword = $('#ajaxSearchInput').val();
+		var url = /*[[@{/innerProduct/list}]]*/'/innerProduct/list';
 
-	    // 💡 關鍵：將參數全部拼在網址後面 (?...)，這樣 jQuery 就會乖乖發送 GET
-	    // 同時確保參數名 searchKeyword 與 Controller 一致
-	    var fullUrl = url + "?cp=" + page + "&searchKeyword=" + encodeURIComponent(keyword) + "&_t=" + new Date().getTime();
+		console.log("正在切換分頁，目標頁碼：" + page);
 
-	    $('#contentBody').load(fullUrl, function(response, status, xhr) {
-	        if (status === "error") {
-	            console.error("分頁切換失敗，錯誤碼：" + xhr.status);
-	            alert("分頁載入失敗，請稍後再試。");
-	        }
-	    });
+		// 💡 關鍵：將參數全部拼在網址後面 (?...)，這樣 jQuery 就會乖乖發送 GET
+		// 同時確保參數名 searchKeyword 與 Controller 一致
+		var fullUrl = url + "?cp=" + page + "&searchKeyword="
+				+ encodeURIComponent(keyword) + "&_t=" + new Date().getTime();
+
+		$('#contentBody').load(fullUrl, function(response, status, xhr) {
+			if (status === "error") {
+				console.error("分頁切換失敗，錯誤碼：" + xhr.status);
+				alert("分頁載入失敗，請稍後再試。");
+			}
+		});
 	}
 
 	// 6. 刷新列表 (修正 405 錯誤專用版)
 	function refreshProductList() {
-	    console.log("正在刷新列表...");
+		console.log("正在刷新列表...");
+
+		// 💡 取得基礎路徑
+		var baseUrl = /*[[@{/innerProduct/list}]]*/'/innerProduct/list';
+
+		// 💡 將參數直接拼接到網址後方，強制 jQuery 使用 GET
+		var fullUrl = baseUrl + "?searchKeyword=&cp=1&_t="
+				+ new Date().getTime();
+
+		$('#contentBody').load(fullUrl, function(response, status, xhr) {
+			if (status === "success") {
+				console.log("列表刷新成功 ✅");
+			} else {
+				console.error("刷新失敗，錯誤碼：" + xhr.status);
+				// 如果還是 405，代表你的 Controller 可能有其他限制
+			}
+		});
+	}
+	
+	//  	7. 庫存警告篩選功能
+	function filterLowStock() {
+	    console.log("執行庫存警告篩選...");
+	    var url = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
 	    
-	    // 💡 取得基礎路徑
-	    var baseUrl = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
-	    
-	    // 💡 將參數直接拼接到網址後方，強制 jQuery 使用 GET
-	    var fullUrl = baseUrl + "?searchKeyword=&cp=1&_t=" + new Date().getTime();
-	    
+	    // 💡 傳送 lowStock=true 參數給後端
+	    var fullUrl = url + "?lowStock=true&cp=1&_t=" + new Date().getTime();
+
 	    $('#contentBody').load(fullUrl, function(response, status, xhr) {
-	        if (status === "success") {
-	            console.log("列表刷新成功 ✅");
-	        } else {
-	            console.error("刷新失敗，錯誤碼：" + xhr.status);
-	            // 如果還是 405，代表你的 Controller 可能有其他限制
+	        if (status === "error") {
+	            alert("篩選失敗，請稍後再試。");
 	        }
 	    });
 	}
 
+	//	8. 同步左邊menu欄數字的函數
+	function updateSidebarBadge() {
+	    var url = /*[[@{/innerProduct/api/lowStockCount}]]*/ '/innerProduct/api/lowStockCount';
+	    
+	    $.get(url, function(count) {
+	        // 找到側邊欄的兩個元素 (注意：因為是在 iframe 或局部加載中，直接用 $ 即可抓到主頁面元素)
+	        const badgeNum = $('#sidebarLowStockBadge');
+	        const badgeWarn = $('#sidebarLowStockWarn');
+	        
+	        if (count > 0) {
+	            // 如果還有警告，更新數字並顯示 (防止原本是隱藏的)
+	            badgeNum.text(count).show();
+	            badgeWarn.show();
+	        } else {
+	            // 如果數量歸零，直接隱藏
+	            badgeNum.hide();
+	            badgeWarn.hide();
+	        }
+	    });
+	}
+	
 	console.log("商品管理邏輯已啟動完成！✅");
 </script>

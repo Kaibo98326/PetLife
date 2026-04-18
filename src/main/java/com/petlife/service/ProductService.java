@@ -60,4 +60,20 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page - 1, size);
         return productRepository.searchByName(keyword, pageable);
     }
+    
+//===== 獲取低庫存商品清單 =========================================================================
+
+    @Transactional(readOnly = true)
+    public Page<Product> getLowStockProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return productRepository.findLowStock(pageable);
+    }
+
+//===== 獲取低庫存商品總數 ===============================================================================
+
+    @Transactional(readOnly = true)
+    public long getLowStockCount() {
+        return productRepository.countLowStock();
+    }    
+    
 }
