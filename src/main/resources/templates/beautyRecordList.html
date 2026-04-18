@@ -1,0 +1,180 @@
+<div class="beauty-embed">
+    <h1>美容預約管理</h1>
+
+    <div class="beauty-err" th:if="${error}" th:text="${error}"></div>
+
+    <fieldset>
+        <legend>查詢</legend>
+        <form action="/admin/beauty/record/list" method="get"
+              onsubmit="event.preventDefault(); event.stopPropagation(); return beautyLoadContentByUrl('美容預約管理', this.action + '?' + new URLSearchParams(new FormData(this)).toString(), 'groomingRecord');">
+            <label for="searchPetId">寵物編號</label>
+            <input type="number" id="searchPetId" name="searchPetId" th:value="${searchPetId}">
+
+            <label for="searchBeautyId">美容項目</label>
+            <select id="searchBeautyId" name="searchBeautyId">
+                <option value="">全部</option>
+                <option th:each="item : ${beautyItems}"
+                        th:value="${item.beautyId}"
+                        th:text="|${item.beautyId} - ${item.itemName}|"
+                        th:selected="${searchBeautyId != null and searchBeautyId == item.beautyId}"></option>
+            </select>
+
+            <label for="searchStatus">狀態</label>
+            <select id="searchStatus" name="searchStatus">
+                <option value="">全部</option>
+                <option value="預約中" th:selected="${searchStatus == '預約中'}">預約中</option>
+                <option value="已完成" th:selected="${searchStatus == '已完成'}">已完成</option>
+                <option value="已取消" th:selected="${searchStatus == '已取消'}">已取消</option>
+            </select>
+
+            <p class="beauty-btns">
+                <button type="submit">查詢</button>
+                <button type="button"
+                        onclick="return beautyLoadContentByUrl('美容預約管理', '/admin/beauty/record/list', 'groomingRecord');">
+                    清除
+                </button>
+                <button type="button"
+                        onclick="return beautyLoadContentByUrl('新增美容預約', '/admin/beauty/record/add', 'groomingRecord');">
+                    新增
+                </button>
+            </p>
+        </form>
+    </fieldset>
+
+    <h2>列表</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>紀錄編號</th>
+            <th>寵物</th>
+            <th>日期</th>
+            <th>時段</th>
+            <th>項目</th>
+            <th>體型</th>
+            <th>價格</th>
+            <th>狀態</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(recordList)}">
+            <td colspan="9">查無資料</td>
+        </tr>
+        <tr th:each="record : ${recordList}">
+            <td th:text="${record.recordId}"></td>
+            <td th:text="${record.petId}"></td>
+            <td th:text="${record.beautyDate}"></td>
+            <td th:text="${record.beautySlot}"></td>
+            <td th:text="${record.itemName}"></td>
+            <td th:text="${record.petSize}"></td>
+            <td th:text="${record.itemPrice}"></td>
+            <td th:text="${record.status}"></td>
+            <td>
+                <p class="beauty-btns">
+                    <button type="button"
+                            th:attr="onclick=|return beautyLoadContentByUrl('修改美容預約','/admin/beauty/record/edit?id=${record.recordId}','groomingRecord');|">
+                        修改
+                    </button>
+                    <button type="button"
+                            th:attr="onclick=|if(confirm('確定刪除？')) return beautyLoadContentByUrl('美容預約管理','/admin/beauty/record/delete?id=${record.recordId}','groomingRecord'); return false;|">
+                        刪除
+                    </button>
+                </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+window.beautyLoadContentByUrl = window.beautyLoadContentByUrl || function(title, url, module) {
+    const contentTitle = document.getElementById('contentTitle');
+    const breadcrumb = document.getElementById('breadcrumb');
+    const contentBody = document.getElementById('contentBody');
+    const mainFrame = document.getElementById('mainFrame');
+
+    if (contentTitle) contentTitle.textContent = title;
+    if (breadcrumb) breadcrumb.textContent = title;
+    if (mainFrame) mainFrame.style.display = 'none';
+    if (contentBody) contentBody.style.display = 'block';
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.text();
+        })
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const cleanHtml = (doc.body && doc.body.innerHTML.trim()) ? doc.body.innerHTML : html;
+
+            contentBody.innerHTML = cleanHtml;
+
+            const scripts = contentBody.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                contentBody.appendChild(newScript);
+            });
+        })
+        .catch(error => {
+            contentBody.innerHTML = `
+                <div class="error-message">
+                    <strong>加載失敗</strong><br>
+                    無法加載 ${title}，請稍後重試。<br>
+                    <small>錯誤信息: ${error.message}</small>
+                </div>
+            `;
+        });
+
+    return false;
+};
+
+window.beautyPostFormThenShow = window.beautyPostFormThenShow || function(form, successTitle, successModule) {
+    const action = form.getAttribute('action');
+    const method = (form.getAttribute('method') || 'post').toUpperCase();
+    const formData = new FormData(form);
+
+    fetch(action, {
+        method: method,
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.text();
+    })
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const cleanHtml = (doc.body && doc.body.innerHTML.trim()) ? doc.body.innerHTML : html;
+
+        const contentBody = document.getElementById('contentBody');
+        contentBody.innerHTML = cleanHtml;
+
+        const scripts = contentBody.querySelectorAll('script');
+        scripts.forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.textContent = script.textContent;
+            contentBody.appendChild(newScript);
+        });
+
+        const contentTitle = document.getElementById('contentTitle');
+        const breadcrumb = document.getElementById('breadcrumb');
+
+        if (contentTitle) contentTitle.textContent = successTitle;
+        if (breadcrumb) breadcrumb.textContent = successTitle;
+    })
+    .catch(error => {
+        const contentBody = document.getElementById('contentBody');
+        contentBody.innerHTML = `
+            <div class="error-message">
+                <strong>送出失敗</strong><br>
+                請稍後重試。<br>
+                <small>錯誤信息: ${error.message}</small>
+            </div>
+        `;
+    });
+
+    return false;
+};
+</script>

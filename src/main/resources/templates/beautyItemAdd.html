@@ -1,0 +1,32 @@
+<div class="beauty-embed">
+    <h1>新增美容項目</h1>
+
+    <div class="beauty-err" th:if="${error}" th:text="${error}"></div>
+
+    <form action="/admin/beauty/item/create" method="post"
+          onsubmit="return beautyPostFormThenShow(this, '美容項目管理', 'groomingItem');">
+        <label for="itemName">項目名稱</label>
+        <input type="text" id="itemName" name="itemName" th:value="${form.itemName}" required>
+
+        <label for="description">描述</label>
+        <textarea id="description" name="description" th:text="${form.description}"></textarea>
+
+        <label for="smallPrice">小型價格</label>
+        <input type="number" step="0.01" min="0" id="smallPrice" name="smallPrice"
+               th:value="${form.smallPrice}" required>
+
+        <label for="mediumPrice">中型價格</label>
+        <input type="number" step="0.01" min="0" id="mediumPrice" name="mediumPrice"
+               th:value="${form.mediumPrice}" required>
+
+        <label for="largePrice">大型價格</label>
+        <input type="number" step="0.01" min="0" id="largePrice" name="largePrice"
+               th:value="${form.largePrice}" required>
+
+        <p class="beauty-btns">
+            <button type="submit">送出</button>
+            <button type="button" onclick="return loadContent('美容項目管理', 'groomingItem');">回列表</button>
+        </p>
+    </form>
+</div>
+
