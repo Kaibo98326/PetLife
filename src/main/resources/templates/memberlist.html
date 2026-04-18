@@ -1,4 +1,4 @@
-<div th:fragment="listFragment" class="container mt-4">
+<div th:fragment="listFragment" id="listFragment" class="container mt-4">
 
     <!-- 搜尋框 -->
     <form id="searchForm" class="d-flex mb-3" onsubmit="event.preventDefault(); searchMemberByName();">
@@ -7,7 +7,6 @@
                class="form-control me-2">
         <button type="submit" class="btn btn-primary">搜尋</button>
     </form>
-
     <!-- 會員清單 -->
     <div style="overflow-x:auto;">
         <table class="table table-striped table-hover table-bordered shadow-sm" style="min-width:1000px;">
@@ -68,7 +67,7 @@
                     <select class="form-select form-select-sm">
                         <option value="active" ${currentStatus === 'active' ? 'selected' : ''}>active</option>
                         <option value="disable" ${currentStatus === 'disable' ? 'selected' : ''}>disable</option>
-                        <option value="banned" ${currentStatus === 'banned' ? 'selected' : ''}>banned</option>
+                        <option value="delete" ${currentStatus === 'delete' ? 'selected' : ''}>delete</option>
                     </select>
                 `;
             } else {
@@ -113,5 +112,25 @@
                 });
             }
         }
+        
+        function searchMemberByName() {
+            const keyword = document.getElementById("searchMemberName").value;
+
+            // 呼叫後端 /members/search
+            fetch('/members/search?memberName=' + encodeURIComponent(keyword))
+                .then(response => response.text())
+                .then(html => {
+                    // 更新 fragment 容器
+                    document.querySelector("#listFragment").outerHTML = html;
+                })
+                .catch(error => {
+                    console.error("搜尋失敗:", error);
+                    alert("搜尋失敗，請稍後再試");
+                });
+        }
+
+
+
+
     </script>
 </div>

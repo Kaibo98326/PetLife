@@ -134,7 +134,14 @@ public class RoleController {
     @PostMapping("/remove")
     public String removeRole(@RequestParam Integer empId, @RequestParam Integer roleId, Model model) {
         employeeRoleService.removeRoleFromEmployee(empId, roleId);
-        return listEmployeeRoles(empId, model);
+        
+     // 這裡改成查全部
+        List<EmployeeRole> empRoles = employeeRoleService.findAll();
+        model.addAttribute("empRoles", empRoles);
+        model.addAttribute("employees", employeeRepo.findAll());
+        model.addAttribute("roles", roleRepo.findAll());
+        
+        return "employeeRole :: roleBindFragment";
     }
 
 

@@ -42,16 +42,36 @@ public class MemberBackendController {
 
 	    // 搜尋分頁
 	    @GetMapping("/search")
-	    public String searchMembers(@RequestParam String memberName,
+	    public String searchMembers(@RequestParam(value="memberName", required=false) String name,
 	                                @RequestParam(defaultValue = "0") int page,
 	                                Model model) {
-	        Page<Member> memberPage = memberService.searchByName(memberName, PageRequest.of(page, 10));
+	        // 如果沒有輸入關鍵字 → 回到一般清單
+	        if (name == null || name.isBlank()) {
+	            return listMembers(page, model); // 呼叫一般清單方法
+	        }
+
+	        // page 保護，避免負數
+	        int safePage = page < 0 ? 0 : page;
+	        int pageSize = 10;
+
+	        // 查詢
+	        Page<Member> memberPage = memberService.searchByName(name, PageRequest.of(safePage, pageSize));
+
+	        // 放入 model
 	        model.addAttribute("members", memberPage.getContent());
-	        model.addAttribute("currentPage", page);
+	        model.addAttribute("currentPage", safePage);
 	        model.addAttribute("totalPages", memberPage.getTotalPages());
-	        model.addAttribute("searchKeyword", memberName);
+	        model.addAttribute("searchKeyword", name);
+
+	        System.out.println(">>> 搜尋關鍵字: " + name + ", page=" + page);
+
+	        // 回傳 fragment
 	        return "memberlist :: listFragment";
 	    }
+
+
+
+
 	    
 	 // 更新會員資料
 	    @PostMapping("/update/{id}")
@@ -74,6 +94,9 @@ public class MemberBackendController {
 	        }
 	        return ResponseEntity.ok().build();
 	    }
+	    
+	    
+
 
 
 
