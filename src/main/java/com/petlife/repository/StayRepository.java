@@ -12,4 +12,6 @@ public interface StayRepository extends JpaRepository<Stay, Integer>{
 
 	List<Stay> findByPet_Member_MemberId(Integer pet_Member_MemberId);
 	
+	List<Stay> findByPet_Member_PhoneEndingWith(String phone);
+	
 }

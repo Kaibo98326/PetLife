@@ -23,7 +23,7 @@ public class StayService {
 	@Autowired
 	private StayRoomRepository stayRoomRepository;
 	
-	// C & U
+	//  U
 	public Stay saveStay(Stay stay) {
 		return stayRepository.save(stay);
 	}
@@ -66,10 +66,15 @@ public class StayService {
 	    stay.setStayStatus("已預約");  
 	    
 	    StayRoom room = stay.getStayRoom();
-		room.setRoomStatus("使用中");
+		room.setRoomStatus("已預約");
 	    stayRoomRepository.save(room);
 	    
 	    return stayRepository.save(stay);
+	}
+	
+	//電話末三碼 查詢邏輯
+	public List<Stay> findByPhone(String phone){
+		return stayRepository.findByPet_Member_PhoneEndingWith(phone);
 	}
 
 }
