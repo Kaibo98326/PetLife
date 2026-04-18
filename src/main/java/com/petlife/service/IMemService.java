@@ -19,4 +19,8 @@ public interface IMemService {
     Member save(Member member);
     
 	String login(String email, String password);
+	
+	String  register(Member member);
+	
+	
 }

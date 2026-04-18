@@ -489,6 +489,13 @@ body {
   background-color: #f0f0f0;
 }
 
+.table-orange thead {
+    background-color: #ff9800; /* 橘色 */
+    color: #fff;
+}
+.table-orange tbody tr:nth-child(even) {
+    background-color: #fff3e0; /* 淺橘背景 */
+}
 
 
 

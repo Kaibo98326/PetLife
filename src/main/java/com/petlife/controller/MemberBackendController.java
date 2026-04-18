@@ -28,52 +28,52 @@ public class MemberBackendController {
 	
 	 	@Autowired
 	    private IMemService memberService;
+	 	
 
-	 	 // 一般清單分頁
-	    @GetMapping("/list")
-	    public String listMembers(@RequestParam(defaultValue = "0") int page,
-	                              Model model) {
-	        Page<Member> memberPage = memberService.findAll(PageRequest.of(page, 10));
-	        model.addAttribute("members", memberPage.getContent());
-	        model.addAttribute("currentPage", page);
-	        model.addAttribute("totalPages", memberPage.getTotalPages());
-	        return "memberlist :: listFragment";
-	    }
+	 	// 會員清單
+	 	@GetMapping("/list")
+	 	public String memberList(@RequestParam(defaultValue = "0") int page, Model m) {
+	 	    int pageSize = 10;
+	 	    Page<Member> memberPage = memberService.findAll(PageRequest.of(page, pageSize));
 
-	    // 搜尋分頁
-	    @GetMapping("/search")
-	    public String searchMembers(@RequestParam(value="memberName", required=false) String name,
-	                                @RequestParam(defaultValue = "0") int page,
-	                                Model model) {
-	        // 如果沒有輸入關鍵字 → 回到一般清單
-	        if (name == null || name.isBlank()) {
-	            return listMembers(page, model); // 呼叫一般清單方法
-	        }
+	 	    m.addAttribute("members", memberPage.getContent());
+	 	    m.addAttribute("currentPage", page);
+	 	    m.addAttribute("totalPages", memberPage.getTotalPages());
 
-	        // page 保護，避免負數
-	        int safePage = page < 0 ? 0 : page;
-	        int pageSize = 10;
+	 	    return "memberlist :: listFragment";
+	 	}
 
-	        // 查詢
-	        Page<Member> memberPage = memberService.searchByName(name, PageRequest.of(safePage, pageSize));
+	 // 模糊查詢姓名
+	 	@GetMapping("/search")
+	 	public String searchMemberByName(@RequestParam(value="memberName", required=false) String name,
+	 	                                 @RequestParam(defaultValue = "0") int page,
+	 	                                 Model m) {
+	 	    // 空字串或 null → 回到一般清單
+	 	    if (name == null || name.isBlank()) {
+	 	        return memberList(page, m);
+	 	    }
 
-	        // 放入 model
-	        model.addAttribute("members", memberPage.getContent());
-	        model.addAttribute("currentPage", safePage);
-	        model.addAttribute("totalPages", memberPage.getTotalPages());
-	        model.addAttribute("searchKeyword", name);
+	 	    // page 保護，避免負數
+	 	    int safePage = page < 0 ? 0 : page;
+	 	    int pageSize = 10;
 
-	        System.out.println(">>> 搜尋關鍵字: " + name + ", page=" + page);
+	 	    Page<Member> memberPage = memberService.searchByName(name, PageRequest.of(safePage, pageSize));
 
-	        // 回傳 fragment
-	        return "memberlist :: listFragment";
-	    }
+	 	    m.addAttribute("members", memberPage.getContent());
+	 	    m.addAttribute("currentPage", safePage);
+	 	    m.addAttribute("totalPages", memberPage.getTotalPages());
+	 	    m.addAttribute("searchKeyword", name);
+
+	 	    System.out.println(">>> 搜尋關鍵字: " + name + ", page=" + page);
+
+	 	    return "memberlist :: listFragment";
+	 	}
 
 
 
 
 	    
-	 // 更新會員資料
+	    // 更新會員資料
 	    @PostMapping("/update/{id}")
 	    @ResponseBody
 	    public ResponseEntity<?> updateMember(@PathVariable Integer id, @RequestBody Member updatedMember) {
@@ -93,6 +93,25 @@ public class MemberBackendController {
 	            return ResponseEntity.notFound().build();
 	        }
 	        return ResponseEntity.ok().build();
+	    }
+	    
+	    // 顯示新增會員表單 (AJAX 載入 fragment)
+	    @GetMapping("/addForm")
+	    public String showAddForm(Model m) {
+	        m.addAttribute("member", new Member());
+	        return "addAdminMemberForm :: addFormFragment";
+	    }
+
+	    // 後台新增會員
+	    @PostMapping("/add")
+	    @ResponseBody
+	    public String addMember(@RequestBody Member member) {
+	        String result = memberService.register(member);
+	        if ("register_success".equals(result)) {
+	            return "success";
+	        } else {
+	            return "duplicate"; // email 或 phone 已存在
+	        }
 	    }
 	    
 	    

@@ -1,44 +1,61 @@
 <!-- empAdd.html -->
-<div th:fragment="addFragment">
-    <div class="card">
-        <div class="card-header">
-            <span class="card-icon">➕</span>
-            <h2>新增員工</h2>
+<div th:fragment="addFragment" id="addFragment" class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <span class="me-2">➕</span>
+            <h4 class="mb-0">新增員工</h4>
         </div>
 
-        <form th:action="@{/employee/add}" method="post"
-              onsubmit="return empPostFormThenShow(this, '員工列表', 'empList');"
-              class="styled-form">
+        <div class="card-body">
+            <form th:action="@{/employee/add}" method="post"
+                  onsubmit="return empPostFormThenShow(this, '員工列表', 'empList');"
+                  class="needs-validation" novalidate>
 
-            <label>姓名：</label>
-            <input type="text" name="empName" required>
+                <div class="mb-3">
+                    <label for="empName" class="form-label">姓名</label>
+                    <input type="text" id="empName" name="empName" class="form-control" required>
+                </div>
 
-            <label>帳號：</label>
-            <input type="text" name="username" required>
+                <div class="mb-3">
+                    <label for="username" class="form-label">帳號</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
 
-            <label>密碼：</label>
-            <input type="password" name="passwordHash" required>
+                <div class="mb-3">
+                    <label for="passwordHash" class="form-label">密碼</label>
+                    <input type="password" id="passwordHash" name="passwordHash" class="form-control" required>
+                </div>
 
-            <label>電話：</label>
-            <input type="text" name="empPhone">
+                <div class="mb-3">
+                    <label for="empPhone" class="form-label">電話</label>
+                    <input type="text" id="empPhone" name="empPhone" class="form-control">
+                </div>
 
-            <label>地址：</label>
-            <input type="text" name="empAddress">
+                <div class="mb-3">
+                    <label for="empAddress" class="form-label">地址</label>
+                    <input type="text" id="empAddress" name="empAddress" class="form-control">
+                </div>
 
-            <label>緊急聯絡人：</label>
-            <input type="text" name="emergencyContact">
+                <div class="mb-3">
+                    <label for="emergencyContact" class="form-label">緊急聯絡人</label>
+                    <input type="text" id="emergencyContact" name="emergencyContact" class="form-control">
+                </div>
 
-            <label>緊急聯絡人電話：</label>
-            <input type="text" name="emergencyphone">
+                <div class="mb-3">
+                    <label for="emergencyphone" class="form-label">緊急聯絡人電話</label>
+                    <input type="text" id="emergencyphone" name="emergencyphone" class="form-control">
+                </div>
 
-            <button type="submit" class="btn btn-add">送出</button>
-            <button type="button"
-                    onclick="loadContent('員工列表', 'empList')">
-                回列表
-            </button>
-        </form>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">送出</button>
+                    <button type="button" class="btn btn-secondary"
+                            onclick="loadContent('員工列表', 'empList')">回列表</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
 
 
 

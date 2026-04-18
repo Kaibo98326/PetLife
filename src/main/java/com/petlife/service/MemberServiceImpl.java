@@ -1,9 +1,11 @@
 package com.petlife.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,9 @@ public class MemberServiceImpl implements IMemService{
 	private MemberRepository memberRepo;
 	
 	@Override
-	public Page<Member> findAll(Pageable pageable){
-		return memberRepo.findAll(pageable);
-	}
+    public Page<Member> findAll(Pageable pageable) {
+        return memberRepo.findAll(pageable);
+    }
 	@Override
     public Page<Member> searchByName(String keyword, Pageable pageable) {
         return memberRepo.findByMemberNameContaining(keyword, pageable);
@@ -78,6 +80,33 @@ public class MemberServiceImpl implements IMemService{
         }
         return "wrongpassword";
     }
+    
+    @Override
+	public String register(Member member) {
+		// 檢查 Email 是否存在
+	    Member existingByEmail = memberRepo.findByEmail(member.getEmail()).orElse(null);
+	    if (existingByEmail != null) {
+	        return "register_duplicate"; // email 已存在
+	    }
+
+	    // 檢查 Phone 是否存在
+	    List<Member> allMembers = memberRepo.findAll();
+	    boolean phoneExists = allMembers.stream()
+	                                    .anyMatch(m -> m.getPhone() != null && m.getPhone().equals(member.getPhone()));
+	    if (phoneExists) {
+	        return "register_duplicate"; // phone 已存在
+	    }
+
+	    // 新增會員
+	    member.setPasswordHash(PasswordUtils.hashPassword(member.getPasswordHash()));
+	    member.setRegisterTime(LocalDateTime.now());
+	    member.setAccountStatus("active");
+	    memberRepo.save(member);
+
+	    return "register_success";
+
+		
+	}
 
 
 
