@@ -65,7 +65,7 @@ public class PetService {
 	public Page<Pet> searchPetsByName(String keyword ,int page , int size){
 		Pageable pageable = PageRequest.of(page, size);
 		
-		return petRepository.findByPetName(keyword , pageable); 
+		return petRepository.findByPetNameContaining(keyword , pageable); 
 	}
 	
 	//查詢主人ID的寵物(分頁)
@@ -99,6 +99,8 @@ public class PetService {
 		Pageable pageable = PageRequest.of(page, size);
 		return petRepository.findAll(pageable);
 	}
+
+	
 
 	
 	

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.petlife.model.Member;
@@ -107,6 +108,13 @@ public class PetController {
 			existPet.setMedicalHistory(pet.getMedicalHistory());
 			
 			if(!file.isEmpty()) {
+				
+				//先刪除舊檔案
+        			if(existPet.getPetPhoto() != null) {
+        				Path oldPath = Paths.get("C:/uploads/" + existPet.getPetPhoto());
+        				Files.deleteIfExists(oldPath);
+        			}
+				
 				String uploadDir = "C:/uploads/images/pets/";
 				String fileName = UUID.randomUUID() +"_" + file.getOriginalFilename();
 				Path path = Paths.get(uploadDir + fileName);
@@ -196,8 +204,80 @@ public class PetController {
         return "adminPetList :: listFragment";
     }
 
-	//後台新增寵物表單
-	
+	//後台刪除寵物(軟刪除)
+    @PostMapping("/admin/delete/{id}")
+    public ResponseEntity<?> adminDeletePet(@PathVariable Integer id){
+    	 	Pet pet = petService.findPet(id);
+    	 	if(pet != null) {
+    	 		pet.setStatus("delete");
+    	 		petService.savePet(pet);
+    	 		return ResponseEntity.ok("寵物已標記為刪除");
+    	 	}
+    	 	
+    	 	return ResponseEntity.badRequest().body("刪除失敗，寵物不存在");
+    }
+    
+    //後端用寵物編輯表單
+    @GetMapping("/admin/edit/{id}")
+    public String adminshowEditForm(@PathVariable Integer id , Model m ) {
+    		Pet pet = petService.findPet(id);
+    		m.addAttribute("pet" , pet);
+    		m.addAttribute("memberId" , pet.getMember().getMemberId());
+    		
+    		return "adminEditPetForm";
+    }
+    
+    //後端用寵物修改方法
+    @PostMapping("/admin/update/{id}")
+    public String adminUpdatePet(@PathVariable Integer id,
+                                 @ModelAttribute Pet pet,
+                                 @RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam("memberId") Integer memberId,
+                                 Model model) {
+        try {
+            Pet existPet = petService.findPet(id);
+            if (existPet != null) {
+                existPet.setPetName(pet.getPetName());
+                existPet.setBreed(pet.getBreed());
+                existPet.setSpecies(pet.getSpecies());
+                existPet.setAge(pet.getAge());
+                existPet.setWeight(pet.getWeight());
+                existPet.setMedicalHistory(pet.getMedicalHistory());
+                existPet.setStatus(pet.getStatus());
+
+                if (file != null && !file.isEmpty()) {
+                	
+                		//先刪除舊檔案
+        				if(existPet.getPetPhoto() != null) {
+        					Path oldPath = Paths.get("C:/uploads/" + existPet.getPetPhoto());
+        					Files.deleteIfExists(oldPath);
+        				}
+                		
+                    String uploadDir = "C:/uploads/images/pets/";
+                    String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    Path path = Paths.get(uploadDir + fileName);
+                    Files.createDirectories(path.getParent());
+                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+                    existPet.setPetPhoto("images/pets/" + fileName);
+                }
+
+                petService.savePet(existPet);
+            }
+            // 更新後重新查詢列表資料
+            Page<Pet> petPage = petService.getAllPets(0, 10);
+            model.addAttribute("petList", petPage.getContent());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", petPage.getTotalPages());
+
+            // ✅ 回傳 fragment，不是 redirect
+            return "adminPetList :: listFragment";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/pets/admin/list?error=true";
+        }
+    }
+
 	
 
 	

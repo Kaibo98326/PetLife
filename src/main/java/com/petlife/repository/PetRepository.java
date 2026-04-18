@@ -25,7 +25,7 @@ public interface PetRepository extends JpaRepository<Pet, Integer>{
 	// 查某會員的寵物，排除已刪除
     List<Pet> findByMemberMemberIdAndStatusNot(Integer memberId, String status);
     
-    Page<Pet> findByPetName(String keyword , Pageable pageable);
+    Page<Pet> findByPetNameContaining(String keyword , Pageable pageable);
     
     Page<Pet> findByMemberMemberId(Integer memberId, Pageable pageable);
 	

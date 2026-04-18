@@ -1,0 +1,71 @@
+<div th:fragment="editFormFragment" class="container mt-4">
+    <h3>後台編輯寵物資料</h3>
+
+    <form th:action="@{'/pets/admin/update/' + ${pet.petId}}" 
+          method="post"
+          id="editForm" 
+          enctype="multipart/form-data">
+
+        <input type="hidden" name="memberId" th:value="${memberId}"/>
+
+        <div class="mb-3">
+            <label class="form-label">寵物名稱</label>
+            <input type="text" class="form-control" name="petName" th:value="${pet.petName}" required>
+            
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">種類</label>
+            <select name="species" class="form-select" th:value="${pet.species}" required>
+                    <option value="貓">貓</option>
+                    <option value="狗">狗</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">品種</label>
+            <input type="text" class="form-control" name="breed" th:value="${pet.breed}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">年齡</label>
+            <input type="number" class="form-control" name="age" th:value="${pet.age}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">體重</label>
+            <input type="number" class="form-control" name="weight" th:value="${pet.weight}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">病史</label>
+            <textarea class="form-control" name="medicalHistory" th:text="${pet.medicalHistory}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">目前照片</label><br>
+            <img th:src="@{'/' + ${pet.petPhoto}}" style="width:120px;">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">更新照片</label>
+            <input type="file" name="file" class="form-control" accept="image/*" onchange="PetPreviewImage(event)">
+            <div class="mt-2">
+                <img id="preview" alt="新照片預覽" style="max-width:200px;">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">狀態</label>
+            <select class="form-select" name="status" th:value="${pet.status}">
+                <option value="active">active</option>
+                <option value="disable">disable</option>
+                <option value="delete">delete</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-success" onclick="PetSubmitUpdate('editForm')">更新</button>
+		<button type="button" class="btn btn-secondary" onclick="PetLoadPage(0)">返回列表</button>
+    </form>
+
+</div>
