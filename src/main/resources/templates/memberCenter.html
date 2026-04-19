@@ -7,26 +7,26 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/MemberCenter.css}">
+    <link rel="stylesheet" th:href="@{/css/MemberCenter.css?v=126}">
 </head>
 
 <body>
     <!-- Header -->
     <header>
         <div class="row align-items-center flex-nowrap">
-                <!-- LOGO -->
-                <div class="col-auto ps-3">
-                    <a th:href="@{/shop}" class="shop-logo">
-                        <img th:src="@{/images/logo01.png}" alt="PetLife Logo"
-                            style="height: 60px; width: auto; object-fit: contain;">
-                    </a>
-                </div>
-        <nav>
-            <a th:href="@{/shop/index}">首頁</a>
-            <a th:href="@{/products}">商品分類</a>
-            <a th:href="@{/member/center}">會員中心</a>
-            <a th:href="@{/contact}">客服</a>
-        </nav>
+            <!-- LOGO -->
+            <div class="col-auto ps-3">
+                <a th:href="@{/shop}" class="shop-logo">
+                    <img th:src="@{/images/logo01.png}" alt="PetLife Logo"
+                        style="height: 60px; width: auto; object-fit: contain;">
+                </a>
+            </div>
+            <nav>
+                <a th:href="@{/shop/index}">首頁</a>
+                <a th:href="@{/products}">商品分類</a>
+                <a th:href="@{/member/center}">會員中心</a>
+                <a th:href="@{/contact}">客服</a>
+            </nav>
     </header>
 
     <!-- Member Dashboard -->
@@ -40,16 +40,19 @@
         </div>
 
         <div class="menu-grid">
-            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/orders} + '\''">📦 訂單紀錄</div>
-            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/edit(id=${memberId})} + '\''">👤 個人資料</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/api/order/orders} + '\''">📦 訂單紀錄</div>
+            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/edit(id=${memberId})} + '\''">👤
+                個人資料</div>
             <div class="menu-item">🏠 收件資訊</div>
             <div class="menu-item">❤️ 我的收藏</div>
-            <div class="menu-item" th:onclick="'window.location.href=\'' + @{/pet/list} + '\''">🐕 寵物管理</div>
+            <div class="menu-item" th:onclick="|window.location.href='@{/pets/list/{memberId}(memberId=${memberId})}'|">
+                🐕 寵物管理
+            </div>
             <div class="menu-item">💎 紅利點數</div>
             <div class="menu-item" th:onclick="'window.location.href=\'' + @{/member/logout} + '\''">🔒登出</div>
         </div>
     </section>
-	
+
     <!-- Notice -->
     <section class="notice">
         <h3>寵物百貨 溫馨提醒</h3>

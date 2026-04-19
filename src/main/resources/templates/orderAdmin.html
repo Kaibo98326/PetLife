@@ -1,0 +1,245 @@
+<div class="admin-order-wrapper p-4">
+	<div class="d-flex justify-content-end mb-3">
+		<form id="searchForm" class="d-flex mb-3"
+			onsubmit="event.preventDefault(); searchEmpByName();">
+			<input type="text" id="searchOrderName" name="orderName"
+				th:value="${searchQuery}" placeholder="輸入收件人姓名查詢"
+				class="form-control me-2 shadow-sm" style="width: 250px;">
+			<button type="button" class="btn btn-orange-action"
+				onclick="searchOrderByRecipient()">搜尋</button>
+		</form>
+	</div>
+
+	<div class="admin-table-header-orange shadow-sm">
+		<div class="d-flex justify-content-between align-items-center">
+			<span class="fw-bold"><i class="bi bi-receipt me-2"></i>訂單管理系統</span>
+			<span class="badge bg-white text-orange-dark px-3 py-2"> 共 <span
+				th:text="${orders.size()}">0</span> 筆訂單
+			</span>
+		</div>
+	</div>
+
+	<div class="admin-table-container shadow-sm">
+		<table class="table align-middle admin-fixed-table m-0">
+			<thead>
+				<tr>
+					<th style="width: 8%">ID</th>
+					<th style="width: 10%">會員ID</th>
+					<th style="width: 12%">收件人</th>
+					<th style="width: 15%">電話</th>
+					<th style="width: 18%">下單日期</th>
+					<th style="width: 12%">總金額</th>
+					<th style="width: 10%">狀態</th>
+					<th style="width: 10%">付款</th>
+					<th style="width: 15%">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="order : ${orders}" th:id="'row-' + ${order.orderId}">
+					<td><a href="javascript:void(0)"
+						class="order-id-link fw-bold text-decoration-none"
+						th:onclick="'loadOrderDetail(' + ${order.orderId} + ')'"> <span
+							th:text="${order.orderId}"></span>
+					</a></td>
+					<td th:text="${order.memberId}"></td>
+					<td th:text="${order.orderName}"></td>
+					<td th:text="${order.orderPhone}"></td>
+					<td
+						th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+					<td class="fw-bold text-orange-deep"
+						th:text="'$' + ${order.orderTotal}"></td>
+					<td><select
+						class="form-select form-select-sm edit-input-orange" disabled
+						data-field="orderStatus">
+							<option th:selected="${order.orderStatus == '處理中'}" value="處理中">處理中</option>
+							<option th:selected="${order.orderStatus == '已完成'}" value="已完成">已完成</option>
+							<option th:selected="${order.orderStatus == '已取消'}" value="已取消">已取消</option>
+					</select></td>
+					<td><select
+						class="form-select form-select-sm edit-input-orange" disabled
+						data-field="orderPayment">
+							<option th:selected="${order.orderPayment == '信用卡'}" value="信用卡">信用卡</option>
+							<option th:selected="${order.orderPayment == '貨到付款'}"
+								value="貨到付款">貨到付款</option>
+					</select></td>
+					<td class="text-center">
+						<div class="btn-group gap-1">
+							<button class="btn btn-orange-action btn-sm"
+								th:onclick="'handleOrderEdit(this, ' + ${order.orderId} + ')'">修改</button>
+							<button class="btn btn-red-action btn-sm"
+								th:onclick="'handleOrderDelete(' + ${order.orderId} + ')'">刪除</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<style>
+/* 深度橘色畫風專用 CSS */
+.text-orange-dark {
+	color: #E65100;
+}
+
+.text-orange-deep {
+	color: #D84315;
+}
+
+.admin-table-header-orange {
+	background: linear-gradient(to right, #E65100, #FF9800);
+	color: white;
+	padding: 15px 25px;
+	border-radius: 12px 12px 0 0;
+}
+
+.admin-table-container {
+	background: white;
+	border: 2px solid #FFE0B2;
+	border-radius: 0 0 12px 12px;
+}
+
+.admin-fixed-table thead th {
+	background-color: #FFF3E0;
+	color: #BF360C;
+	text-align: center;
+	border-bottom: 2px solid #FFCC80;
+	padding: 12px;
+}
+
+.admin-fixed-table tbody td {
+	text-align: center;
+	border-bottom: 1px solid #FFF3E0;
+	padding: 10px;
+}
+
+/* 下拉選單樣式 */
+.edit-input-orange {
+	border: 1px solid transparent;
+	background-color: transparent;
+	text-align-last: center;
+}
+
+.edit-input-orange:not(:disabled) {
+	border: 1px solid #FF9800;
+	background-color: #FFFDE7;
+}
+
+/* 按鈕美化 */
+.btn-orange-action {
+	background-color: #FF9800;
+	color: white;
+	border: none;
+	font-weight: bold;
+	border-radius: 5px;
+}
+
+.btn-orange-action:hover {
+	background-color: #E65100;
+	color: white;
+}
+
+.btn-red-action {
+	background-color: #f44336;
+	color: white;
+	border: none;
+	font-weight: bold;
+	border-radius: 5px;
+} /* ID 連結美化 */
+.order-id-link {
+	color: #E65100;
+	padding: 2px 8px;
+	border-radius: 4px;
+	transition: all 0.2s;
+}
+
+.order-id-link:hover {
+	background-color: #FFF3E0;
+	color: #BF360C;
+	text-decoration: underline !important;
+}
+
+/* 搜尋框樣式 */
+.search-container input {
+	border: 2px solid #FFCC80;
+}
+
+.search-container input:focus {
+	border-color: #FF9800; /* 邊框變橘色 */
+	outline: none; /* 去掉瀏覽器預設的黑框 */
+	/* 正確寫法：box-shadow: 水平 垂直 模糊 擴散 顏色; */
+	box-shadow: 0 0 0 0.25rem rgba(255, 152, 0, 0.25);
+}
+
+.order-id-link {
+	color: #E65100;
+	background-color: #FFF3E0;
+	padding: 4px 12px;
+	border-radius: 50px; /* 藥丸形狀 */
+	display: inline-block;
+	transition: all 0.3s ease;
+}
+
+.order-id-link:hover {
+	background-color: #FF9800;
+	color: white !important;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<script th:inline="javascript">
+window.loadOrderDetail = function(orderId) {
+    console.log("正在讀取訂單明細，ID:", orderId);
+
+    fetch('/api/order/detail/' + orderId)
+        .then(res => {
+            if (!res.ok) throw new Error("找不到明細，狀態碼：" + res.status);
+            return res.text();
+        })
+        .then(html => {
+            // 1. 建立一個全螢幕的黑色遮罩層
+            const overlay = document.createElement('div');
+            overlay.id = 'custom-modal-overlay';
+            overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; justify-content:center; align-items:center;";
+
+            // 2. 建立內容容器
+            const modal = document.createElement('div');
+            modal.style = "background:#fff; width:80%; max-height:80%; border-radius:12px; padding:20px; position:relative; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.5);";
+            
+            // 3. 建立關閉按鈕
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = "✖ 關閉視窗";
+            closeBtn.style = "position:sticky; top:0; float:right; padding:8px 16px; background:#FF9800; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin-bottom:10px;";
+            closeBtn.onclick = function() { document.body.removeChild(overlay); };
+
+            // 4. 組合內容
+            const content = document.createElement('div');
+            content.innerHTML = html;
+
+            modal.appendChild(closeBtn);
+            modal.appendChild(content);
+            overlay.appendChild(modal);
+            
+            // 5. 點擊背景也可以關閉
+            overlay.onclick = function(e) {
+                if (e.target === overlay) document.body.removeChild(overlay);
+            };
+
+            // 6. 塞進頁面
+            document.body.appendChild(overlay);
+        })
+        .catch(err => {
+            console.error(err);
+            alert("讀取明細失敗：" + err.message);
+        });
+};
+
+    // --- 2. 搜尋功能 ---
+    window.searchOrderByRecipient = function() {
+        const input = document.getElementById("searchOrderName");
+        if (input && typeof loadContent === "function") {
+            loadContent('訂單管理', '/api/order/all?search=' + encodeURIComponent(input.value));
+        }
+    };
+   
+</script>

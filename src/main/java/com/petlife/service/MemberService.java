@@ -16,30 +16,94 @@ public class MemberService implements IMemberService {
 	private IMemberDao memberDao; // 依賴介面 不依賴JPA
 	
 	@Override
-	public Member register(Member member) {
-		member.setPasswordHash(PasswordUtils.hashPassword(member.getPasswordHash()));
-		member.setRegisterTime(LocalDateTime.now());
-		member.setAccountStatus("active");
-		return memberDao.save(member);
+	public String register(Member member) {
+		// 檢查 Email 是否存在
+	    Member existingByEmail = memberDao.findByEmail(member.getEmail()).orElse(null);
+	    if (existingByEmail != null) {
+	        return "register_duplicate"; // email 已存在
+	    }
+
+	    // 檢查 Phone 是否存在
+	    List<Member> allMembers = memberDao.findAll();
+	    boolean phoneExists = allMembers.stream()
+	                                    .anyMatch(m -> m.getPhone() != null && m.getPhone().equals(member.getPhone()));
+	    if (phoneExists) {
+	        return "register_duplicate"; // phone 已存在
+	    }
+
+	    // 新增會員
+	    member.setPasswordHash(PasswordUtils.hashPassword(member.getPasswordHash()));
+	    member.setRegisterTime(LocalDateTime.now());
+	    member.setAccountStatus("active");
+	    memberDao.save(member);
+
+	    return "register_success";
+
 		
 	}
 
 	@Override
-	public Member login(String email, String password) {
-		
-		return memberDao.findByEmail(email).filter(m -> 
-				PasswordUtils.checkPassword(password, m.getPasswordHash()))
-				.map(m ->{
-					m.setLastLogin(LocalDateTime.now());
-					return memberDao.save(m);
-				}).orElse(null);
+	public String login(String email, String password) {
+	    Member member = memberDao.findByEmail(email).orElse(null);
+
+	    if (member == null) {
+	        return "notfound";
+	    }
+	    if ("disable".equals(member.getAccountStatus())) {
+	        return "disabled";
+	    }
+	    if ("delete".equals(member.getAccountStatus())) {
+	        return "deleted";
+	    }
+	    if (PasswordUtils.checkPassword(password, member.getPasswordHash())) {
+	        member.setLastLogin(LocalDateTime.now());
+	        memberDao.save(member);
+	        return "login_success";
+	    }
+	    return "wrongpassword";
 	}
 
+
+
 	@Override
-	public Member update(Member member) {
-		
-		return memberDao.save(member);
+	public String updateMember(Integer id, Member updatedMember) {
+	    Member dbMember = memberDao.findById(id).orElse(null);
+	    if (dbMember == null) {
+	        return "notfound";
+	    }
+
+	    // 檢查 Email 是否重複（排除自己）
+	    Member existingByEmail = memberDao.findByEmail(updatedMember.getEmail()).orElse(null);
+	    if (existingByEmail != null && !existingByEmail.getMemberId().equals(id)) {
+	        return "duplicate_email";
+	    }
+
+	    // 檢查 Phone 是否重複（排除自己）
+	    List<Member> allMembers = memberDao.findAll();
+	    boolean phoneExists = allMembers.stream()
+	        .anyMatch(m -> m.getPhone() != null 
+	                    && m.getPhone().equals(updatedMember.getPhone()) 
+	                    && !m.getMemberId().equals(id));
+	    if (phoneExists) {
+	        return "duplicate_phone";
+	    }
+
+	    // 更新允許修改的欄位
+	    dbMember.setMemberName(updatedMember.getMemberName());
+	    dbMember.setEmail(updatedMember.getEmail());
+	    dbMember.setPhone(updatedMember.getPhone());
+	    dbMember.setAddress(updatedMember.getAddress());
+
+	    // 如果有密碼欄位，記得加密處理
+	    if (updatedMember.getPasswordHash() != null && !updatedMember.getPasswordHash().isEmpty()) {
+	        dbMember.setPasswordHash(PasswordUtils.hashPassword(updatedMember.getPasswordHash()));
+	    }
+
+	    memberDao.save(dbMember);
+	    return "update_success";
 	}
+
+
 
 	@Override
 	public boolean softDelete(Integer memberId) {
@@ -62,6 +126,12 @@ public class MemberService implements IMemberService {
 	public Member findById(Integer memberId) {
 		
 		return memberDao.findById(memberId).orElse(null);
+	}
+	
+	@Override
+	public Member findByEmail(String Email) {
+		
+		return memberDao.findByEmail(Email).orElse(null);
 	}
 
 }

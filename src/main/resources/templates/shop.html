@@ -15,17 +15,17 @@
 </head>
 
 <body>
-<!-- 上層頂端導覽 -->
+	<!-- 上層頂端導覽 -->
 	<header class="shop-header sticky-top">
 		<div class="container">
 			<div class="row align-items-center">
-<!-- LOGO -->
+				<!-- LOGO -->
 				<div class="col-auto">
 					<a th:href="@{/shop/index}" class="shop-logo"> <img
 						th:src="@{/images/logo01.png}" alt="PetLife Logo">
 					</a>
 				</div>
-<!-- 搜尋框 -->
+				<!-- 搜尋框 -->
 				<div class="col px-lg-5">
 					<form th:action="@{/shop/index}" method="get"
 						class="shop-search-form">
@@ -39,27 +39,26 @@
 						</div>
 					</form>
 				</div>
-<!-- 頂端右側 -->				
+				<!-- 頂端右側 -->
 				<div class="col-auto">
 					<nav class="shop-user-nav d-flex align-items-center">
-<!-- 購物車 -->   						
-						<a th:href="@{/cart}"
+						<!-- 購物車 -->
+						<a th:href="@{/api/cart/cart}"
 							class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
 							<i class="fas fa-shopping-cart"></i> <span
 							style="font-size: 13px; color: #5a4a42;">購物車</span> <span
 							id="cart-badge" th:if="${cartTotalQty > 0}"
 							th:text="${cartTotalQty}"
 							class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-							style="font-size: 0.7rem;"></span>
-<!-- 聊聊 -->							
+							style="font-size: 0.7rem;"></span> <!-- 聊聊 -->
 						</a> <a href="#"
 							class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
 							<i class="far fa-comment-dots"
 							style="font-size: 1.2rem; color: #666;"></i> <span
 							style="font-size: 13px; color: #5a4a42;">聊聊</span>
 						</a>
-<!-- 登入判斷 -->
-	<!-- 已登入 -->						
+						<!-- 登入判斷 -->
+						<!-- 已登入 -->
 						<div class="user-action-zone">
 							<div th:if="${memberId != null}"
 								class="d-flex align-items-center">
@@ -74,7 +73,7 @@
 									<span style="font-size: 13px;">登出</span>
 								</a>
 							</div>
-	<!-- 尚未登入 -->							
+							<!-- 尚未登入 -->
 							<div th:unless="${memberId != null}">
 								<a th:href="@{/loginChoice}"
 									class="nav-icon-item d-flex flex-column align-items-center text-decoration-none">
@@ -87,11 +86,12 @@
 					</nav>
 				</div>
 			</div>
-<!-- 上層分類目錄 --> 			
+			<!-- 上層分類目錄 -->
 			<nav class="header-nav mt-3">
 				<div class="container">
 					<ul class="nav-menu-list">
-						<li><a th:href="@{/shop/index(all='true')}" class="nav-menu-link">全部商品</a></li>
+						<li><a th:href="@{/shop/index(all='true')}"
+							class="nav-menu-link">全部商品</a></li>
 						<li><a th:href="@{/shop/index(catId=1)}"
 							class="nav-menu-link">🐱 貓貓專區</a></li>
 						<li><a th:href="@{/shop/index(catId=2)}"
@@ -106,8 +106,8 @@
 			</nav>
 		</div>
 	</header>
-	
-<!-- 左方 menu 分類 -->    
+
+	<!-- 左方 menu 分類 -->
 	<main class="shop-hero-section">
 		<div class="container">
 			<div class="hero-wrapper"
@@ -117,10 +117,9 @@
 						<i class="fas fa-bars me-2"></i>毛孩商品總覽
 					</div>
 					<nav class="sidebar-nav">
-						<a th:href="@{/shop/index(all='true')}" 
-							class="category-item"><span>全部商品</span><i
-							class="fas fa-chevron-right small"></i>
-						</a> <a th:each="cat : ${category}"
+						<a th:href="@{/shop/index(all='true')}" class="category-item"><span>全部商品</span><i
+							class="fas fa-chevron-right small"></i> </a> <a
+							th:each="cat : ${category}"
 							th:href="@{/shop/index(catId=${cat.categoryId})}"
 							th:classappend="${catId == cat.categoryId} ? 'is-active'"
 							class="category-item"> <span th:text="${cat.categoryName}"></span><i
@@ -128,7 +127,7 @@
 						</a>
 					</nav>
 				</aside>
-<!-- 廣告輪播 -->				
+				<!-- 廣告輪播 -->
 				<div id="shopCarousel"
 					class="carousel slide shadow-sm rounded-3 overflow-hidden"
 					data-bs-ride="carousel">
@@ -200,7 +199,7 @@
 			</nav>
 		</div>
 	</main>
-<!-- 商品列表區 -->   
+	<!-- 商品列表區 -->
 	<section class="container product-section py-5">
 		<div
 			class="section-header d-flex justify-content-between align-items-center mb-4">
@@ -213,7 +212,7 @@
 				</span> <span th:if="${searchMsg == null}">精選好物</span>
 			</h4>
 		</div>
-<!-- 商品卡片列表 -->
+		<!-- 商品卡片列表 -->
 		<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
 			<div class="col" th:each="p : ${products}">
 				<article class="product-card shadow-sm" style="position: relative;">
@@ -224,14 +223,15 @@
 						class="text-decoration-none" style="color: inherit;">
 						<div class="product-img-wrapper">
 							<img
-								th:src="${p.productImage != null ? '/images/' + p.productImage : '/images/logo01.png'}"
+								th:src="${p.productImage != null ? '/' + p.productImage : '/images/logo01.png'}"
 								th:alt="${p.productName}">
+								
 						</div>
 						<div class="product-info">
 							<h6 class="product-name" th:text="${p.productName}"></h6>
 						</div>
 					</a>
-<!-- 商品價格與加入購物車按鈕 -->
+					<!-- 商品價格與加入購物車按鈕 -->
 					<div class="product-info pt-0">
 						<div class="product-footer">
 							<span class="product-price">$ <span
@@ -277,12 +277,13 @@
                     
                     // 發送 AJAX 請求到後端
                     $.ajax({
-                        url: "/cart/add",
+                    	url: "/api/cart/add/" + "[[${memberId}]]",
                         type: "POST",
-                        data: {
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
                             productId: productId,
                             quantity: 1
-                        },
+                        }),
                         success: function (response) {
                             Swal.fire({
                                 icon: 'success',
@@ -306,6 +307,36 @@
                     });
                 });
         });
+
+     // 1. 核心加載函數 (確保寫在主頁面)
+        function loadContent(title, url) {
+            console.log("嘗試載入路徑:", url);
+            
+            // ！！！請務必確認這裏的 ID 跟你後台主框架中間那個 div 的 ID 一模一樣 ！！！
+            const container = document.getElementById("contentBody"); 
+            
+            if (!container) {
+                console.error("找不到容器！請檢查後台主頁面是否有 id='contentBody' 的標籤");
+                return;
+            }
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error("讀取失敗，狀態碼: " + res.status);
+                    return res.text();
+                })
+                .then(html => {
+                    container.innerHTML = html;
+                    document.title = title;
+                    console.log("載入成功");
+                })
+                .catch(err => console.error("發生錯誤:", err));
+        }
+
+        // 2. 訂單詳情跳轉 (掛載到 window 確保子頁面點得到)
+        window.loadOrderDetail = function(orderId) {
+            loadContent('訂單詳情', '/api/order/detail/' + orderId);
+        };
     </script>
 </body>
 </html>
