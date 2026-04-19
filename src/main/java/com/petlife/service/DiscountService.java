@@ -26,4 +26,10 @@ public class DiscountService {
         // 如果是百分比折扣，確保數值轉換 (前端傳 85 -> 後端存 0.85) 的邏輯也可以寫在這裡
         return discountRepository.save(discount);
     }
+    
+ // 刪除活動
+    public void deleteDiscount(Integer id) {
+        // 使用 JpaRepository 內建的 deleteById 方法來刪除指定 ID 的資料
+        discountRepository.deleteById(id);
+    }
 }
