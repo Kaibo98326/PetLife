@@ -75,7 +75,7 @@
                             <div class="image-box">
                                 <div class="image-label">🖼️ 舊圖 (目前)</div>
                                 <img id="oldPreview" class="preview-img" 
-                                     th:src="${product.productImage != null ? '/images/' + product.productImage : '/images/default.png'}">
+                                     th:src="${product.productImage != null ? '/' + product.productImage : '/images/default.png'}">
                             </div>
                             <div class="comparison-arrow">➡️</div>
                             <div class="image-box">
@@ -120,10 +120,19 @@
             const formData = new FormData(document.getElementById('ajaxEditProductForm'));
             $.ajax({
                 url: /*[[@{/innerProduct/update}]]*/ '/innerProduct/update',
-                type: 'POST', data: formData, processData: false, contentType: false,
+                type: 'POST', 
+                data: formData, 
+                processData: false, 
+                contentType: false,
                 success: function(res) {
-                    if(res === "success") { alert("修改成功！🐾"); backToList(); }
-                    else { alert("修改失敗"); }
+                    if(res === "success") { 
+                        alert("修改成功！🐾"); 
+                        // 💡 關鍵修改：成功後立刻更新側邊欄數字
+                        updateSidebarBadge(); 
+                        backToList(); 
+                    } else { 
+                        alert("修改失敗"); 
+                    }
                 }
             });
         }

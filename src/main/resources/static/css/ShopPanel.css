@@ -376,6 +376,9 @@ body {
     border: 1px solid var(--border-color);
     color: var(--brand-orange);
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .add-to-cart-btn:hover {

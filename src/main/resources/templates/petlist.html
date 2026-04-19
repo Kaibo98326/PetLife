@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>寵物管理 - PetLife</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/MemberCenter.css}">
+    <link rel="stylesheet" th:href="@{/css/petlist.css}">
+</head>
+
+<body>
+    <header class=" py-3 mb-4 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="logo fw-bold fs-4">PetLife 寵物管理</div>
+            <nav>
+                <a th:href="@{/member/center}" class="btn btn-outline-primary">返回會員中心</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="order-container">
+        <h2 class="mb-4 d-flex justify-content-between align-items-center">
+            我的寵物清單
+            <a th:href="@{/pets/addForm/{memberId}(memberId=${memberId})}"
+                class="btn btn-success btn-sm px-3 fw-bold shadow-sm">＋ 新增寵物
+            </a>
+
+
+        </h2>
+        <!-- 如果沒有寵物 -->
+        <div class="row">
+            <div th:if="${#lists.isEmpty(pets)}" class="text-center py-5">
+                <p>目前還沒有任何寵物紀錄喔！</p>
+                <a th:href="@{/pets/addForm/{memberId}(memberId=${memberId})}" class="btn btn-warning">新增寵物</a>
+            </div>
+
+            <!-- 有寵物清單 -->
+            <div th:unless="${#lists.isEmpty(pets)}">
+                <div th:each="pet : ${pets}" class="card mb-3 shadow-sm">
+                    <div class="row g-0 align-items-center">
+
+                        <!-- 左邊：寵物照片 -->
+                        <div class="col-auto">
+                            <img th:src="@{'/' + ${pet.petPhoto}}" alt="寵物照片" class="img-fluid rounded-start"
+                                style="max-width:220px;">
+                        </div>
+
+                        <!-- 中間：寵物資訊 -->
+                        <div class="col">
+                            <div class="card-body">
+                                <p><strong>名稱：</strong><span th:text="${pet.petName}"></span></p>
+                                <p><strong>品種：</strong><span th:text="${pet.breed}"></span></p>
+                                <p><strong>種類：</strong><span th:text="${pet.species}"></span></p>
+                                <p><strong>年齡：</strong><span th:text="${pet.age}"></span></p>
+                                <p><strong>體重(kg)：</strong><span th:text="${pet.weight}"></span></p>
+                                <p><strong>備註：</strong><span th:text="${pet.medicalHistory}"></span></p>
+                            </div>
+                        </div>
+
+                        <!-- 右邊：操作按鈕 -->
+                        <div class="col-auto text-end pe-3">
+                            <div class="btn-group-vertical">
+                                <button class="btn btn-primary btn-sm fw-bold shadow-sm"
+                                    th:onclick="|window.location.href='@{/pets/edit/{id}(id=${pet.petId})}'|">
+                                    修改
+                                </button>
+                                <button class="btn btn-danger btn-sm fw-bold shadow-sm"
+                                    th:onclick="|deletePet(${pet.petId}, ${pet.member.memberId})|">
+                                    刪除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-light py-3 mt-5 border-top text-center">
+        <p>© 2026 PetLife - 寵物管理系統</p>
+    </footer>
+
+    <script>
+        function deletePet(petId, memberId) {
+            if (confirm("確定要刪除寵物 #" + petId + " 嗎？")) {
+                fetch('/pets/delete/' + petId + '?memberId=' + memberId, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("寵物已刪除");
+                            location.reload();
+                        } else {
+                            alert("刪除失敗");
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+
+</html>

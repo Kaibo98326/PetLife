@@ -189,18 +189,50 @@ body {
     font-size: 1.1rem;
 }
 
+/* 商品管理父目錄 庫存低於警告數字 */
+.sidebar-badge-num {
+    background-color: #ff4d4f;
+    color: white;
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-left: auto;
+    padding: 0 4px;
+}
+
+/*  商品管理子目錄 庫存低於警告驚嘆號 */
+.sidebar-badge-warn {
+    background-color: #ff4d4f;
+    color: white;
+    font-size: 10px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
 /* ===== 內容區域 ===== */
 .content-area {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    background-color: transparent;
 }
 
 .content-header {
-    background-color: white;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e0e0e0;
+    background-color: transparent;
+    padding: 0.5rem 2rem;
+    border-bottom: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -210,11 +242,13 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color: #2c3e50;
+    display: none;
 }
 
 .content-breadcrumb {
-    font-size: 0.9rem;
-    color: #999;
+    font-size: 0.85rem;
+    color: #888;
+    margin-left: -5px;
 }
 
 .content-body {
@@ -455,6 +489,13 @@ body {
   background-color: #f0f0f0;
 }
 
+.table-orange thead {
+    background-color: #ff9800; /* 橘色 */
+    color: #fff;
+}
+.table-orange tbody tr:nth-child(even) {
+    background-color: #fff3e0; /* 淺橘背景 */
+}
 
 
 

@@ -29,14 +29,29 @@ public class InnerProductController {
     public String list(@RequestParam(value = "categoryId", required = false) Integer categoryId,
                        @RequestParam(value = "searchKeyword", defaultValue = "") String keyword,
                        @RequestParam(value = "cp", defaultValue = "1") int cp,
+                       @RequestParam(value = "lowStock", defaultValue = "false") boolean lowStock,
                        Model model) {
-        int pageSize = 10;
+        int pageSize = 20;
         Page<Product> productPage;
         
         if (categoryId != null && categoryId != 0) {
             productPage = productService.getProductsByCategory(categoryId, cp, pageSize);
             model.addAttribute("categoryId", categoryId);
         } else {
+            productPage = productService.searchProducts(keyword, cp, pageSize);
+            model.addAttribute("searchKeyword", keyword);
+        }
+        
+        // 判斷是否為庫存預警篩選
+        if (lowStock) {
+            productPage = productService.getLowStockProducts(cp, pageSize);
+            model.addAttribute("isLowStockFilter", true); // 讓前端知道現在是在看警告清單
+        } 
+        else if (categoryId != null && categoryId != 0) {
+            productPage = productService.getProductsByCategory(categoryId, cp, pageSize);
+            model.addAttribute("categoryId", categoryId);
+        } 
+        else {
             productPage = productService.searchProducts(keyword, cp, pageSize);
             model.addAttribute("searchKeyword", keyword);
         }
@@ -54,7 +69,9 @@ public class InnerProductController {
                 }
             }
         }
-
+        
+        long lowStockCount = productService.getLowStockCount();
+        model.addAttribute("lowStockCount", lowStockCount);
         model.addAttribute("productList", productList);
         model.addAttribute("currentPage", cp);
         model.addAttribute("totalPages", productPage.getTotalPages());
@@ -129,13 +146,29 @@ public class InnerProductController {
 //===== 後台商品 工具：處理圖片上傳與路徑存儲 ================================================================================================
 
     private void handleImageUpload(Product product, MultipartFile file, String defaultImage) throws Exception {
+    		//外部儲存目錄
+    		String uploadDir = "C:/uploads/images/products/";
+    		java.io.File directory = new java.io.File(uploadDir);
+    		if(!directory.exists()) {
+    			directory.mkdirs();
+    		}
+    		
         if (file != null && !file.isEmpty()) {
+        		//取得原始檔名
             String fileName = file.getOriginalFilename();
-            String savePath = new java.io.File("src/main/resources/static/images").getAbsolutePath();
-            java.io.File directory = new java.io.File(savePath);
-            if (!directory.exists()) directory.mkdirs();
-            file.transferTo(new java.io.File(savePath, fileName));
-            product.setProductImage(fileName);
+            //儲存檔案到外部目錄
+            file.transferTo(new java.io.File(uploadDir,fileName));
+            
+            //儲存資料庫的路徑:images/xxx
+            product.setProductImage("products/" + fileName);
         } else { product.setProductImage(defaultImage); }
     }
+    
+//===== 後台商品 提供給前端 AJAX 同步庫存警告數量的 API (用於左方menu低庫存數字即時更新 )============================================================
+    @GetMapping("/api/lowStockCount")
+    @ResponseBody
+    public long getLowStockCountApi() {
+        // 💡 直接回傳數字即可，不需要回傳整頁 HTML
+        return productService.getLowStockCount();
+    }    
 }

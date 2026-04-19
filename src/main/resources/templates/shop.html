@@ -223,8 +223,9 @@
 						class="text-decoration-none" style="color: inherit;">
 						<div class="product-img-wrapper">
 							<img
-								th:src="${p.productImage != null ? '/images/' + p.productImage : '/images/logo01.png'}"
+								th:src="${p.productImage != null ? ('/images/products/' + p.productImage) : '/images/products/default.jpg'}"
 								th:alt="${p.productName}">
+								
 						</div>
 						<div class="product-info">
 							<h6 class="product-name" th:text="${p.productName}"></h6>
