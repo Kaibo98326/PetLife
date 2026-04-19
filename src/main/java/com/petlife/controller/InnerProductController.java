@@ -160,7 +160,7 @@ public class InnerProductController {
             file.transferTo(new java.io.File(uploadDir,fileName));
             
             //儲存資料庫的路徑:images/xxx
-            product.setProductImage("images/products/" + fileName);
+            product.setProductImage("products/" + fileName);
         } else { product.setProductImage(defaultImage); }
     }
     

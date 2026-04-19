@@ -44,11 +44,11 @@
 					<td style="text-align: center;">
 						<div class="list-img-container">
 							<img th:if="${not #strings.isEmpty(p.productImage)}"
-								th:src="@{/images/{img}(img=${p.productImage})}"
+								th:src="@{/images/products/{img}(img=${p.productImage})}"
 								class="list-thumb-mini">
 
 							<div class="img-hover-preview">
-								<img th:src="@{/images/{img}(img=${p.productImage})}" />
+								<img th:src="@{/images/products/{img}(img=${p.productImage})}" />
 								<div class="hover-caption" th:text="${p.productName}"></div>
 							</div>
 
