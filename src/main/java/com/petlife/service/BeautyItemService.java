@@ -2,6 +2,8 @@ package com.petlife.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +72,8 @@ public class BeautyItemService {
         BeautyItem item = new BeautyItem();
         item.setItemName(form.getItemName().trim());
         item.setDescription(normalizeText(form.getDescription()));
-        applyPrices(item, form);
+
+        applyPricesForCreate(item, form);
 
         beautyItemRepository.save(item);
     }
@@ -82,7 +85,8 @@ public class BeautyItemService {
         BeautyItem item = getEntity(form.getBeautyId());
         item.setItemName(form.getItemName().trim());
         item.setDescription(normalizeText(form.getDescription()));
-        applyPrices(item, form);
+
+        applyPricesForUpdate(item, form);
 
         beautyItemRepository.save(item);
     }
@@ -93,11 +97,48 @@ public class BeautyItemService {
         beautyItemRepository.delete(item);
     }
 
-    private void applyPrices(BeautyItem item, BeautyItemForm form) {
+    /**
+     * 建立新美容項目時使用：
+     * 因為 item 還是新物件，直接建立三筆價格即可
+     */
+    private void applyPricesForCreate(BeautyItem item, BeautyItemForm form) {
         item.clearPrices();
         item.addPrice(buildPrice(item, "小型", form.getSmallPrice()));
         item.addPrice(buildPrice(item, "中型", form.getMediumPrice()));
         item.addPrice(buildPrice(item, "大型", form.getLargePrice()));
+    }
+
+    /**
+     * 修改既有美容項目時使用：
+     * 不可 clear 後重建，否則 Hibernate 容易把子表當成 insert，
+     * 進而撞上 UNIQUE(beauty_id, pet_size)
+     */
+    private void applyPricesForUpdate(BeautyItem item, BeautyItemForm form) {
+        Map<String, BeautyItemPrice> priceMap = item.getPriceList().stream()
+                .collect(Collectors.toMap(BeautyItemPrice::getPetSize, p -> p));
+
+        upsertPrice(item, priceMap, "小型", form.getSmallPrice());
+        upsertPrice(item, priceMap, "中型", form.getMediumPrice());
+        upsertPrice(item, priceMap, "大型", form.getLargePrice());
+    }
+
+    /**
+     * 有舊資料就直接更新價格
+     * 沒有舊資料才新增
+     */
+    private void upsertPrice(BeautyItem item,
+                             Map<String, BeautyItemPrice> priceMap,
+                             String petSize,
+                             BigDecimal priceValue) {
+
+        BeautyItemPrice existingPrice = priceMap.get(petSize);
+
+        if (existingPrice != null) {
+            existingPrice.setItemPrice(priceValue);
+            return;
+        }
+
+        item.addPrice(buildPrice(item, petSize, priceValue));
     }
 
     private BeautyItemPrice buildPrice(BeautyItem item, String petSize, BigDecimal priceValue) {

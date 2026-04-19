@@ -1,5 +1,7 @@
 package com.petlife.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +30,10 @@ public class BeautyItemController {
         try {
             model.addAttribute("itemList", beautyItemService.findForList(queryType, queryValue));
         } catch (Exception e) {
-            model.addAttribute("itemList", java.util.List.of());
+            model.addAttribute("itemList", List.of());
             model.addAttribute("error", e.getMessage());
         }
+
         model.addAttribute("queryType", queryType);
         model.addAttribute("queryValue", queryValue);
         return "beautyItemList";
@@ -38,7 +41,9 @@ public class BeautyItemController {
 
     @GetMapping("/add")
     public String addPage(Model model) {
-        model.addAttribute("form", new BeautyItemForm());
+        if (!model.containsAttribute("form")) {
+            model.addAttribute("form", new BeautyItemForm());
+        }
         return "beautyItemAdd";
     }
 
@@ -48,6 +53,7 @@ public class BeautyItemController {
             beautyItemService.create(form);
             return "redirect:/admin/beauty/item/list";
         } catch (Exception e) {
+            model.addAttribute("form", form);
             model.addAttribute("error", e.getMessage());
             return "beautyItemAdd";
         }
@@ -55,8 +61,16 @@ public class BeautyItemController {
 
     @GetMapping("/edit")
     public String editPage(@RequestParam("id") Integer id, Model model) {
-        model.addAttribute("form", beautyItemService.getFormById(id));
-        return "beautyItemEdit";
+        try {
+            model.addAttribute("form", beautyItemService.getFormById(id));
+            return "beautyItemEdit";
+        } catch (Exception e) {
+            model.addAttribute("itemList", beautyItemService.findForList("all", ""));
+            model.addAttribute("queryType", "all");
+            model.addAttribute("queryValue", "");
+            model.addAttribute("error", e.getMessage());
+            return "beautyItemList";
+        }
     }
 
     @PostMapping("/update")
@@ -65,14 +79,23 @@ public class BeautyItemController {
             beautyItemService.update(form);
             return "redirect:/admin/beauty/item/list";
         } catch (Exception e) {
+            model.addAttribute("form", form);
             model.addAttribute("error", e.getMessage());
             return "beautyItemEdit";
         }
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam("id") Integer id) {
-        beautyItemService.delete(id);
-        return "redirect:/admin/beauty/item/list";
+    public String delete(@RequestParam("id") Integer id, Model model) {
+        try {
+            beautyItemService.delete(id);
+            return "redirect:/admin/beauty/item/list";
+        } catch (Exception e) {
+            model.addAttribute("itemList", beautyItemService.findForList("all", ""));
+            model.addAttribute("queryType", "all");
+            model.addAttribute("queryValue", "");
+            model.addAttribute("error", e.getMessage());
+            return "beautyItemList";
+        }
     }
 }
