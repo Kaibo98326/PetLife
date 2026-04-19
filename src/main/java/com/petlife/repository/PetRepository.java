@@ -1,15 +1,12 @@
 package com.petlife.repository;
 
-
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.petlife.model.Pet;
-
+import java.util.List;
 
 
 @Repository
@@ -31,9 +28,5 @@ public interface PetRepository extends JpaRepository<Pet, Integer>{
     Page<Pet> findByPetNameContaining(String keyword , Pageable pageable);
     
     Page<Pet> findByMemberMemberId(Integer memberId, Pageable pageable);
-    
-    // 查出此會員的所有寵物 4/19 Bean改 
-    List<Pet> findByMember_MemberId(Integer memberId);
-
 	
 }
