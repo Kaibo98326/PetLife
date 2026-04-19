@@ -105,7 +105,7 @@
 			<div class="row g-5">
 				<div class="col-md-6">
 					<div class="main-image-wrapper">
-						<img th:src="@{'/' + ${product.productImage}}"
+						<img th:src="${product.productImage != null ? '/images/products/' + #strings.replace(product.productImage, 'images/products/', '') : '/images/products/default.jpg'}"
      						th:alt="${product.productName}" class="img-fluid rounded">
  	
 					</div>

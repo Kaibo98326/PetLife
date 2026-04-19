@@ -1,8 +1,11 @@
 package com.petlife.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -165,10 +168,36 @@ public class InnerProductController {
     }
     
 //===== 後台商品 提供給前端 AJAX 同步庫存警告數量的 API (用於左方menu低庫存數字即時更新 )============================================================
+    
     @GetMapping("/api/lowStockCount")
     @ResponseBody
     public long getLowStockCountApi() {
         // 💡 直接回傳數字即可，不需要回傳整頁 HTML
         return productService.getLowStockCount();
-    }    
+    }
+    
+//===== 後台商品 批次上下架 ===========================================================================================================
+    
+    @PostMapping("/api/product/batchUpdateStatus")
+    @ResponseBody
+    public ResponseEntity<?> batchUpdateStatus(@RequestBody Map<String, Object> payload) {
+        try {
+            // 從 JSON 物件中取出 ids 和 status
+            List<Integer> ids = (List<Integer>) payload.get("ids");
+            Integer status = (Integer) payload.get("status");
+
+            if (ids == null || ids.isEmpty()) {
+                return ResponseEntity.badRequest().body("請選擇至少一項商品");
+            }
+
+            // 呼叫 Service 執行批次更新
+            productService.batchUpdateStatus(ids, status);
+            
+            return ResponseEntity.ok().body("批次操作成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("批次操作失敗：" + e.getMessage());
+        }
+    }
+    
 }
