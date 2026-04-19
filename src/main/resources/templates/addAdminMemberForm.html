@@ -1,0 +1,79 @@
+<div th:fragment="addFormFragment" id="addFormFragment" class="container mt-4">
+    <h4 class="mb-3">新增會員</h4>
+
+    <form id="addMemberForm" th:action="@{/members/add}" method="post">
+        <div class="mb-3">
+            <label for="memberName" class="form-label">姓名</label>
+            <input type="text" id="memberName" name="memberName" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">電話</label>
+            <input type="text" id="phone" name="phone" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">電子郵件</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="passwordHash" class="form-label">密碼</label>
+            <input type="password" id="passwordHash" name="passwordHash" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="address" class="form-label">地址</label>
+            <input type="text" id="address" name="address" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">狀態</label>
+            <select id="status" name="accountStatus" class="form-select">
+                <option value="active">active</option>
+                <option value="disable">disable</option>
+                <option value="delete">delete</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-success" onclick="submitNewMember()">新增</button>
+        <button type="button" class="btn btn-secondary" onclick="loadMemberList()">返回列表</button>
+    </form>
+
+    <script>
+        function submitNewMember() {
+            const form = document.getElementById("addMemberForm");
+            const formData = {
+                memberName: form.memberName.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                passwordHash: form.passwordHash.value,
+                address: form.address.value,
+                accountStatus: form.status.value
+            };
+
+            fetch(form.action, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("會員新增成功");
+                    loadMemberList(); // 新增成功後回到列表
+                } else {
+                    alert("新增失敗");
+                }
+            })
+            .catch(() => alert("系統錯誤，請稍後再試"));
+        }
+
+        function loadMemberList() {
+            fetch('/members/list?page=0')
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector("#addFormFragment").outerHTML = html;
+                });
+        }
+    </script>
+</div>

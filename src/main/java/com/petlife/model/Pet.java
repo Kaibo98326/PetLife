@@ -17,8 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-
-
 public class Pet {
 	@Id@Column(name = "pet_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

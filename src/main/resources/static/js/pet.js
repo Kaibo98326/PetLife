@@ -1,3 +1,55 @@
+// 預覽上傳圖片
+function PetPreviewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const preview = document.getElementById("preview");
+            if (preview) {
+                preview.src = e.target.result;
+                preview.style.display = "block";
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// 載入寵物列表分頁
+function PetLoadPage(page) {
+    fetch('/pets/admin/list?page=' + page)
+        .then(response => response.text())
+        .then(html => {
+            const container = document.querySelector('#contentBody');
+            if (container) {
+                container.innerHTML = html;
+            }
+        })
+        .catch(() => alert("載入寵物列表失敗"));
+}
+
+// 提交編輯表單（AJAX）
+function PetSubmitUpdate(formId) {
+    const form = document.getElementById(formId || "editForm");
+    if (!form) {
+        alert("找不到編輯表單");
+        return;
+    }
+
+    const formData = new FormData(form);
+    fetch(form.action, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(html => {
+        const container = document.querySelector('#contentBody');
+        if (container) {
+            container.innerHTML = html;
+        }
+        alert("寵物資料更新成功 🐾");
+    })
+    .catch(() => alert("更新失敗，請稍後再試"));
+}
 function initPetTableEvents() {
     // 修改
     document.querySelectorAll(".edit-btn").forEach(btn => {
@@ -55,6 +107,8 @@ function initPetTableEvents() {
 	          });
 	    };
 	});
+	
+	
 }
 /* --- 訂單管理專用邏輯 --- */
 
@@ -120,3 +174,5 @@ function handleOrderDelete(orderId) {
         });
     }
 }
+
+/*--------------*/ 
