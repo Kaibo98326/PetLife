@@ -1,0 +1,127 @@
+/**
+ * 美容項目／美容預約的樣式
+ * 對應：beauty-item-*.jsp、beauty-record-*.jsp
+ * 於 AdminDashboard.jsp 在 AdminPanel.css 之後引入，避免改到 AdminPanel.css 的樣式，之後再看看要不要合在一起。
+ */
+.content-body .beauty-embed {
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.content-body .beauty-embed h1 {
+    font-size: 1.2rem;
+    margin: 0 0 0.75rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.content-body .beauty-embed h2 {
+    font-size: 1rem;
+    margin: 1rem 0 0.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.content-body .beauty-embed fieldset {
+    border: 1px solid #e0e0e0;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin: 0 0 1rem;
+}
+
+.content-body .beauty-embed legend {
+    padding: 0 0.35rem;
+    color: #666;
+}
+
+.content-body .beauty-embed table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.35rem;
+}
+
+.content-body .beauty-embed th,
+.content-body .beauty-embed td {
+    border: 1px solid #e0e0e0;
+    padding: 0.5rem 0.65rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.content-body .beauty-embed th {
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.content-body .beauty-embed label {
+    display: block;
+    margin-top: 0.65rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.content-body .beauty-embed input[type="text"],
+.content-body .beauty-embed input[type="number"],
+.content-body .beauty-embed input[type="date"],
+.content-body .beauty-embed select,
+.content-body .beauty-embed textarea {
+    box-sizing: border-box;
+    padding: 0.45rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 0.35rem;
+    max-width: 24rem;
+    width: 100%;
+    font-family: inherit;
+}
+
+.content-body .beauty-embed textarea {
+    min-height: 4em;
+}
+
+.content-body .beauty-embed .beauty-btns {
+    margin-top: 1rem;
+}
+
+.content-body .beauty-embed .beauty-btns button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 0.35rem;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.9rem;
+}
+
+.content-body .beauty-embed .beauty-btns button:hover {
+    border-color: #f97316;
+    color: #f97316;
+}
+
+.content-body .beauty-embed .beauty-btns button[type="submit"] {
+    background: #f97316;
+    border-color: #ea580c;
+    color: #fff;
+    font-weight: 600;
+}
+
+.content-body .beauty-embed .beauty-btns button[type="submit"]:hover {
+    background: #ea580c;
+    color: #fff;
+}
+
+.content-body .beauty-embed .beauty-err {
+    color: #c33;
+    margin: 0 0 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #c33;
+    background: #fee;
+}

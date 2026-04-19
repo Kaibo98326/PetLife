@@ -1,0 +1,160 @@
+<div class="beauty-embed">
+    <h1>美容項目管理</h1>
+
+    <div class="beauty-err" th:if="${error}" th:text="${error}"></div>
+
+    <fieldset>
+        <legend>查詢</legend>
+        <form action="/admin/beauty/item/list" method="get"
+              onsubmit="event.preventDefault(); event.stopPropagation(); return loadContent('美容項目管理', 'groomingItem&queryType=' + encodeURIComponent(document.getElementById('queryType').value) + '&queryValue=' + encodeURIComponent(document.getElementById('queryValue').value));">
+            <label for="queryType">查詢類型</label>
+            <select name="queryType" id="queryType">
+                <option value="all" th:selected="${queryType == 'all'}">查全部</option>
+                <option value="id" th:selected="${queryType == 'id'}">依編號</option>
+                <option value="name" th:selected="${queryType == 'name'}">依名稱</option>
+            </select>
+
+            <label for="queryValue">查詢值</label>
+            <input type="text" name="queryValue" id="queryValue" th:value="${queryValue}">
+
+            <p class="beauty-btns">
+                <button type="submit">查詢</button>
+                <button type="button" onclick="return loadContent('美容項目管理', 'groomingItem');">清除</button>
+                <button type="button" onclick="return loadContent('新增美容項目', 'groomingItemAdd');">新增</button>
+            </p>
+        </form>
+    </fieldset>
+
+    <h2>列表</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>編號</th>
+            <th>名稱</th>
+            <th>描述</th>
+            <th>小</th>
+            <th>中</th>
+            <th>大</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(itemList)}">
+            <td colspan="7">查無資料</td>
+        </tr>
+        <tr th:each="item : ${itemList}">
+            <td th:text="${item.beautyId}"></td>
+            <td th:text="${item.itemName}"></td>
+            <td th:text="${item.description}"></td>
+            <td th:text="${item.smallPrice}"></td>
+            <td th:text="${item.mediumPrice}"></td>
+            <td th:text="${item.largePrice}"></td>
+            <td>
+                <p class="beauty-btns">
+                    <button type="button"
+                            th:onclick="|return loadContent('修改美容項目', 'groomingItemEdit&id=' + ${item.beautyId})|">
+                        修改
+                    </button>
+                    <button type="button"
+                            th:onclick="|if(confirm('確定刪除？')) return loadContent('美容項目管理', 'groomingItemDelete&id=' + ${item.beautyId}); return false;|">
+                        刪除
+                    </button>
+                </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+window.beautyLoadContentByUrl = function(title, url, module) {
+    const contentTitle = document.getElementById('contentTitle');
+    const breadcrumb = document.getElementById('breadcrumb');
+    const contentBody = document.getElementById('contentBody');
+    const mainFrame = document.getElementById('mainFrame');
+
+    if (contentTitle) contentTitle.textContent = title;
+    if (breadcrumb) breadcrumb.textContent = title;
+    if (mainFrame) mainFrame.style.display = 'none';
+    if (contentBody) contentBody.style.display = 'block';
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.text();
+        })
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const cleanHtml = (doc.body && doc.body.innerHTML.trim()) ? doc.body.innerHTML : html;
+
+            contentBody.innerHTML = cleanHtml;
+
+            const scripts = contentBody.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                contentBody.appendChild(newScript);
+            });
+        })
+        .catch(error => {
+            contentBody.innerHTML = `
+                <div class="error-message">
+                    <strong>加載失敗</strong><br>
+                    無法加載 ${title}，請稍後重試。<br>
+                    <small>錯誤信息: ${error.message}</small>
+                </div>
+            `;
+        });
+
+    return false;
+};
+
+window.beautyPostFormThenShow = function(form, successTitle, successModule) {
+    const action = form.getAttribute('action');
+    const method = (form.getAttribute('method') || 'post').toUpperCase();
+    const formData = new FormData(form);
+
+    fetch(action, {
+        method: method,
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.text();
+    })
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const cleanHtml = (doc.body && doc.body.innerHTML.trim()) ? doc.body.innerHTML : html;
+
+        const contentBody = document.getElementById('contentBody');
+        contentBody.innerHTML = cleanHtml;
+
+        const scripts = contentBody.querySelectorAll('script');
+        scripts.forEach(script => {
+            const newScript = document.createElement('script');
+            newScript.textContent = script.textContent;
+            contentBody.appendChild(newScript);
+        });
+
+        const contentTitle = document.getElementById('contentTitle');
+        const breadcrumb = document.getElementById('breadcrumb');
+
+        if (contentTitle) contentTitle.textContent = successTitle;
+        if (breadcrumb) breadcrumb.textContent = successTitle;
+    })
+    .catch(error => {
+        const contentBody = document.getElementById('contentBody');
+        contentBody.innerHTML = `
+            <div class="error-message">
+                <strong>送出失敗</strong><br>
+                請稍後重試。<br>
+                <small>錯誤信息: ${error.message}</small>
+            </div>
+        `;
+    });
+
+    return false;
+};
+</script>
