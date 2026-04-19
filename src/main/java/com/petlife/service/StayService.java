@@ -65,9 +65,12 @@ public class StayService {
 	    stay.setSumPrice(days * stay.getOrderPrice());  
 	    stay.setStayStatus("已預約");  
 	    
-	    StayRoom room = stay.getStayRoom();
+	    // 從 DB 查出完整的 StayRoom（前端只傳了 roomId，不是完整實體）
+	    StayRoom room = stayRoomRepository.findById(stay.getStayRoom().getRoomId())
+	    		.orElseThrow(() -> new RuntimeException("找不到此房間"));
 		room.setRoomStatus("已預約");
 	    stayRoomRepository.save(room);
+	    stay.setStayRoom(room);  // 把完整的 room 設回去
 	    
 	    return stayRepository.save(stay);
 	}
@@ -75,6 +78,11 @@ public class StayService {
 	//電話末三碼 查詢邏輯
 	public List<Stay> findByPhone(String phone){
 		return stayRepository.findByPet_Member_PhoneEndingWith(phone);
+	}
+	
+	// 用會員ID查訂單（歷史訂單用）
+	public List<Stay> findByMemberId(Integer memberId) {
+		return stayRepository.findByPet_Member_MemberId(memberId);
 	}
 
 }

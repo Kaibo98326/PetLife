@@ -59,11 +59,13 @@
         <td>
             <button class="stay-btn stay-btn-edit" onclick="editRow(${type.roomTypeId}, '${type.roomName}', 
                 ${type.roomPrice}, '${type.roomDescription}', ${type.capacity})">✏️ 編輯</button>
-            <button class="stay-btn stay-btn-delete" onclick="deleteRoomType(${type.roomTypeId})">🗑️ 刪除</button>
+            
         </td>
     </tr>`;
         });
       }
+      // 4/19 移除刪除按鈕 (預設給更高權限者使用)
+      //<button class="stay-btn stay-btn-delete" onclick="deleteRoomType(${type.roomTypeId})">🗑️ 刪除</button>
 
       // C RoomTypes
       async function createRoomType() {
@@ -122,17 +124,17 @@
       }
 
       // D RoomTypes
-      async function deleteRoomType(id) {
-        // 彈出 警告視窗 (confirm 保留字所以改 confirmed)
-        const confirmed = confirm("ㄟㄟㄟ 你要刪掉房型嗎? 這是不軟刪除ㄟ哥們");
-        if (!confirmed) return;
+      // async function deleteRoomType(id) {
+      //   // 彈出 警告視窗 (confirm 保留字所以改 confirmed)
+      //   const confirmed = confirm("ㄟㄟㄟ 你要刪掉房型嗎? 這是不軟刪除ㄟ哥們");
+      //   if (!confirmed) return;
 
-        //確定才刪
-        const res = await fetch(`/hotel/types/${id}`, {
-          method: "DELETE",
-        });
-        await loadRoomTypes();
-      }
+      //   //確定才刪
+      //   const res = await fetch(`/hotel/types/${id}`, {
+      //     method: "DELETE",
+      //   });
+      //   await loadRoomTypes();
+      // }
 
       //一鍵加入資料
       function fillTestData() {
