@@ -1,0 +1,110 @@
+/* ========================================================================
+   PetLife 後台 寵物旅館管理 樣式表
+   ======================================================================== */
+/* 1. 容器 */
+.stay-container {
+    font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    color: #5d4037;
+    padding: 15px;
+}
+/* 2. 卡片面板 */
+.stay-card {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ffe0b2;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+/* 3. 標題（左側裝飾條） */
+.stay-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 5px solid #ffcc33;
+    color: #e67e22;
+}
+/* 4. 表單行 */
+.stay-form-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+.stay-form-row input,
+.stay-form-row select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+.stay-form-row input:focus,
+.stay-form-row select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+/* 5. 表格 */
+.stay-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.stay-table th {
+    background-color: #fffaf0;
+    color: #e67e22;
+    padding: 14px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid #ffcc33;
+}
+.stay-table td {
+    padding: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: center;
+}
+.stay-table tr:hover {
+    background-color: #fffdf9;
+}
+/* 6. 按鈕 */
+.stay-btn {
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 4px;
+}
+.stay-btn:hover {
+    transform: translateY(-1px);
+}
+.stay-btn-add {
+    background-color: #ffcc33;
+    color: #5d4037;
+}
+.stay-btn-add:hover { background-color: #e67e22; color: white; }
+.stay-btn-edit {
+    background-color: #3498db;
+    color: white;
+}
+.stay-btn-edit:hover { background-color: #2980b9; }
+.stay-btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+.stay-btn-delete:hover { background-color: #c0392b; }
+.stay-btn-confirm {
+    background-color: #27ae60;
+    color: white;
+}
+.stay-btn-confirm:hover { background-color: #219a52; }
+.stay-btn-cancel {
+    background-color: #ecf0f1;
+    color: #7f8c8d;
+}
+.stay-btn-cancel:hover { background-color: #bdc3c7; }

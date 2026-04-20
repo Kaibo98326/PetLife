@@ -138,6 +138,17 @@
         }).then(() => {
             window.location.href = '/member/center';
         });
+    } 
+    // 4/19 Bean 改 判斷是否登入
+    else if (status === 'need_login') {
+        Swal.fire({
+            icon: 'warning',
+            title: '請先登入',
+            text: '需要登入才能預約旅館喔！',
+            confirmButtonText: '前往登入'
+        }).then(() => {
+            window.location.href = '/loginMember';
+        });
     }
 
 
