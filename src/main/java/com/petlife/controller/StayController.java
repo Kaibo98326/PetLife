@@ -24,7 +24,7 @@ import com.petlife.service.StayService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("hotel/orders")
+@RequestMapping("/hotel/orders")
 public class StayController {
 
 	// DI
