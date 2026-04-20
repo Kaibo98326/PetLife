@@ -1,0 +1,191 @@
+/* ========================================================================
+   PetLife 後台 商品分類 樣式表
+   更新日期: 2026.04.15
+      	   2026.04.18 - 移除進入動畫、修正padding
+   ======================================================================== */
+
+/* 1. 基礎變數與容器 */
+:root {
+	--primary-yellow: #ffcc33;
+	--primary-orange: #e67e22;
+	--text-dark: #5d4037;
+	--bg-light: #fffaf0;
+	--border-color: #ffe0b2;
+	--blue-link: #3498db;
+	--red-del: #e74c3c;
+}
+
+.category-wrapper {
+	font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+	color: var(--text-dark);
+}
+
+/* 2. 卡片面板基底 */
+.card-panel, .edit-card {
+	background: #ffffff;
+	border-radius: 8px;
+	border: 1px solid var(--border-color);
+	padding: 24px;
+	margin-bottom: 30px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	position: relative; /* 為了讓壓線標題定位 */
+}
+
+/* 3. 標題系統 */
+
+/* 風格 A：左側裝飾條 (用於清單) */
+.section-title {
+	display: flex;
+	align-items: center;
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-bottom: 20px;
+	padding-left: 12px;
+	border-left: 5px solid var(--primary-yellow);
+	color: var(--primary-orange);
+}
+
+/* 風格 B：壓線標題 (用於編輯/修改) */
+.edit-card::before {
+	content: "✏️ 修改商品分類";
+	position: absolute;
+	top: -15px;
+	left: 20px;
+	background: #fff;
+	padding: 0 10px;
+	color: var(--blue-hover);
+	font-weight: bold;
+	font-size: 1.1rem;
+}
+
+/* 4. 表單與輸入框 */
+.form-row, .search-group {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+	gap: 15px;
+}
+
+.form-row label, .search-group label {
+	width: 100px;
+	font-weight: bold;
+	color: var(--text-dark);
+	white-space: nowrap;
+}
+
+.form-row input, .search-group input {
+	flex: 1;
+	padding: 10px 15px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	outline: none;
+}
+
+/* 狀態：聚焦 */
+.form-row input:focus:not([readonly]), 
+.search-group input:focus {
+	border-color: var(--blue-link);
+	box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+/* 狀態：唯讀 */
+.form-row input[readonly] {
+	background-color: #f8f9fa;
+	color: #95a5a6;
+	border-color: #eee;
+	cursor: not-allowed;
+}
+
+/* 5. 按鈕與連結 */
+.btn-group {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+/* 主按鈕 (新增/查詢) */
+.btn-main {
+	background-color: var(--primary-yellow);
+	color: var(--text-dark);
+	border: none;
+	padding: 10px 24px;
+	border-radius: 6px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.btn-main:hover {
+	background-color: var(--primary-orange);
+	color: white;
+}
+
+/* 更新按鈕 (藍色) */
+.btn-update {
+	background: var(--blue-link);
+	color: white;
+	border: none;
+	padding: 10px 25px;
+	border-radius: 8px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.btn-update:hover { background: var(--blue-hover); }
+
+/* 取消按鈕 (灰色) */
+.btn-cancel {
+	background: #ecf0f1;
+	color: #7f8c8d;
+	border: none;
+	padding: 10px 25px;
+	border-radius: 8px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.btn-cancel:hover { background: #bdc3c7; }
+
+/* 列表中的操作連結 */
+.action-link {
+	text-decoration: none;
+	font-weight: bold;
+	margin: 0 8px;
+	font-size: 0.9rem;
+}
+
+.edit-link { color: var(--blue-link); }
+.del-link { color: var(--red-del); }
+
+/* 6. 表格與標籤 */
+.custom-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.custom-table th {
+	background-color: var(--bg-light);
+	color: var(--primary-orange);
+	padding: 14px;
+	text-align: center;
+	font-weight: bold;
+	border-bottom: 2px solid var(--primary-yellow);
+}
+
+.custom-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f0f0f0;
+	text-align: center;
+}
+
+.custom-table tr:hover { background-color: #fffdf9; }
+
+.count-badge {
+	background: var(--bg-light);
+	color: var(--primary-orange);
+	padding: 4px 12px;
+	border-radius: 50px;
+	font-size: 0.85rem;
+	border: 1px solid var(--border-color);
+}

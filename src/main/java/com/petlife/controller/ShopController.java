@@ -4,14 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.petlife.model.CartItem;
 import com.petlife.model.Category;
 import com.petlife.model.Product;
+import com.petlife.service.CartService;
 import com.petlife.service.CategoryService;
 import com.petlife.service.ProductService;
 
@@ -27,69 +30,89 @@ public class ShopController {
 	    @Autowired
 	    private CategoryService categoryService;
 
-	    //@Autowired
-	    //private CartItemService cartItemService; // 取代原本的 CartItemDao
+	    @Autowired
+	    private CartService cartService;
 
-	    // --- 首頁 ---
-	    @GetMapping("/index")
+// ===== 【商城首頁】 前台主頁面 支援：1. 全部商品 2. 分類篩選 3. 關鍵字搜尋 ============================================
+	    
+	    @GetMapping({"/index", ""}) 
 	    public String index(@RequestParam(value = "catId", required = false) Integer catId,
 	                        @RequestParam(value = "keyword", required = false) String keyword,
 	                        @RequestParam(value = "cp", defaultValue = "1") int cp,
+	                        @RequestParam(value = "all", required = false) String all,
 	                        HttpSession session,
 	                        Model model) {
-	    		model.addAttribute("memberId", session.getAttribute("memberId"));
-	    		model.addAttribute("memberName" , session.getAttribute("memberName"));
+	    	
+	    	
+// ===== 顯示 登入 會員名稱資訊 ==============================================================================
+	    	
+	        model.addAttribute("memberId", session.getAttribute("memberId"));
+	        model.addAttribute("memberName", session.getAttribute("memberName"));
+	        model.addAttribute("cartTotalQty", session.getAttribute("cartTotalQty") != null ? session.getAttribute("cartTotalQty") : 0);
+
 	        // 1. 計算購物車總件數
-/*	        Integer memberId = (Integer) session.getAttribute("memberId");
+	        Integer memberId = (Integer) session.getAttribute("memberId");
 	        if (memberId == null) memberId = 1; // 測試用預設
-	        List<CartItem> cartItems = cartItemService.queryCartItemsByMemberId(memberId);
+	        List<CartItem> cartItems = cartService.queryCartItemsByMemberId(memberId);
 	        int totalQty = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
 	        model.addAttribute("cartTotalQty", totalQty);
-*/
-	        // 2. 取得所有分類 (左側選單)
+
+	        
+// ===== 取得所有分類 (左側 menu 選單) =======================================================================
+	        
 	        List<Category> categories = categoryService.getAllCategory();
 	        model.addAttribute("category", categories);
-
-	        // 3. 商品查詢邏輯
-	        List<Product> products;
+	        
+// ===== 商品 搜尋 與 篩選邏輯 ==============================================================================
+	        
+	        int pageSize = 100; // 前台商城通常一次顯示較多商品，或走無限捲動
+	        Page<Product> productPage;
 	        String searchMsg = "";
 
 	        if (keyword != null && !keyword.trim().isEmpty()) {
-	            // 【B. 關鍵字搜尋模式】
+	// 【關鍵字搜尋】
 	            String cleanKeyword = keyword.trim();
-	            products = productService.searchProducts(cleanKeyword, 1, 100).stream()
-	                    .filter(p -> p.getProductStatus() == 1)
-	                    .collect(Collectors.toList());
+	            productPage = productService.searchProducts(cleanKeyword, cp, pageSize);
 	            searchMsg = "搜尋關鍵字：「" + cleanKeyword + "」";
 	            model.addAttribute("keyword", cleanKeyword);
-
-	        } else if (catId != null) {
-	            // 【A. 分類篩選模式】
-	            products = productService.getProductsByCategory(catId, 1, 100).stream()
-	                    .filter(p -> p.getProductStatus() == 1)
-	                    .collect(Collectors.toList());
+	            
+	        } else if (catId != null && catId != 0) {
+	// 【分類篩選】
+	            productPage = productService.getProductsByCategory(catId, cp, pageSize);
 	            searchMsg = "商品分類結果";
 	            model.addAttribute("catId", catId);
-
+	            
 	        } else {
-	            // 【C. 預設模式】
-	            products = getSafeAllActiveProducts();
+	// 【預設模式：顯示所有上架商品】
+	            productPage = productService.searchProducts("", cp, pageSize);
+	            if ("true".equals(all)) {
+	                searchMsg = "全部商品項目";
+	                model.addAttribute("hideCarousel", true); // 傳送指令給前端：隱藏廣告
+	            }
+	        }
+	        
+// ===== 取得所有上架商品 =================================================================================
+
+	        List<Product> activeProducts = productPage.getContent().stream()
+	                .filter(p -> p.getProductStatus() != null && p.getProductStatus() == 1)
+	                .collect(Collectors.toList());
+
+	        for (Product p : activeProducts) {
+	            if (p.getCategoryId() != null) {
+	                Category cat = categoryService.getCategoryById(p.getCategoryId());
+	                if (cat != null) p.setCategoryName(cat.getCategoryName());
+	            }
 	        }
 
-	        // 4. 封裝結果送往 JSP
-	        model.addAttribute("products", products);
+// ===== 將資料傳往 Thymeleaf ===========================================================================
+
+	        model.addAttribute("products", activeProducts);
 	        model.addAttribute("searchMsg", searchMsg);
-
-	        return "shop"; // 對應 Thymeleaf 模板 (原本的 /Jsp/Shop.jsp)
-	    }
-
-	    // --- 安全取得所有上架商品 ---
-	    private List<Product> getSafeAllActiveProducts() {
-	        List<Product> all = productService.getAllProducts();
-	        if (all == null) return List.of();
-	        return all.stream()
-	                .filter(p -> p != null && p.getProductStatus() == 1)
-	                .collect(Collectors.toList());
-	    }
-
-}
+	        model.addAttribute("currentPage", cp);
+	        model.addAttribute("totalPages", productPage.getTotalPages());
+	        
+	        return "shop";	// 回傳 templates/Shop.html
+	        
+	        
+	        
+}}

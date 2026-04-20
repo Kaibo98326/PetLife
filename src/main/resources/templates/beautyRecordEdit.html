@@ -1,0 +1,52 @@
+<div class="beauty-embed">
+    <h1>修改美容預約</h1>
+
+    <div class="beauty-err" th:if="${error}" th:text="${error}"></div>
+
+    <form action="/admin/beauty/record/update" method="post"
+          onsubmit="return beautyPostFormThenShow(this, '美容預約管理', 'groomingRecord');">
+        <input type="hidden" name="recordId" th:value="${form.recordId}">
+
+        <label for="petId">寵物編號</label>
+        <input type="number" id="petId" name="petId" th:value="${form.petId}" required>
+
+        <label for="beautyDate">美容日期</label>
+        <input type="date" id="beautyDate" name="beautyDate" th:value="${form.beautyDate}" required>
+
+        <label for="beautySlot">美容時段</label>
+        <input type="text" id="beautySlot" name="beautySlot" th:value="${form.beautySlot}" required>
+
+        <label for="beautyId">美容項目</label>
+        <select id="beautyId" name="beautyId" required>
+            <option value="">請選擇</option>
+            <option th:each="item : ${beautyItems}"
+                    th:value="${item.beautyId}"
+                    th:text="|${item.beautyId} - ${item.itemName}|"
+                    th:selected="${form.beautyId == item.beautyId}"></option>
+        </select>
+
+        <label for="petSize">寵物體型</label>
+        <select id="petSize" name="petSize" required>
+            <option value="">請選擇</option>
+            <option value="小型" th:selected="${form.petSize == '小型'}">小型</option>
+            <option value="中型" th:selected="${form.petSize == '中型'}">中型</option>
+            <option value="大型" th:selected="${form.petSize == '大型'}">大型</option>
+        </select>
+
+        <label for="status">預約狀態</label>
+        <select id="status" name="status" required>
+            <option value="">請選擇</option>
+            <option value="預約中" th:selected="${form.status == '預約中'}">預約中</option>
+            <option value="已完成" th:selected="${form.status == '已完成'}">已完成</option>
+            <option value="已取消" th:selected="${form.status == '已取消'}">已取消</option>
+        </select>
+
+        <p class="beauty-btns">
+            <button type="submit">送出</button>
+            <button type="button"
+                    onclick="return beautyLoadContentByUrl('美容預約管理', '/admin/beauty/record/list', 'groomingRecord');">
+                回列表
+            </button>
+        </p>
+    </form>
+</div>

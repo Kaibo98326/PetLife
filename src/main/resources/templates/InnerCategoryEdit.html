@@ -1,0 +1,58 @@
+<div class="category-wrapper" style="padding: 15px;">
+<link rel="stylesheet" th:href="@{/css/InnerCategory.css}">
+
+	<div class="edit-card">
+		<div class="form-row">
+			<label>分類編號：</label> <input type="text" id="editCategoryId"
+				th:value="${item.categoryId}" readonly>
+		</div>
+
+		<div class="form-row">
+			<label>分類名稱：</label> <input type="text" id="editCategoryName"
+				th:value="${item.categoryName}" placeholder="請輸入分類名稱">
+		</div>
+
+		<div class="btn-group">
+			<button type="button" class="btn-cancel"
+				onclick="backToCategoryList()">取消返回</button>
+			<button type="button" class="btn-update"
+				onclick="submitCategoryUpdate()">儲存修改</button>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		// 執行修改提交
+		function submitCategoryUpdate() {
+			const id = $('#editCategoryId').val();
+			const name = $('#editCategoryName').val().trim();
+
+			if (!name) {
+				alert("請填寫分類名稱哦！");
+				return;
+			}
+
+			$.ajax({
+				url : /*[[@{/innerCategory/update}]]*/'/innerCategory/update',
+				type : 'POST',
+				data : {
+					categoryId : id,
+					categoryName : name
+				},
+				success : function(response) {
+					alert("修改成功！🐾");
+					backToCategoryList();
+				},
+				error : function() {
+					alert("更新失敗，請檢查網路。");
+				}
+			});
+		}
+
+		// 返回列表
+		function backToCategoryList() {
+			const listUrl = /*[[@{/innerCategory/list}]]*/'/innerCategory/list';
+			// 強行載入列表並加上時間戳
+			$('#contentBody').load(listUrl + "?_t=" + new Date().getTime());
+		}
+	</script>
+</div>

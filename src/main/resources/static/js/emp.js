@@ -36,6 +36,40 @@ function searchEmpByName() {
     }
     loadContent('員工列表', 'empSearch&empName=' + encodeURIComponent(keyword));
 }
+function submitNewMember() {
+            const form = document.getElementById("addMemberForm");
+            const formData = {
+                memberName: form.memberName.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                passwordHash: form.passwordHash.value,
+                address: form.address.value,
+                accountStatus: form.status.value
+            };
+
+            fetch(form.action, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("會員新增成功");
+                    loadMemberList(); // 新增成功後回到列表
+                } else {
+                    alert("新增失敗");
+                }
+            })
+            .catch(() => alert("系統錯誤，請稍後再試"));
+        }
+
+        function loadMemberList() {
+            fetch('/members/list?page=0')
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector("#addFormFragment").outerHTML = html;
+                });
+        }
 
 
 

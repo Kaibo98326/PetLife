@@ -3,6 +3,7 @@ package com.petlife.controller;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.petlife.model.Member;
+import com.petlife.repository.MemberRepository;
 import com.petlife.service.IMemberService;
+import com.petlife.service.PasswordUtils;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,42 +33,49 @@ public class MemberFontController {
 	
 	@Autowired
 	private IMemberService memberService;
+	@Autowired
+	private MemberRepository memberRepo;
 	
 	//註冊會員
 	@PostMapping("/register")
-	public String  register(@ModelAttribute Member member , Model m) {
-		Member registered = memberService.register(member);
-		if(registered != null ) {
-			m.addAttribute("status" , "register_success");
-		}else {
-			m.addAttribute("status" , "register_fail");
-		}
-		return "result1";
+	public String register(@ModelAttribute Member member, Model m) {
+	    String status = memberService.register(member);
+	    m.addAttribute("status", status);
+	    return "result1";
 	}
+
+
 	
 	//登入會員
 	@PostMapping("/login")
-	public String login(@RequestParam String email ,
-						@RequestParam String password ,
-						Model m , HttpSession session) {
-		Member member = memberService.login(email, password);
-		if(member != null) {
-			m.addAttribute("status" , "login_success");
-			session.setAttribute("memberName", member.getMemberName());
-			session.setAttribute("memberId", member.getMemberId());
-		}else {
-			m.addAttribute("status", "wrongpassword");
-		}
-		return "result1";
+	public String login(@RequestParam String email,
+	                    @RequestParam String password,
+	                    Model m,
+	                    HttpSession session) {
+	    String status = memberService.login(email, password);
+
+	    if ("login_success".equals(status)) {
+	        Member member = memberService.findByEmail(email);
+	        session.setAttribute("memberName", member.getMemberName());
+	        session.setAttribute("memberId", member.getMemberId());
+	    }
+
+	    m.addAttribute("status", status);
+	    return "result1";
 	}
+
+
+
+
 	
 	//更新會員資料
-	@PutMapping("/update")
-	public String  update(@ModelAttribute Member member , Model m) {
-		memberService.update(member);
-		m.addAttribute("status" , "update_success");
-		return "result1";
+	@PostMapping("/memberupdate")
+	public String updateMember(@ModelAttribute Member member, Model m) {
+	    String status = memberService.updateMember(member.getMemberId(), member);
+	    m.addAttribute("status", status);
+	    return "result1";
 	}
+
 	
 	//會員登出
 	@GetMapping("/logout")
@@ -95,6 +106,86 @@ public class MemberFontController {
 		//以後可擴充查詢紅利點數訂單紀錄之類的
 		return "memberCenter" ;
 	}
+
+	@GetMapping("/edit")
+    public String editMemberForm(Model model, @RequestParam("id") Integer memberId) {
+        Member member = memberRepo.findById(memberId).orElseThrow();
+        model.addAttribute("member", member);
+        return "memberEdit"; // 對應上面的 Thymeleaf 頁面
+    }
+
+	@PostMapping("/update")
+	public String updateMember(@ModelAttribute Member member,
+            @RequestParam(required = false) String password,
+            Model m) {
+		Member dbMember = memberRepo.findById(member.getMemberId()).orElseThrow();
+
+		boolean changed = false;
+		
+		// 檢查 Email 重複（排除自己）
+	    Member existingByEmail = memberRepo.findByEmail(member.getEmail()).orElse(null);
+	    if (existingByEmail != null && !existingByEmail.getMemberId().equals(member.getMemberId())) {
+	        m.addAttribute("status", "duplicate_email");
+	        m.addAttribute("memberId", member.getMemberId());
+	        return "result1";
+	    }
+
+	    // 檢查 Phone 重複（排除自己）
+	    boolean phoneExists = memberRepo.findAll().stream()
+	        .anyMatch(mb -> mb.getPhone() != null &&
+	                        mb.getPhone().equals(member.getPhone()) &&
+	                        !mb.getMemberId().equals(member.getMemberId()));
+	    if (phoneExists) {
+	        m.addAttribute("status", "duplicate_phone");
+	        m.addAttribute("memberId", member.getMemberId());
+	        return "result1";
+	    }
+	
+		if (!dbMember.getMemberName().equals(member.getMemberName())) {
+			dbMember.setMemberName(member.getMemberName());
+			changed = true;
+		}
+		if (!dbMember.getEmail().equals(member.getEmail())) {
+			dbMember.setEmail(member.getEmail());
+			changed = true;
+		}
+		if (!dbMember.getPhone().equals(member.getPhone())) {
+			dbMember.setPhone(member.getPhone());
+			changed = true;
+		}
+		if (!dbMember.getAddress().equals(member.getAddress())) {
+			dbMember.setAddress(member.getAddress());
+			changed = true;
+		}
+		if (password != null && !password.isEmpty()) {
+			dbMember.setPasswordHash(PasswordUtils.hashPassword(password));
+			changed = true;
+		}
+
+		if (!changed) {
+			m.addAttribute("status", "nochange");
+			return "result1"; // SweetAlert 顯示「沒有修改任何資料」
+		}
+
+		memberRepo.save(dbMember);
+		m.addAttribute("status", "update_success");
+		return "result1"; // SweetAlert 顯示「更新成功」}
+	}
+
+
+    @PostMapping("/checkPassword")
+    @ResponseBody
+    public Map<String, Boolean> checkPassword(@RequestBody Map<String, String> payload) {
+        Integer memberId = Integer.valueOf(payload.get("memberId"));
+        String oldPassword = payload.get("oldPassword");
+
+        Member member = memberRepo.findById(memberId).orElseThrow();
+        boolean valid = PasswordUtils.checkPassword(oldPassword, member.getPasswordHash());
+
+        return Map.of("valid", valid);
+    }
+
+
 
 
 	

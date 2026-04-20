@@ -102,7 +102,47 @@
         }).then(() => {
             window.location.href =  '/shop/index';
         });
+    }else if (status === 'duplicate_email') {
+        Swal.fire({
+            icon: 'error',
+            title: '更新失敗',
+            text: '此 Email 已被使用',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href = '/member/edit?id=' + /*[[${memberId}]]*/ '';
+        });
+    } else if (status === 'duplicate_phone') {
+        Swal.fire({
+            icon: 'error',
+            title: '更新失敗',
+            text: '此電話已被使用',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href = '/member/edit?id=' + /*[[${memberId}]]*/ '';
+        });
+    } else if (status === 'nochange') {
+        Swal.fire({
+            icon: 'info',
+            title: '沒有修改',
+            text: '您沒有更改任何資料',
+            confirmButtonText: '確定'
+        }).then(() => {
+            window.location.href = '/member/center';
+        });
+    }  else if (status === 'update_success') {
+        Swal.fire({
+            icon: 'success',
+            title: '會員更新密碼',
+            text: '恭喜更新密碼成功!',
+            confirmButtonText: '確認'
+        }).then(() => {
+            window.location.href = '/member/center';
+        });
     }
+
+
+
+
     /*]]>*/
 </script>
 </body>

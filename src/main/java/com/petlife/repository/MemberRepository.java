@@ -2,12 +2,14 @@ package com.petlife.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.petlife.model.Member;
 
 public interface MemberRepository extends JpaRepository<Member , Integer>{
-	
+	Page<Member> findByMemberNameContaining(String keyword, Pageable pageable);
 	// 查詢會員 by email
     Optional<Member> findByEmail(String email);
 

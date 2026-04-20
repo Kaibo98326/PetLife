@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>訂單詳情 - PetLife</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="stylesheet" th:href="@{/css/MemberCenter.css}">
+<link rel="stylesheet" th:href="@{/css/orderDetail.css}">
+</head>
+<body>
+	<header>
+		<div class="logo">PetLife 訂單管理</div>
+		<nav>
+			<a th:href="@{/member/center}">返回會員中心</a>
+		</nav>
+	</header>
+
+	<main class="container py-5">
+		<div class="detail-header mb-4 shadow-sm">
+			<div>
+				<h2 class="m-0 fw-bold text-orange-dark">
+					<i class="bi bi-file-earmark-text me-2"></i>訂單詳情
+				</h2>
+				<span class="text-muted small">訂單編號：<strong
+					class="text-orange-dark">[[${order.orderId}]]</strong></span>
+			</div>
+			<a th:href="@{/api/order/orders}" class="btn-back-orange">← 返回訂單紀錄</a>
+		</div>
+
+		<div class="info-table-container mb-4 shadow-sm">
+			<table class="table info-custom-table m-0">
+				<thead>
+					<tr>
+						<th colspan="2" class="orange-gradient-th"><i
+							class="bi bi-person-badge me-2"></i>收件資訊</th>
+						<th colspan="2" class="orange-gradient-th"><i
+							class="bi bi-credit-card me-2"></i>付款詳情</th>
+						<th class="orange-gradient-th text-center">狀態</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="label-cell">姓名</td>
+						<td class="value-cell" th:text="${order.orderName}"></td>
+						<td class="label-cell">付款方式</td>
+						<td class="value-cell" th:text="${order.orderPayment}"></td>
+						<td rowspan="3" class="status-cell text-center">
+							<div class="status-badge-orange" th:text="${order.orderStatus}"></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="label-cell">電話</td>
+						<td class="value-cell" th:text="${order.orderPhone}"></td>
+						<td class="label-cell">下單時間</td>
+						<td class="value-cell"
+							th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+					</tr>
+					<tr>
+						<td class="label-cell">地址</td>
+						<td class="value-cell" th:text="${order.orderAddress}"></td>
+						<td class="label-cell">訂單備註</td>
+						<td class="value-cell"
+							th:text="${order.orderNote != '' ? order.orderNote : '無'}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="product-list-container shadow-sm">
+			<div class="list-header-orange p-3 fw-bold">
+				<i class="bi bi-cart3 me-2"></i>購買商品清單
+			</div>
+			<table class="table align-middle product-fixed-table">
+				<thead>
+					<tr>
+						<th class="col-name">商品名稱</th>
+						<th class="col-price text-center">單價</th>
+						<th class="col-qty text-center">數量</th>
+						<th class="col-subtotal text-end">小計</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="detail : ${order.details}">
+						<td class="ps-4 fw-bold" th:text="${detail.productName}"></td>
+						<td class="text-center" th:text="'$' + ${detail.productPrice}"></td>
+						<td class="text-center" th:text="${detail.quantity} + ' 件'"></td>
+						<td class="text-end pe-4 fw-bold text-orange-dark"
+							th:text="'$' + ${detail.subtotal}"></td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr class="total-orange-row">
+						<td colspan="3" class="text-end fw-bold fs-5">總計金額：</td>
+						<td class="text-end total-price-final pe-4"
+							th:text="'$' + ${#numbers.formatDecimal(order.orderTotal, 1, 'COMMA', 0, 'POINT')}"></td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</main>
+
+	<footer class="mt-5 py-4 border-top text-center bg-white">
+		<p class="text-muted mb-0">© 2026 PetLife 寵物生活 - 打造寵物的完美生活</p>
+	</footer>
+</body>
+</html>
