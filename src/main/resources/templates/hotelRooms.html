@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.or">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旅館房間管理</title>
+  </head>
+  <body>
+    <div class="stay-container">
+      <h2 class="stay-title">🚪 旅館房間管理</h2>
+
+      <!-- 新增房間表單 -->
+      <div class="stay-card">
+        <div class="stay-form-row">
+          <h4>新增房間</h4>
+
+          <!-- 選擇房型 -->
+          <select id="inputRoomTypeId" onchange="showPreviewRoomNumber()">
+            <option value="">請選擇房型</option>
+
+            <!-- JavaScript 會動態在這裡插入 <option> -->
+          </select>
+          <span id="previewRoomNumber" style="font-weight: bold; color: #e67e22"></span>
+          <!-- 按鈕 -->
+          <button class="stay-btn stay-btn-add" onclick="createRoom()">➕ 新增</button>
+        </div>
+      </div>
+
+      <table class="stay-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>房間名稱</th>
+            <th>房間價格/Day</th>
+            <th>狀態</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="roomsTableBody">
+          <!-- JavaScript 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // init
+      async function init() {
+        await loadRoomTypeOptions(); // 下拉選單
+        await loadRooms();
+      }
+
+      // 載入房型 → 填入 <select> 下拉選單
+      async function loadRoomTypeOptions() {
+        const res = await fetch("/hotel/types/data");
+        const data = await res.json();
+        const select = document.getElementById("inputRoomTypeId");
+        data.forEach((room) => {
+          select.innerHTML += `<option value="${room.roomTypeId}">
+            ${room.roomTypeId}.${room.roomName} (NT$${room.roomPrice})
+        </option>`;
+        });
+      }
+
+      var allRooms = []; // ← 在最上面加一個全域變數
+
+      //取得所有房間 & 渲染tbody
+      async function loadRooms() {
+        try {
+          {
+            const res = await fetch("/hotel/rooms/data");
+            //fetch() 回傳狀態碼、body(文字) => res
+            const data = await res.json();
+            // res 被 json parse(解析)成 JS物件(矩陣) => data
+            allRooms = data;
+            const tbody = document.getElementById("roomsTableBody");
+            tbody.innerHTML = "";
+            data.forEach((room) => {
+              tbody.innerHTML += `
+            <tr id="row-${room.roomId}">
+                <td>${room.roomId}</td>
+                <td>${room.stayRoomType.roomTypeId * 100 + room.roomId} </td>
+                <td>${room.stayRoomType.roomPrice}</td>
+                <td>${room.roomStatus}</td>
+                <td>
+                    <button class="stay-btn stay-btn-edit" onclick="editRow(${room.roomId}, ${room.stayRoomType.roomTypeId}, '${room.stayRoomType.roomName}', ${room.stayRoomType.roomPrice}, '${room.roomStatus}')">✏️ 編輯</button>
+                    <button class="stay-btn stay-btn-delete" onclick="deleteRoom(${room.roomId})">🗑️ 停用</button>
+                </td>
+            </tr>`;
+            });
+          }
+        } catch (error) {
+          console.error("載入房間失敗:", error);
+        }
+      }
+      // C Room
+      async function createRoom() {
+        const data = {
+          stayRoomType: {
+            roomTypeId: document.getElementById("inputRoomTypeId").value,
+          },
+          roomStatus: "可入住",
+        };
+        await fetch("/hotel/rooms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          // 告訴後端 這是JSON格式的資料
+          body: JSON.stringify(data),
+          // 把 data(JS物件) 轉成 JSON(文字物件) 才能放進 body
+        });
+        await loadRooms();
+        document.getElementById("inputRoomTypeId").value = "";
+      }
+
+      //新增房間時，顯示下一個房間號碼
+      function showPreviewRoomNumber() {
+        const roomTypeId = Number(document.getElementById("inputRoomTypeId").value);
+        const span = document.getElementById("previewRoomNumber");
+        if (!roomTypeId) {
+          span.textContent = "";
+          return;
+        }
+        // 從 allRooms 裡面找出目前最大的 roomId
+        const maxRoomId = allRooms.length > 0 ? Math.max(...allRooms.map((r) => r.roomId)) : 0;
+        // 下一間房的編號
+        const nextNumber = roomTypeId * 100 + maxRoomId + 1;
+        span.textContent = `欲新增房間號碼: ${nextNumber}`;
+      }
+
+      // inline Eidt
+      function editRow(id, roomTypeId, roomName, roomPrice, currentStatus) {
+        const row = document.getElementById(`row-${id}`);
+        const roomNumber = roomTypeId * 100 + id;
+        row.innerHTML = `
+        <td>${id}</td>
+        <td>${roomNumber} (${roomName})</td>
+        <td>${roomPrice}</td>
+        <td>
+            <select id="edit-status">
+                <option value="可入住" ${currentStatus === "可入住" ? "selected" : ""}>可入住</option>
+                <option value="使用中" ${currentStatus === "使用中" ? "selected" : ""}>使用中</option>
+                <option value="已預約" ${currentStatus === "已預約" ? "selected" : ""}>已預約</option>
+            </select>
+        </td>
+        <td>
+            <button class="stay-btn stay-btn-confirm" onclick="confirmEdit(${id}, ${roomTypeId})">✅ 確認</button>
+            <button class="stay-btn stay-btn-cancel" onclick="loadRooms()">❌ 取消</button>
+        </td>`;
+      }
+
+      async function confirmEdit(id, roomTypeId) {
+        const data = {
+          stayRoomType: { roomTypeId: roomTypeId },
+          roomStatus: document.getElementById("edit-status").value,
+        };
+        await fetch(`/hotel/rooms/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRooms();
+      }
+
+      //soft delete
+      async function deleteRoom(id) {
+        const confirmed = confirm("停用此房間?");
+        if (!confirmed) return;
+        await fetch(`/hotel/rooms/${id}`, { method: "DELETE" });
+        await loadRooms();
+      }
+
+      init();
+    </script>
+  </body>
+</html>
