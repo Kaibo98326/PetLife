@@ -182,43 +182,45 @@ function renderTable(dataArray) {
     dataArray.forEach((row, index) => {
         const badge = getStatusBadge(row.status, row.start, row.end);
         const isOngoing = badge.includes('進行中');
-        const isExpired = badge.includes('已結束'); // 判斷是否已結束
+        const isExpired = badge.includes('已結束');
+        const isInactive = badge.includes('已停用');
+        
+        // 定義「鎖定狀態」(已結束或已停用)
+        const isLocked = isExpired || isInactive; 
         const period = `${row.start.replace(/-/g, '/')} - ${row.end.replace(/-/g, '/')}`;
         const displayIndex = index + 1;
 
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-discount-id', row.id); 
-        tr.innerHTML = `
-            <td>${displayIndex}</td>
-            <td>${badge}</td>
-            <td class="fw-bold">${row.name}</td>
-            <td>${row.typeName}</td>
-            <td>${period}</td>
-            <td>
-                ${!isExpired ? `
-                <button class="btn btn-sm text-primary border-0 bg-transparent px-2 py-1 fw-bold" 
-                        style="transition: 0.2s;" 
-                        onmouseover="this.classList.add('bg-light')" 
-                        onmouseout="this.classList.remove('bg-light')" 
-                        title="查看和修改活動" data-discount-id="${row.id}" 
-                        onclick="viewAndEditActivity(${row.id}, ${isOngoing})">
-                    <i class="fa-solid fa-folder-closed"></i> 查看/修改
-                </button>` : ''}
-                
-                <button class="btn btn-sm text-danger border-0 bg-transparent px-2 py-1 fw-bold" 
-                        style="transition: 0.2s;" 
-                        onmouseover="this.classList.add('bg-light')" 
-                        onmouseout="this.classList.remove('bg-light')" 
-                        title="刪除活動" data-discount-id="${row.id}" 
-                        onclick="deleteActivity(${row.id}, ${isOngoing})">
-                    <i class="fa-regular fa-trash-can"></i> 刪除
-                </button>
-            </td>
-        `;
+		const tr = document.createElement('tr');
+		        tr.setAttribute('data-discount-id', row.id); 
+		        tr.innerHTML = `
+		            <td>${displayIndex}</td>
+		            <td>${badge}</td>
+		            <td class="fw-bold">${row.name}</td>
+		            <td>${row.typeName}</td>
+		            <td>${period}</td>
+		            <td>
+		                <button class="btn btn-sm text-primary border-0 bg-transparent px-2 py-1 fw-bold text-start" 
+		                        style="transition: 0.2s; width: 105px;" 
+		                        onmouseover="this.classList.add('bg-light')" 
+		                        onmouseout="this.classList.remove('bg-light')" 
+		                        title="${isLocked ? '查看歷史資料' : '查看和修改活動'}" 
+		                        onclick="viewAndEditActivity(${row.id}, ${isOngoing}, ${isLocked})">
+		                    <i class="fa-solid ${isLocked ? 'fa-eye' : 'fa-folder-closed'}"></i> ${isLocked ? '查看' : '查看/修改'}
+		                </button>
+		                
+		                <button class="btn btn-sm text-danger border-0 bg-transparent px-2 py-1 fw-bold text-start" 
+		                        style="transition: 0.2s;" 
+		                        onmouseover="this.classList.add('bg-light')" 
+		                        onmouseout="this.classList.remove('bg-light')" 
+		                        title="刪除活動" data-discount-id="${row.id}" 
+		                        onclick="deleteActivity(${row.id}, ${isOngoing})">
+		                    <i class="fa-regular fa-trash-can"></i> 刪除
+		                </button>
+		            </td>
+		        `;
         tbody.appendChild(tr);
     });
 }
-
 function getStatusBadge(status, startStr, endStr) {
     // 【修正 2】：定義標準化的字體與排版樣式 (稍微放大、好看的黑體字、一致的飽滿內距)
     const badgeStyle = "font-size: 0.9rem; font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; letter-spacing: 0.5px; padding: 0.45em 0.85em;";
@@ -269,6 +271,7 @@ function deleteActivity(id, isOngoing) {
 // ==================== 5. 表單與動態對應邏輯 ====================
 var currentEditId = null; 
 var currentIsOngoing = false; 
+var currentIsLocked = false; // 【新增】：紀錄是否為已結束或已停用的唯讀狀態
 
 function setFormDisabled(disabled) {
     var fields = ['discount_name', 'status', 'start_date', 'end_date', 'discount_type_id', 'discount_description', 'is_member', 'minimum_purchase_amount', 'discount_value'];
@@ -295,13 +298,14 @@ function setFormDisabled(disabled) {
     if(hint) hint.style.display = '';
 }
 
-function setupFooterButtons(mode) {
+//根據鎖定狀態隱藏「修改」按鈕
+function setupFooterButtons(mode, isLocked) {
     var footer = document.querySelector('#formModal .modal-footer');
     if(!footer) return;
 
     if (mode === 'view') {
         footer.innerHTML = `
-            <button type="button" class="btn btn-primary px-4" onclick="enableEditMode()">修改</button>
+            ${!isLocked ? '<button type="button" class="btn btn-primary px-4" onclick="enableEditMode()">修改</button>' : ''}
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">關閉</button>
         `;
     } else if (mode === 'edit') {
@@ -348,40 +352,26 @@ function openAddModal() {
     modal.show(); 
 }
 
-function viewAndEditActivity(id, isOngoing) {
+function viewAndEditActivity(id, isOngoing, isLocked) {
     var data = tableData.find(d => d.id === id);
     if (!data) return;
 
     currentEditId = id; 
     currentIsOngoing = isOngoing;
+    currentIsLocked = isLocked; // 紀錄鎖定狀態
 
     var modal = getFormModal();
     var formTitle = document.getElementById('formModalTitle');
-    if (formTitle) formTitle.innerHTML = '📁 查看與修改活動';
     
-    document.getElementById('discount_name').value = data.name;
-    document.getElementById('status').value = data.status;
-    document.getElementById('start_date').value = data.start;
-    document.getElementById('end_date').value = data.end;
-    document.getElementById('discount_type_id').value = data.type;
-    document.getElementById('discount_description').value = data.desc;
-    document.getElementById('is_member').value = data.isMember ? 'true' : 'false';
-    
-    renderDynamicFields();
-
-    var keyword = document.querySelector('#discount_type_id option:checked') ? document.querySelector('#discount_type_id option:checked').getAttribute('data-keyword') : '';
-    if (keyword === 'PERCENT') {
-        document.getElementById('discount_value').value = data.val * 100;
-    } else {
-        document.getElementById('discount_value').value = data.val;
+    // 根據狀態切換標題
+    if (formTitle) {
+        formTitle.innerHTML = isLocked ? '📜 查看活動歷史 (唯讀)' : '📁 查看與修改活動';
     }
-    document.getElementById('minimum_purchase_amount').value = data.min;
+    
+    // ... (中間的欄位賦值與 renderDynamicFields 不動) ...
 
-    var warning = document.getElementById('ongoingWarning');
-    if(warning) warning.remove();
-
-    setFormDisabled(true);
-    setupFooterButtons('view');
+    setFormDisabled(true); // 初始全部鎖死
+    setupFooterButtons('view', isLocked); // 傳入鎖定狀態
     updateCharCount();
 
     var triggerEl = document.querySelector('#rules-tab');
