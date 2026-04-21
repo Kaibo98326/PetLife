@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>旅館房型管理</title>
+  </head>
+  <body>
+    <div class="stay-container">
+      <h2 class="stay-title">
+        🛏️ 旅館房型管理
+        <button class="stay-btn stay-btn-edit" onclick="fillTestData()" style="font-size: 0.7rem; margin-left: 10px">🧪 一鍵測試</button>
+      </h2>
+
+      <!-- 新增房型表單 -->
+      <div class="stay-card">
+        <div class="stay-form-row">
+          <h4>新增房型</h4>
+          <input type="text" id="inputRoomTypeName" placeholder="房型名稱" />
+          <input type="number" id="inputRoomTypePrice" placeholder="價格" />
+          <input type="text" id="inputRoomTypeDescription" placeholder="描述" />
+          <input type="number" id="inputCapacity" placeholder="容量" />
+          <button class="stay-btn stay-btn-add" onclick="createRoomType()">➕ 新增</button>
+        </div>
+      </div>
+
+      <!-- 資料表格 -->
+      <table class="stay-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>房型名稱</th>
+            <th>房型價格/Day</th>
+            <th>描述</th>
+            <th>容量</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="roomTypeTableBody">
+          <!-- JavaScript 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // 取得所有房型並渲染tbody
+      async function loadRoomTypes() {
+        const res = await fetch("/hotel/types/data");
+        const data = await res.json();
+        const tbody = document.getElementById("roomTypeTableBody");
+        tbody.innerHTML = "";
+        data.forEach((type) => {
+          tbody.innerHTML += `
+    <tr id="row-${type.roomTypeId}">
+        <td>${type.roomTypeId}</td>
+        <td>${type.roomName}</td>
+        <td>${type.roomPrice}</td>
+        <td>${type.roomDescription}</td>
+        <td> ${type.capacity}</td>
+        <td>
+            <button class="stay-btn stay-btn-edit" onclick="editRow(${type.roomTypeId}, '${type.roomName}', 
+                ${type.roomPrice}, '${type.roomDescription}', ${type.capacity})">✏️ 編輯</button>
+            
+        </td>
+    </tr>`;
+        });
+      }
+      // 4/19 移除刪除按鈕 (預設給更高權限者使用)
+      //<button class="stay-btn stay-btn-delete" onclick="deleteRoomType(${type.roomTypeId})">🗑️ 刪除</button>
+
+      // C RoomTypes
+      async function createRoomType() {
+        const data = {
+          roomName: document.getElementById("inputRoomTypeName").value,
+          roomPrice: document.getElementById("inputRoomTypePrice").value,
+          roomDescription: document.getElementById("inputRoomTypeDescription").value,
+          capacity: document.getElementById("inputCapacity").value,
+        };
+
+        const res = await fetch("/hotel/types", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRoomTypes();
+
+        //拉完了就清空表單
+        document.getElementById("inputRoomTypeName").value = "";
+        document.getElementById("inputRoomTypePrice").value = "";
+        document.getElementById("inputRoomTypeDescription").value = "";
+        document.getElementById("inputCapacity").value = "";
+      }
+
+      // U RoomTypes inline Edit
+      function editRow(id, name, price, desc, capacity) {
+        // 找到這一行（用 id 屬性）
+        const row = document.getElementById(`row-${id}`);
+
+        // 把整行換成可編輯的 input 版本
+        row.innerHTML = `
+        <td>${id}</td>
+        <td><input id="edit-name"  value="${name}"     /></td>
+        <td><input id="edit-price" value="${price}"    type="number" /></td>
+        <td><input id="edit-desc"  value="${desc}"     /></td>
+        <td><input id="edit-cap"   value="${capacity}" type="number" style="width:50px; text-align:center" /></td>
+        <td>
+            <button class="stay-btn stay-btn-confirm" onclick="confirmEdit(${id})">✅ 確認</button>
+            <button class="stay-btn stay-btn-cancel" onclick="loadRoomTypes()">❌ 取消</button>
+        </td>
+    `;
+      }
+      async function confirmEdit(id) {
+        const data = {
+          roomName: document.getElementById("edit-name").value,
+          roomPrice: document.getElementById("edit-price").value,
+          roomDescription: document.getElementById("edit-desc").value,
+          capacity: document.getElementById("edit-cap").value,
+        };
+        await fetch(`/hotel/types/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadRoomTypes();
+      }
+
+      // D RoomTypes
+      // async function deleteRoomType(id) {
+      //   // 彈出 警告視窗 (confirm 保留字所以改 confirmed)
+      //   const confirmed = confirm("ㄟㄟㄟ 你要刪掉房型嗎? 這是不軟刪除ㄟ哥們");
+      //   if (!confirmed) return;
+
+      //   //確定才刪
+      //   const res = await fetch(`/hotel/types/${id}`, {
+      //     method: "DELETE",
+      //   });
+      //   await loadRoomTypes();
+      // }
+
+      //一鍵加入資料
+      function fillTestData() {
+        document.getElementById("inputRoomTypeName").value = "測試貓房";
+        document.getElementById("inputRoomTypePrice").value = 888;
+        document.getElementById("inputRoomTypeDescription").value = "測試用貓房";
+        document.getElementById("inputCapacity").value = 1;
+      }
+
+      // 頁面一載入就執行渲染畫面
+      loadRoomTypes();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.or">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旅館訂單管理</title>
+  </head>
+  <body>
+    <div class="stay-container">
+      <h2 class="stay-title">📋 旅館訂單管理</h2>
+
+      <!-- 查詢訂單表單 -->
+      <div class="stay-card">
+        <div class="stay-form-row">
+          <h4>查詢訂單</h4>
+          <!-- maxlength="3" pattern="\d{3}" 最多是3個字 且必須是三個字 -->
+          <!-- oninput="this.value = this.value.replace(/\D/g, '')  打非數字就變成空字串-->
+          <input type="text" id="MemberPhone" placeholder="電話末三碼" maxlength="3" pattern="\d{3}" oninput="this.value = this.value.replace(/\D/g, '')" />
+          <button class="stay-btn stay-btn-add" onclick="searchOrder()">🔍 抽查</button>
+          <button class="stay-btn stay-btn-edit" onclick="loadOrders()">🔍 顯示全部</button>
+        </div>
+        
+        </div>
+      </div>
+
+      <table class="stay-table">
+        <thead>
+          <tr>
+            <th>訂購人姓名</th>
+            <th>訂購人電話</th>
+            <th>寵物姓名</th>
+            <th>房間名稱</th>
+            <th>入住日期</th>
+            <th>退房日期</th>
+            <th>入住天數</th>
+            <th>總價/total</th>
+            <th>訂單狀態</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="stayBody">
+          <!-- JavaScript 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // 取得所有訂單並渲染tbody
+      async function loadOrders() {
+        const res = await fetch("/hotel/orders/data");
+        const data = await res.json();
+        const tbody = document.getElementById("stayBody");
+        tbody.innerHTML = "";
+        data.forEach((stay) => {
+          // 防止 null 導致整個表格爆掉
+          const memberName = stay.pet?.member?.memberName ?? "-";
+          const phone = stay.pet?.member?.phone ?? "-";
+          const petName = stay.pet?.petName ?? "-";
+          const roomNumber = stay.stayRoomType && stay.stayRoom ? stay.stayRoomType.roomTypeId * 100 + stay.stayRoom.roomId : "-";
+          tbody.innerHTML += `
+<tr id="row-${stay.stayId}">
+    <td>${memberName}</td>
+    <td>${phone}</td>
+    <td>${petName}</td>
+    <td>${roomNumber}</td>
+    <td>${stay.stayStartDate ?? "-"}</td>
+    <td>${stay.stayEndDate ?? "-"}</td>
+    <td>${stay.stayDay ?? "-"}</td>
+    <td>${stay.sumPrice ?? "-"}</td>
+    <td>${stay.stayStatus ?? "-"}</td>
+    <td>
+        <button class="stay-btn stay-btn-edit" onclick="editRow(${stay.stayId}, '${stay.stayStatus}')">✏️ 編輯</button>
+        <button class="stay-btn stay-btn-delete" onclick="deleteOrder(${stay.stayId})">🗑️ 取消</button>
+    </td>
+</tr>`;
+        });
+      }
+
+      // inline Eidt
+      function editRow(id, currentStatus) {
+        const row = document.getElementById(`row-${id}`);
+        //抓取所有td
+        const tds = row.querySelectorAll("td");
+
+        // 改tds.length - 2 成下拉選單
+        tds[tds.length - 2].innerHTML = `
+          <select id="edit-status">
+              <option value="已預約" ${currentStatus === "已預約" ? "selected" : ""}>已預約</option>
+              <option value="已入住" ${currentStatus === "已入住" ? "selected" : ""}>已入住</option>
+              <option value="已退房" ${currentStatus === "已退房" ? "selected" : ""}>已退房</option>
+          </select>`;
+        // 改按鈕
+        tds[tds.length - 1].innerHTML = `
+          <button class="stay-btn stay-btn-confirm" onclick="confirmEdit(${id})">✅ 確認</button>
+          <button class="stay-btn stay-btn-cancel" onclick="loadOrders()">❌ 取消</button>`;
+      }
+
+      async function confirmEdit(id) {
+        const res = await fetch(`/hotel/orders/${id}`);
+        const data = await res.json();
+
+        data.stayStatus = document.getElementById("edit-status").value;
+
+        await fetch(`/hotel/orders/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        await loadOrders();
+      }
+
+      //soft delete
+      async function deleteOrder(id) {
+        const confirmed = confirm("取消此訂單?");
+        if (!confirmed) return;
+        await fetch(`/hotel/orders/${id}`, { method: "DELETE" });
+        await loadOrders();
+      }
+
+      // 電話末三碼查詢
+      async function searchOrder() {
+        const phone = document.getElementById("MemberPhone").value;
+        if (!phone) {
+          await loadOrders(); // 沒輸入就顯示全部
+          return;
+        }
+        const res = await fetch(`/hotel/orders/search?phone=${phone}`);
+        const data = await res.json();
+        const tbody = document.getElementById("stayBody");
+        tbody.innerHTML = "";
+        // 用跟 loadOrders 一樣的 forEach 渲染
+        data.forEach((stay) => {
+          // 防止 null 導致整個表格爆掉
+          const memberName = stay.pet?.member?.memberName ?? "-";
+          const phone = stay.pet?.member?.phone ?? "-";
+          const petName = stay.pet?.petName ?? "-";
+          const roomNumber = stay.stayRoomType && stay.stayRoom ? stay.stayRoomType.roomTypeId * 100 + stay.stayRoom.roomId : "-";
+          tbody.innerHTML += `
+<tr id="row-${stay.stayId}">
+    <td>${memberName}</td>
+    <td>${phone}</td>
+    <td>${petName}</td>
+    <td>${roomNumber}</td>
+    <td>${stay.stayStartDate ?? "-"}</td>
+    <td>${stay.stayEndDate ?? "-"}</td>
+    <td>${stay.stayDay ?? "-"}</td>
+    <td>${stay.sumPrice ?? "-"}</td>
+    <td>${stay.stayStatus ?? "-"}</td>
+    <td>
+        <button class="stay-btn stay-btn-edit" onclick="editRow(${stay.stayId}, '${stay.stayStatus}')">✏️ 編輯</button>
+        <button class="stay-btn stay-btn-delete" onclick="deleteOrder(${stay.stayId})">🗑️ 取消</button>
+    </td>
+</tr>`;
+        });
+      }
+
+      loadOrders();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>確認訂單明細</title>
+    <link rel="stylesheet" th:href="@{/css/stay.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .preview-table {
+        width: 100%;
+        margin: 15px 0;
+      }
+      .preview-table td {
+        padding: 12px 20px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .preview-table td:first-child {
+        font-weight: bold;
+        color: #e67e22;
+        width: 130px;
+      }
+      .btn-group {
+        text-align: center;
+        margin-top: 25px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stay-container">
+      <h2 class="stay-title">📋 Step 4：確認訂單明細</h2>
+
+      <div class="stay-card">
+        <table class="preview-table">
+          <tr><td>訂購人</td><td id="pvMemberName">-</td></tr>
+          <tr><td>寵物名稱</td><td id="pvPetName">-</td></tr>
+          <tr><td>房間號碼</td><td id="pvRoomNumber">-</td></tr>
+          <tr><td>房型名稱</td><td id="pvRoomType">-</td></tr>
+          <tr><td>入住日期</td><td id="pvStartDate">-</td></tr>
+          <tr><td>退房日期</td><td id="pvEndDate">-</td></tr>
+          <tr><td>入住天數</td><td id="pvDays">-</td></tr>
+          <tr><td>每日價格</td><td id="pvPrice">-</td></tr>
+          <tr>
+            <td style="font-size:1.2rem;">總價</td>
+            <td id="pvTotal" style="font-size:1.2rem; color:#e74c3c; font-weight:bold;">-</td>
+          </tr>
+        </table>
+
+        <div class="btn-group">
+          <button class="stay-btn stay-btn-confirm" style="padding:12px 40px; font-size:1rem;"
+                  onclick="submitBooking()">✅ 確認預約</button>
+          <a href="/hotel/orders/booking" class="stay-btn stay-btn-cancel"
+             style="padding:12px 40px; font-size:1rem; text-decoration:none;">🔙 返回修改</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 從 sessionStorage 讀取訂單資料
+      const orderData = JSON.parse(sessionStorage.getItem('stayOrderData'));
+
+      if (!orderData) {
+        // 沒有資料（直接打網址進來），導回預約頁
+        window.location.href = '/hotel/orders/booking';
+      } else {
+        // 填入預覽資料
+        document.getElementById('pvMemberName').textContent = orderData.memberName;
+        document.getElementById('pvPetName').textContent = orderData.petName;
+        document.getElementById('pvRoomNumber').textContent = orderData.roomNumber;
+        document.getElementById('pvRoomType').textContent = orderData.roomTypeName;
+        document.getElementById('pvStartDate').textContent = orderData.startDate;
+        document.getElementById('pvEndDate').textContent = orderData.endDate;
+        document.getElementById('pvDays').textContent = orderData.days + ' 天';
+        document.getElementById('pvPrice').textContent = 'NT$ ' + orderData.price;
+        document.getElementById('pvTotal').textContent = 'NT$ ' + orderData.total;
+      }
+
+      // 送出訂單
+      async function submitBooking() {
+        const data = {
+          pet: { petId: orderData.petId },
+          stayRoomType: { roomTypeId: orderData.roomTypeId },
+          stayRoom: { roomId: orderData.roomId },
+          stayStartDate: orderData.startDate,
+          stayEndDate: orderData.endDate,
+          orderPrice: orderData.price
+        };
+
+        try {
+          const res = await fetch('/hotel/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (res.ok) {
+            // 清除暫存資料
+            sessionStorage.removeItem('stayOrderData');
+
+            Swal.fire({
+              icon: 'success',
+              title: '預約成功！🎉',
+              text: '我們會好好照顧您的毛孩！',
+              showCancelButton: true,
+              confirmButtonText: '🏠 回首頁',
+              cancelButtonText: '📜 查看歷史訂單',
+              confirmButtonColor: '#e67e22',
+              cancelButtonColor: '#3498db',
+              reverseButtons: true
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/shop/index';
+              } else {
+                window.location.href = '/hotel/orders/history';
+              }
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: '預約失敗',
+              text: '請稍後再試，或聯繫客服。',
+              confirmButtonText: '確定'
+            });
+          }
+        } catch (e) {
+          console.error('送出失敗:', e);
+        }
+      }
+    </script>
+  </body>
+</html>

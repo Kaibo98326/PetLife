@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的訂單紀錄</title>
+    <link rel="stylesheet" th:href="@{/css/stay.css}" />
+    <style>
+      .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: bold;
+      }
+      .status-reserved {
+        background: #fff8e1;
+        color: #f39c12;
+        border: 1px solid #f39c12;
+      }
+      .status-checkedin {
+        background: #eafaf1;
+        color: #27ae60;
+        border: 1px solid #27ae60;
+      }
+      .status-completed {
+        background: #ebf5fb;
+        color: #3498db;
+        border: 1px solid #3498db;
+      }
+      .status-cancelled {
+        background: #fdecea;
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+      }
+      .empty-msg {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stay-container">
+      <div class="title-row">
+        <h2 class="stay-title" style="margin-bottom:0;">📜 我的訂單紀錄</h2>
+        <a th:href="@{/shop/index}" class="stay-btn">首頁</a>
+        <a th:href="@{/hotel/orders/booking}" class="stay-btn stay-btn-add" style="text-decoration:none; padding:10px 20px;">
+          🏨 預約旅館
+        </a>
+      </div>
+
+      <table class="stay-table">
+        <thead>
+          <tr>
+            <th>訂單編號</th>
+            <th>寵物名稱</th>
+            <th>房間號碼</th>
+            <th>房型</th>
+            <th>入住日期</th>
+            <th>退房日期</th>
+            <th>天數</th>
+            <th>總價</th>
+            <th>狀態</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <!-- JS 動態填入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      async function loadHistory() {
+        try {
+          const res = await fetch('/hotel/orders/history/data');
+          const data = await res.json();
+          const tbody = document.getElementById('historyBody');
+
+          if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">目前沒有訂單紀錄 🐾</td></tr>`;
+            return;
+          }
+
+          tbody.innerHTML = '';
+          data.forEach(stay => {
+            const petName = stay.pet?.petName ?? '-';
+            const roomNumber = (stay.stayRoomType && stay.stayRoom)
+              ? stay.stayRoomType.roomTypeId * 100 + stay.stayRoom.roomId
+              : '-';
+            const roomTypeName = stay.stayRoomType?.roomName ?? '-';
+            const status = stay.stayStatus ?? '-';
+
+            // 狀態對應顏色
+            let badgeClass = 'status-reserved';
+            if (status === '入住中') badgeClass = 'status-checkedin';
+            else if (status === '已完成') badgeClass = 'status-completed';
+            else if (status === '已取消') badgeClass = 'status-cancelled';
+
+            tbody.innerHTML += `
+            <tr>
+              <td>${stay.stayId}</td>
+              <td>${petName}</td>
+              <td>${roomNumber}</td>
+              <td>${roomTypeName}</td>
+              <td>${stay.stayStartDate ?? '-'}</td>
+              <td>${stay.stayEndDate ?? '-'}</td>
+              <td>${stay.stayDay ?? '-'}</td>
+              <td>NT$ ${stay.sumPrice ?? '-'}</td>
+              <td><span class="status-badge ${badgeClass}">${status}</span></td>
+            </tr>`;
+          });
+        } catch (e) {
+          console.error('載入歷史訂單失敗:', e);
+        }
+      }
+
+      loadHistory();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>寵物旅館預約</title>
+    <link rel="stylesheet" th:href="@{/css/stay.css}" />
+    <style>
+      /* 房間卡片網格 */
+      .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+      .room-card {
+        border: 2px solid #ffe0b2;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #fff;
+      }
+      .room-card:hover:not(.room-disabled) {
+        border-color: #e67e22;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);
+      }
+      .room-card.room-selected {
+        border-color: #27ae60;
+        background: #eafaf1;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.2);
+      }
+      .room-card.room-disabled {
+        background: #f5f5f5;
+        border-color: #ddd;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .room-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #e67e22;
+      }
+      .room-card.room-disabled .room-number {
+        color: #999;
+      }
+      .room-type-name {
+        font-size: 0.9rem;
+        color: #888;
+        margin: 5px 0;
+      }
+      .room-price {
+        font-weight: bold;
+        color: #5d4037;
+      }
+      .room-status-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-top: 8px;
+      }
+      .badge-available {
+        background: #eafaf1;
+        color: #27ae60;
+        border: 1px solid #27ae60;
+      }
+      .badge-occupied {
+        background: #fdecea;
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+      }
+      .badge-reserved {
+        background: #fff8e1;
+        color: #f39c12;
+        border: 1px solid #f39c12;
+      }
+      .step-hidden { display: none; }
+      /* 標題列 */
+      .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      /* 確認按鈕區 */
+      .confirm-section {
+        text-align: center;
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stay-container">
+      <!-- 標題 + 歷史訂單按鈕 -->
+      <div class="title-row">
+        <h2 class="stay-title" style="margin-bottom:0;">🏨 寵物旅館預約</h2>
+        <a th:href="@{/hotel/orders/history}" class="stay-btn stay-btn-edit" style="text-decoration:none; padding:10px 20px;">
+          📜 查看歷史訂單
+        </a>
+      </div>
+
+      <!-- Step 1: 選寵物 -->
+      <div class="stay-card">
+        <h4>🐾 Step 1：選擇您的毛孩</h4>
+        <div class="stay-form-row">
+          <select id="selectPet" onchange="onPetSelected()">
+            <option value="">請選擇寵物</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 2: 選日期 -->
+      <div class="stay-card step-hidden" id="stepDate">
+        <h4>📅 Step 2：選擇入住期間</h4>
+        <div class="stay-form-row">
+          <label>入住日</label>
+          <input type="date" id="startDate" />
+          <label>退房日</label>
+          <input type="date" id="endDate" onchange="loadAvailableRooms()" />
+        </div>
+      </div>
+
+      <!-- Step 3: 選房間 -->
+      <div class="stay-card step-hidden" id="stepRoom">
+        <h4>🚪 Step 3：選擇房間</h4>
+        <div class="room-grid" id="roomGrid">
+          <!-- JS 動態渲染 -->
+        </div>
+        <!-- 選完房間後出現的按鈕 -->
+        <div class="confirm-section" id="goConfirmBtn">
+          <button class="stay-btn stay-btn-confirm" style="padding:12px 40px; font-size:1rem;"
+                  onclick="goToConfirm()">📋 查看訂單明細</button>
+        </div>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      const memberId = /*[[${memberId}]]*/ 0;
+      const memberName = /*[[${memberName}]]*/ '';
+
+      var selectedPet = null;
+      var selectedRoom = null;
+      var allRooms = [];
+
+      async function init() {
+        await loadPets();
+        setMinDate();
+      }
+
+      function setMinDate() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').min = today;
+        document.getElementById('endDate').min = today;
+        document.getElementById('startDate').addEventListener('change', function() {
+          document.getElementById('endDate').min = this.value;
+          if (document.getElementById('endDate').value < this.value) {
+            document.getElementById('endDate').value = '';
+          }
+        });
+      }
+
+      // ===== Step 1 =====
+      async function loadPets() {
+        try {
+          const res = await fetch('/hotel/orders/booking/pets');
+          const pets = await res.json();
+          const select = document.getElementById('selectPet');
+          pets.forEach(pet => {
+            select.innerHTML += `<option value="${pet.petId}">
+              ${pet.petName}（${pet.species || ''}・${pet.breed || ''}）
+            </option>`;
+          });
+        } catch (e) {
+          console.error('載入寵物失敗:', e);
+        }
+      }
+
+      function onPetSelected() {
+        const petId = document.getElementById('selectPet').value;
+        if (petId) {
+          const selectEl = document.getElementById('selectPet');
+          const petName = selectEl.options[selectEl.selectedIndex].text.trim();
+          selectedPet = { petId: Number(petId), petName: petName };
+          document.getElementById('stepDate').classList.remove('step-hidden');
+        } else {
+          document.getElementById('stepDate').classList.add('step-hidden');
+          document.getElementById('stepRoom').classList.add('step-hidden');
+        }
+      }
+
+      // ===== Step 2 → Step 3 =====
+      async function loadAvailableRooms() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        if (!startDate || !endDate) return;
+        if (endDate <= startDate) {
+          alert('退房日必須晚於入住日！');
+          document.getElementById('endDate').value = '';
+          return;
+        }
+        try {
+          const res = await fetch('/hotel/rooms/data');
+          allRooms = await res.json();
+          renderRoomGrid();
+          document.getElementById('stepRoom').classList.remove('step-hidden');
+          document.getElementById('goConfirmBtn').style.display = 'none';
+        } catch (e) {
+          console.error('載入房間失敗:', e);
+        }
+      }
+
+      function renderRoomGrid() {
+        const grid = document.getElementById('roomGrid');
+        grid.innerHTML = '';
+        allRooms.forEach(room => {
+          const roomNumber = room.stayRoomType.roomTypeId * 100 + room.roomId;
+          const isAvailable = room.roomStatus === '可入住';
+          const statusClass = isAvailable ? '' : 'room-disabled';
+          const badgeClass = room.roomStatus === '可入住' ? 'badge-available'
+                           : room.roomStatus === '已預約' ? 'badge-reserved'
+                           : 'badge-occupied';
+          grid.innerHTML += `
+            <div class="room-card ${statusClass}" id="room-card-${room.roomId}"
+                 onclick="${isAvailable ? `selectRoom(${room.roomId})` : ''}">
+              <div class="room-number">${roomNumber}</div>
+              <div class="room-type-name">${room.stayRoomType.roomName}</div>
+              <div class="room-price">NT$ ${room.stayRoomType.roomPrice} / 晚</div>
+              <div class="room-status-badge ${badgeClass}">${room.roomStatus}</div>
+            </div>`;
+        });
+      }
+
+      // ===== Step 3: 選擇房間 =====
+      function selectRoom(roomId) {
+        document.querySelectorAll('.room-card').forEach(card => {
+          card.classList.remove('room-selected');
+        });
+        document.getElementById(`room-card-${roomId}`).classList.add('room-selected');
+        selectedRoom = allRooms.find(r => r.roomId === roomId);
+        // 顯示「查看訂單明細」按鈕
+        document.getElementById('goConfirmBtn').style.display = 'block';
+      }
+
+      // ===== 跳轉到確認頁面 =====
+      function goToConfirm() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+        const price = selectedRoom.stayRoomType.roomPrice;
+        const roomNumber = selectedRoom.stayRoomType.roomTypeId * 100 + selectedRoom.roomId;
+
+        // 把所有資料存到 sessionStorage，讓確認頁面可以讀取
+        const orderData = {
+          memberName: memberName,
+          petId: selectedPet.petId,
+          petName: selectedPet.petName,
+          roomId: selectedRoom.roomId,
+          roomTypeId: selectedRoom.stayRoomType.roomTypeId,
+          roomTypeName: selectedRoom.stayRoomType.roomName,
+          roomNumber: roomNumber,
+          startDate: startDate,
+          endDate: endDate,
+          days: days,
+          price: price,
+          total: days * price
+        };
+        sessionStorage.setItem('stayOrderData', JSON.stringify(orderData));
+
+        // 跳轉到確認頁面
+        window.location.href = '/hotel/orders/confirm';
+      }
+
+      init();
+      /*]]>*/
+    </script>
+  </body>
+</html>
