@@ -21,8 +21,12 @@ function getViewModal() {
 }
 
 
-fetchDiscountTypes();
-fetchDiscountList();
+//加入 DOMContentLoaded 監聽器
+// 告訴瀏覽器：「等整個 HTML 的標籤都確實載入完畢後，再來執行這兩行抓資料！」
+document.addEventListener('DOMContentLoaded', function() {
+    fetchDiscountTypes();
+    fetchDiscountList();
+});
 
 
 
@@ -172,10 +176,10 @@ function runAllFilters() {
 
 
 function renderTable(dataArray) {
-    const tbody = document.getElementById('tableBody');
-    if(!tbody) return;
-    
-    tbody.innerHTML = '';
+	const tbody = document.getElementById('discount_tableBody');
+	if(!tbody) return; 
+
+	tbody.innerHTML = '';
     const countEl = document.getElementById('totalCount');
     if(countEl) countEl.textContent = tableData.length; 
     

@@ -143,7 +143,7 @@
             'groomingRecordDelete': { title: '美容預約管理', url: /*[[@{/admin/beauty/record/delete}]]*/ '', type: 'ajax' },
             'hotel_orders': { title: '旅館訂單管理', url: '#', type: 'ajax' },
             'hotel_rooms': { title: '旅館房型管理', url: '#', type: 'ajax' },
-            'promotion': { title: '優惠活動管理', url: '#', type: 'ajax' },
+            'promotion': { title: '優惠活動管理', url:/*[[@{/discount/index}]]*/'' , type: 'ajax' }, 
             'empList': { title: '員工列表', url: /*[[@{/employee/list}]]*/'', type: 'ajax' },
             'empAdd': { title: '新增員工', url: /*[[@{/employee/add}]]*/'', type: 'ajax' },
             'empEdit': { title: '編輯員工', url: /*[[@{/employee/edit}]]*/'', type: 'ajax' },
@@ -306,6 +306,7 @@
 
 	<!-- 外部 JS 引入 -->
 	<script th:src="@{../js/emp.js}"></script>
+	<script th:src="@{../js/discount.js}"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
