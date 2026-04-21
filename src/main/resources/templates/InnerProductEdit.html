@@ -1,107 +1,134 @@
-<div class="category-wrapper" style="padding: 20px;">
-<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
-    <div class="card-panel">
-        <div class="page-title-area">
-            <div class="title-decorator"></div>
-            <div class="page-header-text">
-                <span class="title-icon">✏️</span>
-                <span>編輯寵物商品</span>
-            </div>
-        </div>
+<div class="category-wrapper" style="padding: 10px 20px;">
+	<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
 
-        <form id="ajaxEditProductForm">
-            <input type="hidden" name="productId" th:value="${product.productId}">
-            <input type="hidden" name="oldImage" th:value="${product.productImage}">
+	<div class="card-panel" style="padding: 20px 30px;">
+		<div class="page-title-area" style="margin-bottom: 15px;">
+			<div class="page-header-text">
+				<i class="fas fa-paw" style="color: var(--primary-orange);"></i> <span>編輯商品</span>
+			</div>
+		</div>
 
-            <div class="form-section">
-                <div class="section-legend">基本資訊</div>
-                <div class="st2">
-                    <label class="t1">商品編號：</label>
-                    <span style="color: #888;" th:text="${product.productId} + ' (系統編號)'"></span>
-                </div>
-                <div class="st2">
-                    <label class="t1">商品名稱：</label>
-                    <input type="text" name="productName" class="form-control" th:value="${product.productName}" required>
-                </div>
-                <div class="st2">
-                    <label class="t1">商品分類：</label>
-                    <select name="categoryId" class="form-control">
-                        <option th:each="cat : ${allCategories}" 
-                                th:value="${cat.categoryId}" 
-                                th:text="${cat.categoryName}"
-                                th:selected="${product.categoryId == cat.categoryId}">
-                        </option>
-                    </select>
-                </div>
-                <div class="st2">
-                    <label class="t1">商品狀態：</label>
-                    <select name="productStatus" class="form-control">
-                        <option value="1" th:selected="${product.productStatus == 1}">上架中</option>
-                        <option value="0" th:selected="${product.productStatus == 0}">已下架</option>
-                    </select>
-                </div>
-            </div>
+		<form id="ajaxEditProductForm">
+			<input type="hidden" name="productId" th:value="${product.productId}">
+			<input type="hidden" name="oldImage"
+				th:value="${product.productImage}">
 
-            <div class="form-section">
-                <div class="section-legend">庫存管理</div>
-                <div class="flex-row">
-                    <div class="st2">
-                        <label class="t1">商品價格：</label>
-                        <input type="number" name="productPrice" class="form-control" th:value="${product.productPrice}">
-                    </div>
-                    <div class="st2">
-                        <label class="t1">庫存數量：</label>
-                        <input type="number" name="productStock" class="form-control" th:value="${product.productStock}">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="st2">
-                        <label class="t1">低庫存警告：</label>
-                        <input type="number" name="lowStock" class="form-control" th:value="${product.lowStock != null ? product.lowStock : 5}">
-                    </div>
-                    <div class="st2">
-                        <label class="t1">倉庫庫位：</label>
-                        <input type="text" name="storagePosition" class="form-control" th:value="${product.storagePosition}">
-                    </div>
-                </div>
-            </div>
+			<div class="form-grid" style="gap: 15px; margin-bottom: 0;">
+				<fieldset class="detail-fieldset"
+					style="margin-bottom: 15px; padding: 15px 20px;">
+					<legend>基本資訊</legend>
+					<div class="form-row" style="margin-bottom: 10px;">
+						<label>商品名稱</label> <input type="text" name="productName"
+							class="form-control" th:value="${product.productName}" required>
+					</div>
+					<div class="form-row" style="margin-bottom: 10px;">
+						<label>商品分類</label> <select name="categoryId" class="form-control">
+							<option th:each="cat : ${allCategories}"
+								th:value="${cat.categoryId}" th:text="${cat.categoryName}"
+								th:selected="${product.categoryId == cat.categoryId}">
+							</option>
+						</select>
+					</div>
+					<div class="form-row" style="margin-bottom: 0;">
+						<label>上架狀態</label> <select name="productStatus"
+							class="form-control">
+							<option value="1" th:selected="${product.productStatus == 1}">✅
+								立即上架</option>
+							<option value="0" th:selected="${product.productStatus == 0}">❌
+								暫時下架</option>
+						</select>
+					</div>
+				</fieldset>
 
-            <div class="form-section">
-                <div class="section-legend">商品圖片與詳情</div>
-                <div class="st2" style="align-items: flex-start;">
-                    <label class="t1">更換圖片：</label>
-                    <div style="flex: 1;">
-                        <div class="image-comparison-container">
-                            <div class="image-box">
-                                <div class="image-label">🖼️ 舊圖 (目前)</div>
-                                <img id="oldPreview" class="preview-img" 
-                                     th:src="${product.productImage != null ? '/' + product.productImage : '/images/default.png'}">
-                            </div>
-                            <div class="comparison-arrow">➡️</div>
-                            <div class="image-box">
-                                <div class="image-label">✨ 新圖 (預覽)</div>
-                                <div id="newImagePlaceholder" class="new-image-placeholder">選擇檔案預覽</div>
-                                <img id="newPreview" class="preview-img" src="#" style="display: none;">
-                            </div>
-                        </div>
-                        <input type="file" name="file" class="form-control" accept=".jpg,.png" onchange="previewComparisonImage(this)">
-                    </div>
-                </div>
-                <div class="st2" style="align-items: flex-start; margin-top: 20px;">
-                    <label class="t1">商品描述：</label>
-                    <textarea name="productDescription" class="form-control" rows="5" th:text="${product.productDescription}"></textarea>
-                </div>
-            </div>
+				<fieldset class="detail-fieldset"
+					style="margin-bottom: 15px; padding: 15px 20px;">
+					<legend>價格與庫存</legend>
+					<div class="form-row" style="margin-bottom: 10px;">
+						<label>販售價格</label> <input type="number" name="productPrice"
+							class="form-control"
+							th:value="${product.productPrice != null ? #numbers.formatInteger(product.productPrice, 0) : 0}">
+					</div>
+					<div class="form-row" style="margin-bottom: 10px;">
+						<label>目前庫存</label> <input type="number" name="productStock"
+							class="form-control" th:value="${product.productStock}">
+					</div>
+					<div class="form-row" style="margin-bottom: 0;">
+						<label>預警數量</label> <input type="number" name="lowStock"
+							class="form-control"
+							th:value="${product.lowStock != null ? product.lowStock : 5}">
+					</div>
+				</fieldset>
+			</div>
 
-            <div class="btn-area">
-                <button type="button" class="btn-submit" onclick="submitProductUpdate()">儲存修改</button>
-                <button type="reset" class="btn-reset">重設</button>
-                <button type="button" class="btn-cancel" onclick="backToList()">取消返回</button>
-            </div>
-        </form>
-    </div>
+			<fieldset class="detail-fieldset"
+				style="margin-bottom: 15px; padding: 15px 20px;">
+				<legend>商品詳情與圖片</legend>
+				<div class="form-grid" style="gap: 20px;">
+					<div class="form-row">
+						<label style="margin-bottom: 10px;">圖片更換</label>
+						<div class="image-comparison-container"
+							style="padding: 15px; min-height: 200px;">
+							<div
+								style="display: flex; align-items: center; justify-content: space-around; width: 100%; gap: 15px;">
 
-    <script th:inline="javascript">
+								<div style="text-align: center; flex: 1;">
+									<span class="badge"
+										style="margin-bottom: 5px; font-size: 10px; background-color: #eee; color: #888;">目前舊圖</span>
+									<img id="oldPreview"
+										th:src="${product.productImage != null ? '/' + product.productImage : '/images/default.png'}"
+										style="max-width: 100%; max-height: 180px; width: auto; height: auto; border-radius: 8px; border: 1px solid #ddd; filter: grayscale(5%); opacity: 0.6;">
+								</div>
+
+								<div
+									style="color: var(--primary-yellow); font-weight: bold; font-size: 1.5rem;">▶</div>
+
+								<div style="text-align: center; flex: 1;">
+									<span class="badge"
+										style="margin-bottom: 5px; font-size: 10px;">新圖預覽</span>
+									<div id="newImagePlaceholder"
+										style="height: 100px; display: flex; align-items: center; justify-content: center; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px; color: #ccc; font-size: 12px;">
+										待選擇</div>
+									<img id="newPreview" src="#"
+										style="display: none; max-width: 100%; max-height: 180px; width: auto; height: auto; border-radius: 8px; border: 2px solid var(--primary-yellow);">
+								</div>
+
+							</div>
+						</div>
+						<input type="file" name="file" class="form-control"
+							style="margin-top: 10px; font-size: 12px;"
+							accept=".jpg,.png,.gif" onchange="previewComparisonImage(this)">
+					</div>
+
+					<div class="form-row">
+						<label style="margin-bottom: 10px;">商品描述</label>
+						<textarea name="productDescription" class="form-control" rows="8"
+							placeholder="請輸入商品詳細說明..."
+							th:text="${product.productDescription}"
+							style="height: 245px; resize: none; line-height: 1.5; font-size: 14px;"></textarea>
+					</div>
+				</div>
+			</fieldset>
+
+			<div class="action-footer d-flex align-items-center"
+				style="padding-top: 20px; margin-top: 10px; border-top: 1px dashed #eee; gap: 15px;">
+
+				<button type="button" class="btn-submit"
+					onclick="submitProductUpdate()"
+					style="padding: 8px 30px; min-width: 120px;">儲存修改</button>
+
+				<button type="button" class="btn-cancel" onclick="backToList()"
+					style="padding: 8px 30px; min-width: 120px;">返回清單</button>
+
+				<button type="button" class="btn-warning ms-auto"
+					th:onclick="deleteProduct([[${product.productId}]])"
+					style="padding: 8px 25px; background-color: #fceaea; border: 1px solid #f5c6cb; color: #e74c3c; cursor: pointer;">
+					<i class="fas fa-trash-alt"></i> 刪除商品
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<script th:inline="javascript">
         function previewComparisonImage(input) {
             const placeholder = document.getElementById('newImagePlaceholder');
             const newPreview = document.getElementById('newPreview');
@@ -126,8 +153,7 @@
                 contentType: false,
                 success: function(res) {
                     if(res === "success") { 
-                        alert("修改成功！🐾"); 
-                        // 💡 關鍵修改：成功後立刻更新側邊欄數字
+                        alert("修改成功！"); 
                         updateSidebarBadge(); 
                         backToList(); 
                     } else { 
@@ -139,6 +165,28 @@
 
         function backToList() {
             $('#contentBody').load(/*[[@{/innerProduct/list}]]*/);
+        }
+        
+     // 刪除商品
+        function deleteProduct(id) {
+            if (!confirm(' ⚠️ 【危險操作確認】\n\n 確定要永久刪除此商品嗎？此操作將無法復原。\n\n 💡 小提醒：若您只是想暫時停止販售，建議使用「編輯商品」功能將狀態改為「下架」，這樣可以保留過往的銷售紀錄與數據哦！'))
+                return;
+
+            var baseUrl = /*[[@{/innerProduct/delete}]]*/'/innerProduct/delete';
+
+            $.get(baseUrl + '/' + id, function(res) {
+                if (res === "success") {
+                    alert("已成功刪除！");
+                    if (typeof updateSidebarBadge === "function") {
+                        updateSidebarBadge();
+                    }
+                    backToList(); 
+                } else {
+                    alert("刪除失敗，錯誤訊息：" + res);
+                }
+            }).fail(function(xhr) {
+                alert("伺服器連線失敗 (錯誤碼: " + xhr.status + ")");
+            });
         }
     </script>
 </div>

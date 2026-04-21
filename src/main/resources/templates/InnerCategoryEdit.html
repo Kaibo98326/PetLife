@@ -1,13 +1,15 @@
 <div class="category-wrapper" style="padding: 15px;">
-<link rel="stylesheet" th:href="@{/css/InnerCategory.css}">
+	<link rel="stylesheet" th:href="@{/css/InnerCategory.css}">
 
+	<div class="section-title">修改商品分類</div>
+    </div>
 	<div class="edit-card">
-		<div class="form-row">
+		<div class="form-row mb-3">
 			<label>分類編號：</label> <input type="text" id="editCategoryId"
 				th:value="${item.categoryId}" readonly>
 		</div>
 
-		<div class="form-row">
+		<div class="form-row mt-3">
 			<label>分類名稱：</label> <input type="text" id="editCategoryName"
 				th:value="${item.categoryName}" placeholder="請輸入分類名稱">
 		</div>
@@ -39,7 +41,7 @@
 					categoryName : name
 				},
 				success : function(response) {
-					alert("修改成功！🐾");
+					alert("修改成功！");
 					backToCategoryList();
 				},
 				error : function() {

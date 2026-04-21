@@ -1,138 +1,197 @@
 <div class="category-wrapper" style="padding: 20px;">
-<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
-    <div class="category-container">
-        <div class="card-panel">
-            <div class="section-title">🐾 新增寵物商品</div>
+	<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+	<div class="category-container">
+		<div class="card-panel">
+			<div class="page-title-area">
+				<div class="page-header-text">新增寵物商品</div>
+			</div>
 
-            <form id="ajaxAddProductForm" enctype="multipart/form-data">
-                
-                <div class="form-grid">
-                    <div class="form-row">
-                        <label>商品名稱</label>
-                        <input type="text" name="productName" id="addProductName" placeholder="請輸入商品名稱" required>
-                    </div>
+			<form id="ajaxAddProductForm" enctype="multipart/form-data">
+				<div class="form-main-layout"
+					style="display: flex; gap: 30px; align-items: flex-start;">
 
-                    <div class="form-row">
-                        <label>商品分類</label>
-                        <select name="categoryId" id="addCategoryId" required>
-                            <option value="">-- 請選擇分類 --</option>
-                            <option th:each="cat : ${allCategories}" 
-                                    th:value="${cat.categoryId}" 
-                                    th:text="${cat.categoryName} + ' (ID: ' + ${cat.categoryId} + ')' ">
-                            </option>
-                        </select>
-                    </div>
+					<div class="form-left-col" style="flex: 1.5;">
+						<div class="form-row">
+							<label class="required-label">商品名稱</label> <input type="text"
+								name="productName" id="addProductName" class="form-control"
+								placeholder="請輸入商品名稱" required>
+						</div>
 
-                    <div class="form-row">
-                        <label>商品價格</label>
-                        <input type="number" name="productPrice" id="addProductPrice" value="0" min="0" required>
-                    </div>
+						<div class="form-grid"
+							style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+							<div class="form-row">
+								<label class="required-label">商品分類</label> <select
+									name="categoryId" id="addCategoryId" class="form-control"
+									required>
+									<option value="">-- 請選擇 --</option>
+									<option th:each="cat : ${allCategories}"
+										th:value="${cat.categoryId}" th:text="${cat.categoryName}"></option>
+								</select>
+							</div>
+							<div class="form-row">
+								<label>商品狀態</label> <select name="productStatus"
+									class="form-control">
+									<option value="1">✅ 上架中</option>
+									<option value="0">❌ 下架/暫存</option>
+								</select>
+							</div>
+							<div class="form-row">
+								<label class="required-label">商品價格</label> <input type="number"
+									name="productPrice" id="addProductPrice" class="form-control"
+									value="0" min="0" required>
+							</div>
+							<div class="form-row">
+								<label class="required-label">庫存數量</label> <input type="number"
+									name="productStock" id="addProductStock" class="form-control"
+									value="0" min="0" required>
+							</div>
+						</div>
 
-                    <div class="form-row">
-                        <label>商品狀態</label>
-                        <select name="productStatus">
-                            <option value="1">上架中</option>
-                            <option value="0">已下架 / 倉庫暫存</option>
-                        </select>
-                    </div>
+						<div class="form-row" style="margin-top: 15px;">
+							<div
+								style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
 
-                    <div class="form-row">
-                        <label>庫存數量</label>
-                        <input type="number" name="productStock" id="addProductStock" value="0" min="0" required>
-                    </div>
+								<div>
+									<label>倉庫庫位</label> <input type="text" name="storagePosition"
+										class="form-control" placeholder="例如：A-101" required>
+								</div>
 
-                    <div class="form-row">
-                        <label>低庫存警告</label>
-                        <input type="number" name="lowStock" id="addLowStock" value="5" min="0">
-                    </div>
+								<div>
+									<label>庫存預警值</label> <input type="number" name="lowStock"
+										class="form-control" value="5" min="0">
+								</div>
 
-                    <div class="form-row">
-                        <label>倉庫庫位</label>
-                        <input type="text" name="storagePosition" id="addStoragePosition" placeholder="例如：A-101">
-                    </div>
+							</div>
+						</div>
+					</div>
 
-                    <div class="form-row">
-                        <label>商品圖片</label>
-                        <input type="file" name="file" id="addProductFile" accept=".jpg,.png" onchange="previewImage(this)">
-                        <img id="preview" class="preview-img-box" src="#" alt="預覽圖">
-                    </div>
+					<div class="form-right-col"
+						style="flex: 1; background: #fdfaf5; padding: 20px; border-radius: 12px; border: 1px dashed var(--border-color);">
+						<label class="required-label"
+							style="justify-content: center; margin-bottom: 15px;">商品圖片預覽</label>
 
-                    <div class="form-row full-width">
-                        <label>商品描述</label>
-                        <textarea name="productDescription" id="addProductDescription" rows="4" placeholder="請輸入詳細描述..."></textarea>
-                    </div>
-                </div>
+						<div class="add-img-preview-container"
+							style="text-align: center; margin-bottom: 15px;">
+							<div id="imagePlaceholder"
+								style="width: 100%; height: 250px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #999;">
+								<i class="fas fa-image" style="font-size: 3rem;"></i><br>尚未選擇圖片
+							</div>
+							<img id="preview" src="#" alt="預覽圖"
+								style="display: none; width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+						</div>
 
-                <div class="btn-group">
-                    <button type="button" class="btn-secondary" onclick="backToList()">取消返回</button>
-                    <button type="reset" class="btn-secondary" onclick="resetPreview()">清除重填</button>
-                    <button type="button" class="btn-main" onclick="submitProductAdd()">執行新增</button>
-                </div>
-            </form>
-        </div>
-    </div>
+						<input type="file" name="file" id="addProductFile"
+							accept=".jpg,.png" onchange="previewImage(this)"
+							style="font-size: 0.85rem ;"required>
+						<p style="font-size: 0.75rem; color: #888; margin-top: 8px;">支援格式：JPG,PNG</p>
+					</div>
+				</div>
 
-    <script th:inline="javascript">
-        /**
-         * 1. 圖片預覽邏輯
-         */
-        function previewImage(input) {
-            const preview = document.getElementById('preview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                resetPreview();
-            }
-        }
+				<div class="form-row full-width" style="margin-top: 25px;">
+					<label>詳細描述</label>
+					<textarea name="productDescription" id="addProductDescription"
+						rows="4" class="form-control" placeholder="請輸入商品詳細介紹..."></textarea>
+				</div>
 
-        function resetPreview() {
-            const preview = document.getElementById('preview');
-            preview.src = "#";
-            preview.style.display = 'none';
-        }
-
-        /**
-         * 2. 執行 AJAX 商品新增
-         */
-        function submitProductAdd() {
-            const form = document.getElementById('ajaxAddProductForm');
-            const formData = new FormData(form);
-
-            // 簡易驗證
-            if (!$('#addProductName').val()) { alert("請填寫商品名稱哦！🐾"); return; }
-            if (!$('#addCategoryId').val()) { alert("請選擇商品分類哦！"); return; }
-
-            $.ajax({
-                url: /*[[@{/innerProduct/insert}]]*/ '/innerProduct/insert',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if(response === "success") {
-                        alert("商品新增成功！✨");
-                        backToList();
-                    } else {
-                        alert("新增失敗，請檢查資料。");
-                    }
-                },
-                error: function() {
-                    alert("發送請求失敗，伺服器可能正在維修中。");
-                }
-            });
-        }
-
-        /**
-         * 3. 返回清單
-         */
-        function backToList() {
-            const listUrl = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
-            $('#contentBody').load(listUrl + "?_t=" + new Date().getTime());
-        }
-    </script>
+				<div class="btn-area d-flex justify-content-center"
+					style="justify-content: center; margin-top: 30px;">
+					<button type="button" class="btn-main" onclick="submitProductAdd()">新增商品</button>
+					<button type="reset" class="btn-cancel" onclick="resetPreview()">清除重填</button>
+					<button type="button" class="btn-cancel" onclick="backToList()">取消返回</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
+<script th:inline="javascript">
+	function previewImage(input) {
+		const preview = document.getElementById('preview');
+		const placeholder = document.getElementById('imagePlaceholder');
+
+		if (input.files && input.files[0]) {
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				preview.src = e.target.result;
+				preview.style.display = 'block';
+				placeholder.style.display = 'none'; // 隱藏佔位區
+			}
+			reader.readAsDataURL(input.files[0]);
+		} else {
+			resetPreview();
+		}
+	}
+
+	function resetPreview() {
+		document.getElementById('preview').style.display = 'none';
+		document.getElementById('imagePlaceholder').style.display = 'flex';
+	}
+	
+	function submitProductAdd() {
+	    const form = document.getElementById('ajaxAddProductForm');
+	    
+	    if (!form.checkValidity()) {
+	        form.reportValidity();
+	        return;
+	    }
+
+	    const formData = new FormData(form);
+	    const price = parseFloat(document.getElementById('addProductPrice').value);
+
+	    // 如果價格為 0，跳出確認視窗
+	    if (price === 0) {
+	        Swal.fire({
+	            title: '確認商品價格',
+	            text: "目前商品價格設定為 0 元，確定要以此價格新增嗎？",
+	            icon: 'warning',
+	            showCancelButton: true,
+	            confirmButtonColor: '#ff9800',
+	            cancelButtonColor: '#aaa',
+	            confirmButtonText: '是的，繼續新增',
+	            cancelButtonText: '再改一下'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                executeSubmit();
+	            }
+	        });
+	    } else {
+	        // 價格不為 0，直接上傳
+	        executeSubmit();
+	    }
+	}
+
+	function executeSubmit() {
+	    const form = document.getElementById('ajaxAddProductForm');
+	    const formData = new FormData(form);
+
+	    $.ajax({
+	        url: /*[[@{/innerProduct/insert}]]*/ '/innerProduct/insert',
+	        type: 'POST',
+	        data: formData,
+	        processData: false, 
+	        contentType: false,
+	        success: function(res) {
+	            if (res === "success") {
+	                Swal.fire('成功！', '商品已成功加入商城。', 'success').then(() => {
+	                    if(typeof updateSidebarBadge === "function") updateSidebarBadge();
+	                    backToList();
+	                });
+	            } else {
+	                Swal.fire('失敗', '新增失敗，請檢查輸入內容。', 'error');
+	            }
+	        },
+	        error: function() {
+	            Swal.fire('錯誤', '伺服器連線失敗，請檢查網路。', 'error');
+	        }
+	    });
+	}
+	
+	function backToList() {
+	    var listUrl = /*[[@{/innerProduct/list}]]*/ '/innerProduct/list';
+	    // 加上時間戳記防止讀取到舊的快取資料
+	    $('#contentBody').load(listUrl + "?_t=" + new Date().getTime(), function(response, status, xhr) {
+	        if (status === "error") {
+	            console.error("載入列表失敗:", xhr.status, xhr.statusText);
+	        }
+	    });
+	}
+</script>

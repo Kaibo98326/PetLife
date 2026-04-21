@@ -98,8 +98,8 @@
 							class="nav-menu-link">🐶 狗狗專區</a></li>
 						<li><a th:href="@{/beauty-booking}" class="nav-menu-link">🛁
 								寵物美容</a></li>
-						<li><a th:href="@{/hotel/orders/booking}" class="nav-menu-link">🏠
-								寵物旅館</a></li>
+						<li><a th:href="@{/hotel/orders/booking}"
+							class="nav-menu-link">🏠 寵物旅館</a></li>
 						<li><a href="#" class="nav-menu-link">🔥 限時特惠</a></li>
 					</ul>
 				</div>
@@ -223,9 +223,9 @@
 						class="text-decoration-none" style="color: inherit;">
 						<div class="product-img-wrapper">
 							<img
-								th:src="${p.productImage != null ? ('/images/products/' + p.productImage) : '/images/products/default.jpg'}"
+								th:src="${p.productImage != null ? ('/' + p.productImage) : '/images/products/default.jpg'}"
 								th:alt="${p.productName}">
-								
+
 						</div>
 						<div class="product-info">
 							<h6 class="product-name" th:text="${p.productName}"></h6>
@@ -235,7 +235,7 @@
 					<div class="product-info pt-0">
 						<div class="product-footer">
 							<span class="product-price">$ <span
-								th:text="${p.productPrice}"></span></span>
+								th:text="${#numbers.formatInteger(p.productPrice, 0)}"></span></span>
 							<button type="button" class="btn add-to-cart-btn"
 								th:attr="data-id=${p.productId}, data-name=${p.productName}">
 								<i class="fas fa-shopping-basket"></i>
@@ -275,9 +275,23 @@
 
                     if (!productId) return;
                     
+                    // 會員登入提示
+                    var mid = "[[${memberId}]]";
+                    if (!mid || mid === "" || mid === "null") {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '請先登入',
+                            text: '登入後才能將毛孩好物加入購物車喔！',
+                            confirmButtonText: '前往登入'
+                        }).then(() => {
+                            window.location.href = "/loginChoice"; // 導向登入選擇頁
+                        });
+                        return;
+                    }
+                    
                     // 發送 AJAX 請求到後端
                     $.ajax({
-                    	url: "/api/cart/add/" + "[[${memberId}]]",
+                    	url: "/api/cart/add/" + mid,
                         type: "POST",
                         contentType: "application/json; charset=utf-8",
                         data: JSON.stringify({
@@ -288,7 +302,7 @@
                             Swal.fire({
                                 icon: 'success',
                                 title: '加入成功！',
-                                text: '已將 [' + name + '] 放進購物車囉 🐾',
+                                text: '已將 [' + name + '] 放進購物車。',
                                 timer: 1500,
                                 showConfirmButton: false
                             }).then(() => {
@@ -302,6 +316,7 @@
                             });
                         },
                         error: function (xhr, status, error) {
+                        	console.error("錯誤狀態碼:", xhr.status);
                             alert("連線失敗，請檢查後端 Controller 是否有啟動。");
                         }
                     });

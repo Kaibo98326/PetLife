@@ -2,6 +2,7 @@
    PetLife 後台 商品分類 樣式表
    更新日期: 2026.04.15
       	   2026.04.18 - 移除進入動畫、修正padding
+      	   2026.04.20 - 修正編輯頁面
    ======================================================================== */
 
 /* 1. 基礎變數與容器 */
@@ -43,19 +44,6 @@
 	padding-left: 12px;
 	border-left: 5px solid var(--primary-yellow);
 	color: var(--primary-orange);
-}
-
-/* 風格 B：壓線標題 (用於編輯/修改) */
-.edit-card::before {
-	content: "✏️ 修改商品分類";
-	position: absolute;
-	top: -15px;
-	left: 20px;
-	background: #fff;
-	padding: 0 10px;
-	color: var(--blue-hover);
-	font-weight: bold;
-	font-size: 1.1rem;
 }
 
 /* 4. 表單與輸入框 */
