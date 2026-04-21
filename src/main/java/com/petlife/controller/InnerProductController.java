@@ -117,9 +117,8 @@ public class InnerProductController {
     public String edit(@PathVariable("id") Integer id,
                        @RequestParam(value = "cp", defaultValue = "1") int cp,
                        Model model) {
-        // 💡 根據 ID 抓取商品資料
         Product product = productService.getProductById(id);
-        // 💡 抓取所有分類給下拉選單選
+        // 抓取所有分類給下拉選單選
         List<Category> categories = categoryService.getAllCategory();
         
         model.addAttribute("product", product);
@@ -136,7 +135,7 @@ public class InnerProductController {
                                 @RequestParam("oldImage") String oldImage,
                                 @RequestParam(value = "file", required = false) MultipartFile file) {
         try {
-            // 💡 處理圖片：有新傳新，沒新用舊
+            // 處理圖片：有新傳新，沒新用舊
             handleImageUpload(product, file, oldImage);
             productService.updateProduct(product);
             return "success";
@@ -149,22 +148,34 @@ public class InnerProductController {
 //===== 後台商品 工具：處理圖片上傳與路徑存儲 ================================================================================================
 
     private void handleImageUpload(Product product, MultipartFile file, String defaultImage) throws Exception {
-    		//外部儲存目錄
-    		String uploadDir = "C:/uploads/images/products/";
-    		java.io.File directory = new java.io.File(uploadDir);
-    		if(!directory.exists()) {
-    			directory.mkdirs();
-    		}
-    		
+        String uploadDir = "C:/uploads/images/products/";
+        java.io.File directory = new java.io.File(uploadDir);
+
+        // 雙重確認資料夾是否存在
+        if (!directory.exists()) {
+            directory.mkdirs(); 
+        }
+
         if (file != null && !file.isEmpty()) {
-        		//取得原始檔名
             String fileName = file.getOriginalFilename();
-            //儲存檔案到外部目錄
-            file.transferTo(new java.io.File(uploadDir,fileName));
+            java.io.File saveFile = new java.io.File(directory, fileName);
             
-            //儲存資料庫的路徑:images/xxx
-            product.setProductImage("products/" + fileName);
-        } else { product.setProductImage(defaultImage); }
+            if (!saveFile.exists()) {
+                file.transferTo(saveFile);
+                System.out.println("偵測到新圖片，已存檔：" + fileName);
+            } else {
+                System.out.println("檔案已存在，沿用舊有檔案：" + fileName);
+            }
+            
+            product.setProductImage(fileName);
+        } else {
+            // 如果沒選新檔案，就用舊的（把 products/ 修掉，保持純檔名）
+            if (defaultImage != null) {
+                product.setProductImage(defaultImage.replace("products/", ""));
+            } else {
+                product.setProductImage(null);
+            }
+        }
     }
     
 //===== 後台商品 提供給前端 AJAX 同步庫存警告數量的 API (用於左方menu低庫存數字即時更新 )============================================================
@@ -172,7 +183,6 @@ public class InnerProductController {
     @GetMapping("/api/lowStockCount")
     @ResponseBody
     public long getLowStockCountApi() {
-        // 💡 直接回傳數字即可，不需要回傳整頁 HTML
         return productService.getLowStockCount();
     }
     
@@ -182,7 +192,6 @@ public class InnerProductController {
     @ResponseBody
     public ResponseEntity<?> batchUpdateStatus(@RequestBody Map<String, Object> payload) {
         try {
-            // 從 JSON 物件中取出 ids 和 status
             List<Integer> ids = (List<Integer>) payload.get("ids");
             Integer status = (Integer) payload.get("status");
 
@@ -190,7 +199,6 @@ public class InnerProductController {
                 return ResponseEntity.badRequest().body("請選擇至少一項商品");
             }
 
-            // 呼叫 Service 執行批次更新
             productService.batchUpdateStatus(ids, status);
             
             return ResponseEntity.ok().body("批次操作成功");
@@ -199,5 +207,18 @@ public class InnerProductController {
             return ResponseEntity.status(500).body("批次操作失敗：" + e.getMessage());
         }
     }
+ //===== 後台商品 顯示商品詳情 =========================================================================================================== 
     
+    @GetMapping("/detail/{id}")
+    public String showDetail(@PathVariable("id") Integer id, Model model) {
+        Product product = productService.getProductById(id);
+        
+        if (product != null && product.getCategoryId() != null) {
+            Category cat = categoryService.getCategoryById(product.getCategoryId());
+            if (cat != null) product.setCategoryName(cat.getCategoryName());
+        }
+
+        model.addAttribute("product", product);
+        return "InnerProductDetail";
+    }
 }

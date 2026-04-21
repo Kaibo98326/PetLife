@@ -5,7 +5,7 @@
 	<div class="card-panel">
 		<div class="page-title-area">
 			<div class="title-decorator"></div>
-			<div class="page-header-text">📦 商品管理系統</div>
+			<div class="page-header-text">商品管理系統</div>
 		</div>
 
 		<div class="toolbar">
@@ -20,8 +20,8 @@
 			</button>
 			<div class="warning-badge-wrapper"
 				style="display: inline-block; position: relative; margin-left: 10px;">
-				<button class="btn-warning" onclick="filterLowStock()">
-					庫存警告</button>
+				<button class="btn-warning" onclick="filterLowStock()"><img width="15" height="15" src="https://img.icons8.com/material-outlined/24/box-important--v1.png" alt="box-important--v1"/>
+					&nbsp;庫存警告</button>
 				<span id="lowStockBadge" class="badge-danger"
 					th:if="${lowStockCount > 0}" th:text="${lowStockCount}">0</span>
 			</div>
@@ -73,11 +73,14 @@
 					<td class="product-name-td">
 						<div class="name-with-id">
 							<span class="product-id-tag" th:text="'#' + ${p.productId}"></span>
-							<span class="main-name-text" th:text="${p.productName}"></span>
+							<a href="javascript:void(0)"
+								th:onclick="showProductDetail([[${p.productId}]])"
+								class="product-detail-link"> <span class="main-name-text"
+								th:text="${p.productName}"></span>
+							</a>
 						</div>
 					</td>
-					<td style="text-align: center;"><span class="price-text"
-						th:text="'$' + ${p.productPrice}"></span></td>
+					<td style="text-align: center;"><span class="price-text" th:text="'$' + ${#numbers.formatInteger(p.productPrice, 0)}"></span></td>
 					<td style="text-align: center;" th:text="${p.productStock}"></td>
 					<td style="text-align: center;"><span class="cat-badge"
 						th:text="${p.categoryName}"></span></td>
@@ -85,8 +88,8 @@
 						<div class="action-group">
 							<button type="button" class="action-btn edit-btn"
 								th:onclick="editProduct([[${p.productId}]])">修改</button>
-							<button type="button" class="action-btn del-btn"
-								th:onclick="deleteProduct([[${p.productId}]])">刪除</button>
+<!-- 							<button type="button" class="action-btn del-btn" -->
+<!-- 								th:onclick="deleteProduct([[${p.productId}]])">刪除</button> -->
 						</div>
 					</td>
 				</tr>
@@ -129,27 +132,6 @@
 		console.log("正在開啟新增頁面");
 		var url = /*[[@{/innerProduct/prepareAdd}]]*/'/innerProduct/prepareAdd';
 		$('#contentBody').load(url + "?_t=" + new Date().getTime());
-	}
-
-	// 3. 刪除商品
-	function deleteProduct(id) {
-		if (!confirm('確定要將這件寶貝下架嗎？🐾'))
-			return;
-
-		// 💡 取得動態路徑 (後端是 /delete/{id})
-		var deleteUrl = /*[[@{/innerProduct/delete/}]]*/'/innerProduct/delete/';
-
-		$.get(deleteUrl + id, function(res) {
-			if (res === "success") {
-				alert("已成功下架！✨");
-				// 💡 成功後一定要呼叫刷新
-				refreshProductList();
-			} else {
-				alert("下架失敗，請檢查後台日誌。");
-			}
-		}).fail(function() {
-			alert("伺服器連線失敗，請稍後再試。");
-		});
 	}
 
 	// 4. 搜尋功能 (補上原本漏掉的部分)
@@ -273,7 +255,7 @@
         Swal.fire({
             icon: 'info',
             title: '哎呀！',
-            text: '請先勾選想要下架的商品喔 🐾'
+            text: '請先勾選想要下架的商品喔!'
         });
         return;
     }
@@ -322,7 +304,7 @@
 	    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
 
 	    if (selectedIds.length === 0) {
-	        Swal.fire({ icon: 'info', title: '提示', text: '請先勾選想要上架的商品喔 🐾' });
+	        Swal.fire({ icon: 'info', title: '提示', text: '請先勾選想要上架的商品喔!' });
 	        return;
 	    }
 
@@ -345,7 +327,7 @@
 	                    status: 1 // 💡 這裡是 1，代表上架
 	                }),
 	                success: function(response) {
-	                    Swal.fire('成功！', '商品已批次上架成功 ✨', 'success')
+	                    Swal.fire('成功！', '商品已批次上架成功!', 'success')
 	                        .then(() => {
 	                            refreshProductList();
 	                        });
@@ -354,6 +336,20 @@
 	        }
 	    });
 	}
+	
+	// 後台商品 顯示商品詳情
+	function showProductDetail(id) {
+	    console.log("查看商品詳情，ID =", id);
+	    
+	    var baseUrl = /*[[@{/innerProduct/detail/}]]*/'/innerProduct/detail/';
+	    
+	    $('#contentBody').load(baseUrl + id, function(response, status, xhr) {
+	        if (status === "error") {
+	            Swal.fire('錯誤', '無法載入詳情頁面 (' + xhr.status + ')', 'error');
+	        }
+	    });
+	}
+	
 	
 	console.log("商品管理邏輯已啟動完成！✅");
 </script>
