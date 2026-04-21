@@ -167,11 +167,10 @@ public class InnerProductController {
                 System.out.println("檔案已存在，沿用舊有檔案：" + fileName);
             }
             
-            product.setProductImage(fileName);
+            product.setProductImage("images/products/"+fileName);
         } else {
-            // 如果沒選新檔案，就用舊的（把 products/ 修掉，保持純檔名）
             if (defaultImage != null) {
-                product.setProductImage(defaultImage.replace("products/", ""));
+                product.setProductImage(defaultImage);
             } else {
                 product.setProductImage(null);
             }

@@ -75,7 +75,7 @@
 									<span class="badge"
 										style="margin-bottom: 5px; font-size: 10px; background-color: #eee; color: #888;">目前舊圖</span>
 									<img id="oldPreview"
-										th:src="${product.productImage != null ? '/images/products/' + product.productImage : '/images/default.png'}"
+										th:src="${product.productImage != null ? '/' + product.productImage : '/images/default.png'}"
 										style="max-width: 100%; max-height: 180px; width: auto; height: auto; border-radius: 8px; border: 1px solid #ddd; filter: grayscale(5%); opacity: 0.6;">
 								</div>
 
