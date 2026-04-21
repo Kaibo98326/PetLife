@@ -53,7 +53,7 @@
 
 								<div>
 									<label>倉庫庫位</label> <input type="text" name="storagePosition"
-										class="form-control" placeholder="例如：A-101">
+										class="form-control" placeholder="例如：A-101" required>
 								</div>
 
 								<div>
@@ -83,8 +83,7 @@
 						<input type="file" name="file" id="addProductFile"
 							accept=".jpg,.png" onchange="previewImage(this)"
 							style="font-size: 0.85rem ;"required>
-						<p style="font-size: 0.75rem; color: #888; margin-top: 8px;">支援格式：JPG,
-							PNG (建議尺寸 500x500)</p>
+						<p style="font-size: 0.75rem; color: #888; margin-top: 8px;">支援格式：JPG,PNG</p>
 					</div>
 				</div>
 
@@ -130,12 +129,38 @@
 	function submitProductAdd() {
 	    const form = document.getElementById('ajaxAddProductForm');
 	    
-	    // 檢查必填欄位
 	    if (!form.checkValidity()) {
 	        form.reportValidity();
 	        return;
 	    }
 
+	    const formData = new FormData(form);
+	    const price = parseFloat(document.getElementById('addProductPrice').value);
+
+	    // 如果價格為 0，跳出確認視窗
+	    if (price === 0) {
+	        Swal.fire({
+	            title: '確認商品價格',
+	            text: "目前商品價格設定為 0 元，確定要以此價格新增嗎？",
+	            icon: 'warning',
+	            showCancelButton: true,
+	            confirmButtonColor: '#ff9800',
+	            cancelButtonColor: '#aaa',
+	            confirmButtonText: '是的，繼續新增',
+	            cancelButtonText: '再改一下'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                executeSubmit();
+	            }
+	        });
+	    } else {
+	        // 價格不為 0，直接上傳
+	        executeSubmit();
+	    }
+	}
+
+	function executeSubmit() {
+	    const form = document.getElementById('ajaxAddProductForm');
 	    const formData = new FormData(form);
 
 	    $.ajax({
@@ -146,15 +171,16 @@
 	        contentType: false,
 	        success: function(res) {
 	            if (res === "success") {
-	                alert("商品新增成功！");
-	                if(typeof updateSidebarBadge === "function") updateSidebarBadge();
-	                backToList();
+	                Swal.fire('成功！', '商品已成功加入商城。', 'success').then(() => {
+	                    if(typeof updateSidebarBadge === "function") updateSidebarBadge();
+	                    backToList();
+	                });
 	            } else {
-	                alert("新增失敗，請檢查資料。");
+	                Swal.fire('失敗', '新增失敗，請檢查輸入內容。', 'error');
 	            }
 	        },
 	        error: function() {
-	            alert("伺服器連線失敗。");
+	            Swal.fire('錯誤', '伺服器連線失敗，請檢查網路。', 'error');
 	        }
 	    });
 	}
