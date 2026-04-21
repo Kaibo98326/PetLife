@@ -21,13 +21,23 @@ function getViewModal() {
 }
 
 
-//加入 DOMContentLoaded 監聽器
-// 告訴瀏覽器：「等整個 HTML 的標籤都確實載入完畢後，再來執行這兩行抓資料！」
-document.addEventListener('DOMContentLoaded', function() {
-    fetchDiscountTypes();
-    fetchDiscountList();
-});
+// ==================== 啟動 SPA 頁面監聽雷達 ====================
+var isDiscountPageActive = false; // 紀錄目前是否停留在優惠活動頁面
 
+setInterval(function() {
+    var tbody = document.getElementById('discount_tableBody');
+    
+    // 情境 1：如果畫面上有表格，且雷達狀態是「未啟動」，代表使用者剛切換進來這個頁面
+    if (tbody && !isDiscountPageActive) {
+        isDiscountPageActive = true; // 標記為已啟動
+        fetchDiscountTypes();
+        fetchDiscountList();
+    } 
+    // 情境 2：如果畫面上沒有表格，代表使用者切換到左邊的其他選單了
+    else if (!tbody && isDiscountPageActive) {
+        isDiscountPageActive = false; // 重置狀態，等待下次使用者切換回來
+    }
+}, 300); // 每 0.3 秒掃描一次畫面
 
 
 // ==================== 3. 動態取得下拉選單與關鍵字機制 ====================
@@ -519,7 +529,20 @@ function updateCharCount() {
 function saveActivity() {
     var nameInput = document.getElementById('discount_name');
     var saveBtn = document.getElementById('saveBtn');
+    
+    // 【新增防呆】：針對最低消費金額設定自定義提示訊息
+    var minAmountInput = document.getElementById('minimum_purchase_amount');
+    if (minAmountInput) {
+        if (minAmountInput.value === "") {
+            // 設定使用者沒填時的特定提示文字
+            minAmountInput.setCustomValidity("請輸入最低消費金額，若無門檻請填寫 0");
+        } else {
+            // 如果有填了，要把錯誤訊息清空，否則會一直不給過
+            minAmountInput.setCustomValidity("");
+        }
+    }
 
+    // 檢查活動名稱 (你原本的邏輯)
     if(!nameInput.value.trim()) {
         document.getElementById('nameError').style.display = 'block';
         var triggerEl = document.querySelector('#rules-tab');
@@ -528,9 +551,9 @@ function saveActivity() {
         return;
     }
     
-	var form = document.getElementById('activityForm');
-	    // 注意：disabled 的欄位不會被 reportValidity 檢查
-	    if(form && !form.reportValidity()) return;
+	// 執行所有 HTML 必填 (required) 檢查
+	    var form = document.getElementById('activityForm');
+	    if(form && !form.reportValidity()) return; // 這行會觸發剛才設定的「請填寫 0」提示
 
 		saveBtn.disabled = true;
 		    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 處理中...';

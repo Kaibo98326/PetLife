@@ -175,11 +175,9 @@
 										style="display: none;">
 										<div class="row">
 											<div class="col-md-4">
-												<label class="form-label text-muted">最低消費金額 (<span
-													id="minAmountType">元</span>)
-												</label> <input type="number" class="form-control"
-													id="minimum_purchase_amount" min="0" step="1">
-											</div>
+    <label class="form-label text-muted">最低消費金額 (<span id="minAmountType">元</span>) <span class="text-danger">*</span></label>
+    <input type="number" class="form-control" id="minimum_purchase_amount" min="0" step="1" required placeholder="無門檻請填 0">
+</div>
 											<div class="col-md-4">
 												<label class="form-label fw-bold" id="valueLabel">折扣值</label>
 												<div class="input-group">
@@ -190,12 +188,12 @@
 												<small class="text-muted mt-2 d-block" id="valueHint"></small>
 											</div>
 											<div class="col-md-4">
-												<label class="form-label fw-bold">限定會員專屬</label>
-												<select class="form-select" id="is_member">
-													<option value="false" selected>否</option>
-													<option value="true">是</option>
-												</select>
-											</div>
+    <label class="form-label fw-bold">限定會員專屬 <span class="text-danger">*</span></label>
+    <select class="form-select" id="is_member">
+        <option value="false" selected>否</option>
+        <option value="true">是</option>
+    </select>
+</div>
 										</div>
 									</div>
 										
