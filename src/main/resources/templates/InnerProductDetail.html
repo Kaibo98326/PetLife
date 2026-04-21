@@ -72,7 +72,7 @@
                 <legend> 商品圖片 </legend>
                 <div class="detail-img-box">
                     <div th:if="${not #strings.isEmpty(product.productImage)}">
-                        <img th:src="@{/images/products/{img}(img=${product.productImage})}" 
+                        <img th:src="@{'/' + ${p.productImage}}" 
                              alt="商品圖片">
                     </div>
                     <div th:unless="${not #strings.isEmpty(product.productImage)}" 

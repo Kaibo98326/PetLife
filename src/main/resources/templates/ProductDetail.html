@@ -38,7 +38,7 @@
 				<div class="col-auto">
 					<nav class="shop-user-nav d-flex align-items-center">
 <!-- 購物車 -->   						
-						<a th:href="@{/cart}"
+						<a th:href="@{/api/cart/cart}"
 							class="nav-icon-item position-relative d-flex flex-column align-items-center text-decoration-none">
 							<i class="fas fa-shopping-cart"></i> <span
 							style="font-size: 13px; color: #5a4a42;">購物車</span> <span
@@ -105,7 +105,7 @@
 			<div class="row g-5">
 				<div class="col-md-6">
 					<div class="main-image-wrapper">
-						<img th:src="${product.productImage != null ? '/images/products/' + #strings.replace(product.productImage, 'images/products/', '') : '/images/products/default.jpg'}"
+						<img th:src="${product.productImage != null ? '/' + product.productImage : '/images/products/default.jpg'}"
      						th:alt="${product.productName}" class="img-fluid rounded">
  	
 					</div>
@@ -126,7 +126,7 @@
 					<h1 class="product-title" th:text="${product.productName}">商品名稱</h1>
 
 					<div class="product-price-large"
-						th:text="'$ ' + ${product.productPrice}">$ 0</div>
+						th:text="'$ ' + ${#numbers.formatInteger(product.productPrice, 0)}">$ 0</div>
 
 					<div class="mb-4">
 						<label class="form-label fw-bold">規格選擇</label> <select
@@ -189,18 +189,37 @@
 						$("#buy-quantity").val(qty + 1);
 					});
 
-					// 立即購買 (跳轉至購物車)
-					$("#direct-buy-btn").click(
-							function() {
-								const pId = $(this).data("pid");
-								const qty = $("#buy-quantity").val();
-								if (!pId || qty <= 0)
-									return;
-								// 這裡的路徑改為 /cart/add (假設你未來的路徑)
-								window.location.href = contextPath
-										+ "cart/add?productId=" + pId
-										+ "&quantity=" + qty;
-							});
+					// 立即購買 (修改後的邏輯)
+					$("#direct-buy-btn").click(function() {
+					    const pId = $(this).data("pid");
+					    const qty = $("#buy-quantity").val();
+					    const mid = [[${memberId}]]; 
+
+					    // 先登入才能購買
+					    if (!mid) {
+					        alert("請先登入後再進行購買喔！");
+					        window.location.href = contextPath + "loginChoice";
+					        return;
+					    }
+
+					    if (!pId || qty <= 0) return;
+
+					    $.ajax({
+					        url: contextPath + "api/cart/add/" + mid,
+					        type: "POST",
+					        contentType: "application/json",
+					        data: JSON.stringify({
+					            productId: pId,
+					            quantity: qty
+					        }),
+					        success: function() {
+					            window.location.href = contextPath + "api/cart/cart";
+					        },
+					        error: function() {
+					            alert("購買失敗，請在試一次。");
+					        }
+					    });
+					});
 
 					// 加入購物車 (AJAX)
 					$("#add-to-cart-detail").click(
@@ -210,18 +229,26 @@
 									alert("數量必須大於 0 哦！");
 									return;
 								}
+								
+								const mid = [[${memberId}]];
+								if (!mid) {
+							        alert("請先登入後再加入購物車喔！");
+							        window.location.href = contextPath + "loginChoice";
+							        return;
+							    }
 
 								$.ajax({
 									// 注意：這裡先保留原有的路徑，待購物車同學完成後再統一修改
-									url : contextPath + "CartServlet",
+									url : contextPath + "api/cart/add/" + mid,
 									type : "POST",
-									data : {
-										action : "add",
+									contentType: "application/json; charset=utf-8",
+									data : 
+										JSON.stringify({
 										productId : productId,
 										quantity : qty
-									},
+									}),
 									success : function(response) {
-										alert("已將 " + qty + " 件商品加入購物車！🐾");
+										alert("已將 " + qty + " 件商品加入購物車！");
 
 										// 動態更新購物車紅點數字
 										let badge = $("#cart-badge");
@@ -230,11 +257,11 @@
 													.text()) || 0;
 											badge.text(currentCount + qty);
 										} else {
-											// 如果原本沒紅點，點了之後應該出現 (重新整理最快)
 											location.reload();
 										}
 									},
 									error : function() {
+										console.error("加入失敗，狀態碼：" + xhr.status);
 										alert("加入購物車失敗，請稍後再試。");
 									}
 								});
