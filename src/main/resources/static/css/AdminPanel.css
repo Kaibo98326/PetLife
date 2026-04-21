@@ -43,24 +43,33 @@ body {
 }
 
 
-.header-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+/* ===== 頂端PetLife字樣 ===== */
+.admin-title {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size:30px;
+    
+    /* 讓英文部分稍微明顯一點 */
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.05); 
+    
+    /* 對齊方式 */
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-/* 新版 logo 額外樣式 */
-.logo-paws {
-    font-size: 1.4rem;
-}
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
     letter-spacing: 1px;
-    font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
 }
+
+
+/* 新版 logo 額外樣式 */
+/* .logo-paws { */
+/*     font-size: 1.4rem; */
+/* } */
+/* .logo-text { */
+/*     font-size: 1.5rem; */
+/*     font-weight: bold; */
+/*     color: white; */
+/*     letter-spacing: 1px; */
+/*     font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; */
+/* } */
 
 .header-right {
     display: flex;

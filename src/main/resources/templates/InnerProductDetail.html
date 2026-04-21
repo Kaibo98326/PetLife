@@ -1,99 +1,102 @@
-<div class="data-container" style="max-width: 1000px;" id="innerProductDetailArea">
-<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
-    <h1 class="page-title">🔍 商品完整規格檢視</h1>
-    
-    <fieldset style="margin-bottom: 25px;">
-        <legend> 📦 商品基本資料 </legend>
-        <table class="data-table view-table">
-            <thead>
-                <tr>
-                    <th width="20%">項目</th>
-                    <th width="30%">內容</th>
-                    <th width="20%">項目</th>
-                    <th width="30%">內容</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="label-cell">商品編號</td>
-                    <td th:text="${product.productId}">ID</td>
-                    <td class="label-cell">商品狀態</td>
-                    <td>
-                        <div th:if="${product.productStatus == 1}">
-                            <span class="badge" style="background-color: #d4edda; color: #155724;">✅ 上架中</span>
-                        </div>
-                        <div th:unless="${product.productStatus == 1}">
-                            <span class="badge" style="background-color: #f8d7da; color: #721c24;">❌ 已下架</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-cell">分類編號</td>
-                    <td th:text="${product.categoryId}">0</td>
-                    <td class="label-cell">分類名稱</td>
-                    <td>
-                        <span class="badge" style="background-color: #ffeaa7; color: #d63031;" 
-                              th:text="${product.categoryName}">分類名稱</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-cell">商品名稱</td>
-                    <td colspan="3" style="text-align: left; font-size: 1.2em; font-weight: bold; color: #5d4037;"
-                        th:text="${product.productName}">商品名稱</td>
-                </tr>
-                <tr>
-                    <td class="label-cell">商品價格</td>
-                    <td style="color: #e67e22; font-weight: bold; font-size: 1.2em;" 
-                        th:text="'NT$ ' + ${product.productPrice}">NT$ 0</td>
-                    <td class="label-cell">庫存位置</td>
-                    <td th:text="${#strings.isEmpty(product.storagePosition) ? '未註記' : product.storagePosition}">未註記</td>
-                </tr>
-                <tr>
-                    <td class="label-cell">目前庫存</td>
-                    <td>
-                        <div th:if="${product.productStock <= product.lowStock}">
-                            <strong style="color: #e74c3c; font-size: 1.1em;" 
-                                    th:text="${product.productStock} + ' 件 (低於門檻!)'">0 件</strong>
-                        </div>
-                        <div th:unless="${product.productStock <= product.lowStock}">
-                            <span th:text="${product.productStock} + ' 件'">0 件</span>
-                        </div>
-                    </td>
-                    <td class="label-cell">庫存預警值</td>
-                    <td th:text="${product.lowStock} + ' 件'">0 件</td>
-                </tr>
-            </tbody>
-        </table>
-    </fieldset>
-
-    <div class="flex-row" style="gap: 20px; display: flex;">
-        <fieldset style="flex: 1;">
-            <legend> 🖼️ 商品圖片 </legend>
-            <div style="text-align: center; padding: 20px; min-height: 250px; display: flex; align-items: center; justify-content: center;">
-                <div th:if="${not #strings.isEmpty(product.productImage)}">
-                    <img th:src="@{/images/products/{img}(img=${p.productImage})}" 
-                         alt="商品圖片" style="max-width: 100%; max-height: 300px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                </div>
-                <div th:unless="${not #strings.isEmpty(product.productImage)}" 
-                     style="width: 100%; height: 200px; background: #eee; color: #999; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                    暫無圖片
-                </div>
-            </div>
-        </fieldset>
-
-        <fieldset style="flex: 1.5;">
-            <legend> 📝 商品詳細描述 </legend>
-            <div style="padding: 20px; line-height: 1.8; color: #555; min-height: 200px; white-space: pre-wrap; background-color: #fffdf5; border-radius: 10px;"
-                 th:text="${not #strings.isEmpty(product.productDescription) ? product.productDescription : '此商品目前暫無詳細說明資訊。'}">
-            </div>
-        </fieldset>
-    </div>
-
-    <div class="sub" style="margin-top: 30px;">
-        <button type="button" class="btn-add" style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;" 
-                th:onclick="loadContent([[@{/innerProduct/edit/{id}(id=${product.productId})}]])">✏️ 編輯資訊</button>
+<div class="category-wrapper">
+    <div class="card-panel" id="innerProductDetailArea">
+        <link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
         
-        <button type="button" class="btn-back" style="padding: 10px 20px; border-radius: 5px; cursor: pointer; border: 1px solid #ccc; background: #eee;"
-                th:onclick="loadContent([[@{/innerProduct/list}]])">📋 返回清單</button>
+        <div class="page-title-area">
+            <div class="page-header-text">商品完整規格檢視</div>
+        </div>
+
+        <fieldset class="detail-fieldset">
+            <legend> 商品基本資料 </legend>
+            <table class="view-table">
+                <thead>
+                    <tr>
+                        <th width="20%"></th>
+                        <th width="30%"></th>
+                        <th width="20%"></th>
+                        <th width="30%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label-cell">商品編號</td>
+                        <td th:text="${'#' + product.productId}">ID</td>
+                        <td class="label-cell">商品狀態</td>
+                        <td>
+                            <span th:class="${product.productStatus == 1} ? 'status-badge status-on' : 'status-badge status-off'"
+                                  th:text="${product.productStatus == 1} ? '✅ 上架中' : '❌ 已下架'">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">分類編號</td>
+                        <td th:text="${product.categoryId}">0</td>
+                        <td class="label-cell">分類名稱</td>
+                        <td>
+                            <span class="cat-badge" th:text="${product.categoryName}">分類名稱</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">商品名稱</td>
+                        <td colspan="3" class="product-name-td" 
+                            style="font-size: 1.2rem; font-weight: bold; color: var(--text-dark);"
+                            th:text="${product.productName}">商品名稱</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">商品價格</td>
+                        <td style="color: var(--primary-orange); font-weight: bold; font-size: 1.15rem;"
+                            th:text="'NT$ ' + ${product.productPrice}">NT$ 0</td>
+                        <td class="label-cell">庫存位置</td>
+                        <td th:text="${#strings.isEmpty(product.storagePosition) ? '未註記' : product.storagePosition}">未註記</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">目前庫存</td>
+                        <td>
+                            <div th:if="${product.productStock <= product.lowStock}">
+                                <strong class="del-btn" style="font-size: 1.1rem;"
+                                        th:text="${product.productStock} + ' 件 (低於門檻!)'">0 件</strong>
+                            </div>
+                            <div th:unless="${product.productStock <= product.lowStock}">
+                                <span th:text="${product.productStock} + ' 件'">0 件</span>
+                            </div>
+                        </td>
+                        <td class="label-cell">庫存預警值</td>
+                        <td th:text="${product.lowStock} + ' 件'">0 件</td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <div class="detail-flex-layout" style="display: flex; gap: 20px; align-items: flex-start;">
+            <fieldset class="detail-fieldset" style="flex: 1; min-width: 300px;">
+                <legend> 商品圖片 </legend>
+                <div class="detail-img-box">
+                    <div th:if="${not #strings.isEmpty(product.productImage)}">
+                        <img th:src="@{/images/products/{img}(img=${product.productImage})}" 
+                             alt="商品圖片">
+                    </div>
+                    <div th:unless="${not #strings.isEmpty(product.productImage)}" 
+                         style="height: 250px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; color: #ccc; border-radius: 8px;">
+                        暫無圖片
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="detail-fieldset" style="flex: 1.5;">
+                <legend> 商品詳細描述 </legend>
+                <div class="detail-desc-box"
+                     th:text="${not #strings.isEmpty(product.productDescription) ? product.productDescription : '此商品目前暫無詳細說明資訊。'}">
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="action-footer">
+            <button type="button" class="btn-main" th:onclick="editProduct([[${product.productId}]])">
+                編輯資訊
+            </button>
+            <button type="button" class="btn-secondary" onclick="refreshProductList()">
+                返回清單
+            </button>
+        </div>
     </div>
 </div>

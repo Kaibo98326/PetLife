@@ -1,17 +1,27 @@
 <div class="category-wrapper" style="padding: 15px;">
 	<link rel="stylesheet" th:href="@{/css/InnerProduct.css}">
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 	<div class="card-panel">
 		<div class="page-title-area">
 			<div class="title-decorator"></div>
-			<div class="page-header-text">📦 商品管理系統</div>
+			<div class="page-header-text">商品管理系統</div>
 		</div>
 
 		<div class="toolbar">
 			<button class="btn-main" onclick="openAddProduct()">＋ 新增商品</button>
+			<button type="button" class="btn btn-outline-success btn-sm ms-2"
+				onclick="batchList()">
+				<i class="fas fa-arrow-up me-1"></i> 批次上架
+			</button>
+			<button type="button" class="btn btn-outline-danger btn-sm ms-2"
+				onclick="batchUnlist()">
+				<i class="fas fa-arrow-down me-1"></i> 批次下架
+			</button>
 			<div class="warning-badge-wrapper"
 				style="display: inline-block; position: relative; margin-left: 10px;">
-				<button class="btn-warning" onclick="filterLowStock()">
-					庫存警告</button>
+				<button class="btn-warning" onclick="filterLowStock()"><img width="15" height="15" src="https://img.icons8.com/material-outlined/24/box-important--v1.png" alt="box-important--v1"/>
+					&nbsp;庫存警告</button>
 				<span id="lowStockBadge" class="badge-danger"
 					th:if="${lowStockCount > 0}" th:text="${lowStockCount}">0</span>
 			</div>
@@ -26,6 +36,8 @@
 		<table class="custom-table">
 			<thead>
 				<tr>
+					<th><input type="checkbox" id="selectAll"
+						onclick="toggleSelectAll()"></th>
 					<th width="8%">狀態</th>
 					<th width="8%">商品</th>
 					<th width="32%">商品名稱</th>
@@ -37,6 +49,8 @@
 			</thead>
 			<tbody>
 				<tr th:each="p : ${productList}">
+					<td><input type="checkbox" class="product-checkbox"
+						th:value="${p.productId}"></td>
 					<td style="text-align: center;"><span
 						th:if="${p.productStatus == 1}" class="status-badge status-on">上架中</span>
 						<span th:unless="${p.productStatus == 1}"
@@ -59,11 +73,14 @@
 					<td class="product-name-td">
 						<div class="name-with-id">
 							<span class="product-id-tag" th:text="'#' + ${p.productId}"></span>
-							<span class="main-name-text" th:text="${p.productName}"></span>
+							<a href="javascript:void(0)"
+								th:onclick="showProductDetail([[${p.productId}]])"
+								class="product-detail-link"> <span class="main-name-text"
+								th:text="${p.productName}"></span>
+							</a>
 						</div>
 					</td>
-					<td style="text-align: center;"><span class="price-text"
-						th:text="'$' + ${p.productPrice}"></span></td>
+					<td style="text-align: center;"><span class="price-text" th:text="'$' + ${#numbers.formatInteger(p.productPrice, 0)}"></span></td>
 					<td style="text-align: center;" th:text="${p.productStock}"></td>
 					<td style="text-align: center;"><span class="cat-badge"
 						th:text="${p.categoryName}"></span></td>
@@ -71,8 +88,8 @@
 						<div class="action-group">
 							<button type="button" class="action-btn edit-btn"
 								th:onclick="editProduct([[${p.productId}]])">修改</button>
-							<button type="button" class="action-btn del-btn"
-								th:onclick="deleteProduct([[${p.productId}]])">刪除</button>
+<!-- 							<button type="button" class="action-btn del-btn" -->
+<!-- 								th:onclick="deleteProduct([[${p.productId}]])">刪除</button> -->
 						</div>
 					</td>
 				</tr>
@@ -92,6 +109,7 @@
 		</div>
 	</div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script th:inline="javascript">
 	// 1. 修改商品 (確保這個函式名跟 HTML 上的 onclick 一致)
 	function editProduct(id) {
@@ -114,27 +132,6 @@
 		console.log("正在開啟新增頁面");
 		var url = /*[[@{/innerProduct/prepareAdd}]]*/'/innerProduct/prepareAdd';
 		$('#contentBody').load(url + "?_t=" + new Date().getTime());
-	}
-
-	// 3. 刪除商品
-	function deleteProduct(id) {
-		if (!confirm('確定要將這件寶貝下架嗎？🐾'))
-			return;
-
-		// 💡 取得動態路徑 (後端是 /delete/{id})
-		var deleteUrl = /*[[@{/innerProduct/delete/}]]*/'/innerProduct/delete/';
-
-		$.get(deleteUrl + id, function(res) {
-			if (res === "success") {
-				alert("已成功下架！✨");
-				// 💡 成功後一定要呼叫刷新
-				refreshProductList();
-			} else {
-				alert("下架失敗，請檢查後台日誌。");
-			}
-		}).fail(function() {
-			alert("伺服器連線失敗，請稍後再試。");
-		});
 	}
 
 	// 4. 搜尋功能 (補上原本漏掉的部分)
@@ -193,6 +190,7 @@
 		$('#contentBody').load(fullUrl, function(response, status, xhr) {
 			if (status === "success") {
 				console.log("列表刷新成功 ✅");
+				updateSidebarBadge();
 			} else {
 				console.error("刷新失敗，錯誤碼：" + xhr.status);
 				// 如果還是 405，代表你的 Controller 可能有其他限制
@@ -235,6 +233,123 @@
 	        }
 	    });
 	}
+	
+	// 1. 全選/全不選
+	function toggleSelectAll() {
+	    const isChecked = document.getElementById('selectAll').checked;
+	    document.querySelectorAll('.product-checkbox').forEach(cb => {
+	        cb.checked = isChecked;
+	    });
+	}
+
+	// 2. 執行批次下架
+	function batchUnlist() {
+    // 💡 1. 抓出所有被勾選的 checkbox
+    const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+    
+    // 💡 2. 把勾選的 ID 存成陣列
+    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+    // 💡 3. 防呆機制：沒勾選不能按
+    if (selectedIds.length === 0) {
+        Swal.fire({
+            icon: 'info',
+            title: '哎呀！',
+            text: '請先勾選想要下架的商品喔!'
+        });
+        return;
+    }
+
+    // 💡 4. 確認視窗
+    Swal.fire({
+        title: '確定要批次下架嗎？',
+        text: `你選了 ${selectedIds.length} 個商品，下架後前台商城就看不到了喔！`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '是的，下架它們！',
+        cancelButtonText: '先不要'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // 💡 5. 發送 AJAX 給後端
+            $.ajax({
+                url: '/innerProduct/api/product/batchUpdateStatus',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    ids: selectedIds,
+                    status: 0 // 假設 0 代表下架
+                }),
+                success: function(response) {
+                    Swal.fire('成功！', '勾選的商品已經通通下架囉！', 'success')
+                        .then(() => {
+                            // 💡 改用這個，才能維持在商品管理分頁
+                            refreshProductList(); 
+                            // 如果你有實作更新左側選單數字，也可以順便呼叫
+                            updateSidebarBadge(); 
+                        });
+                },
+                error: function() {
+                    Swal.fire('錯誤', '批次處理出了點問題，請檢查後端日誌。', 'error');
+                }
+            });
+        }
+    });
+	}
+	
+	// 批次上架
+	function batchList() {
+	    const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+	    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+	    if (selectedIds.length === 0) {
+	        Swal.fire({ icon: 'info', title: '提示', text: '請先勾選想要上架的商品喔!' });
+	        return;
+	    }
+
+	    Swal.fire({
+	        title: '確定要批次上架嗎？',
+	        text: `即將讓 ${selectedIds.length} 個商品重新在商城露臉！`,
+	        icon: 'question',
+	        showCancelButton: true,
+	        confirmButtonColor: '#28a745',
+	        confirmButtonText: '是的，上架！',
+	        cancelButtonText: '取消'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            $.ajax({
+	                url: '/innerProduct/api/product/batchUpdateStatus',
+	                type: 'POST',
+	                contentType: 'application/json',
+	                data: JSON.stringify({
+	                    ids: selectedIds,
+	                    status: 1 // 💡 這裡是 1，代表上架
+	                }),
+	                success: function(response) {
+	                    Swal.fire('成功！', '商品已批次上架成功!', 'success')
+	                        .then(() => {
+	                            refreshProductList();
+	                        });
+	                }
+	            });
+	        }
+	    });
+	}
+	
+	// 後台商品 顯示商品詳情
+	function showProductDetail(id) {
+	    console.log("查看商品詳情，ID =", id);
+	    
+	    var baseUrl = /*[[@{/innerProduct/detail/}]]*/'/innerProduct/detail/';
+	    
+	    $('#contentBody').load(baseUrl + id, function(response, status, xhr) {
+	        if (status === "error") {
+	            Swal.fire('錯誤', '無法載入詳情頁面 (' + xhr.status + ')', 'error');
+	        }
+	    });
+	}
+	
 	
 	console.log("商品管理邏輯已啟動完成！✅");
 </script>

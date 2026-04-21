@@ -1,11 +1,16 @@
 package com.petlife.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.petlife.model.Product;
 
 
@@ -40,6 +45,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT COUNT(p) FROM Product p WHERE p.productStock <= p.lowStock")
     long countLowStock();
+    
+//===== 後台商品 批次上下架處理 ======================================================================================
+    
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.productStatus = :status WHERE p.productId IN :ids")
+    void batchUpdateStatus(@Param("ids") List<Integer> ids, @Param("status") Integer status);
     
 }
 

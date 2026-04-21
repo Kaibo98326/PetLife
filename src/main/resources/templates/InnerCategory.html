@@ -2,7 +2,7 @@
 <link rel="stylesheet" th:href="@{/css/InnerCategory.css}">
 
 		<div class="card-panel">
-			<div class="section-title">📂 商品分類管理</div>
+			<div class="section-title">商品分類管理</div>
 			<div class="search-group">
 				<label>新增分類：</label> <input type="text" id="newCategoryName"
 					placeholder="請輸入欲新增的分類名稱..." required>
@@ -11,7 +11,7 @@
 		</div>
 
 		<div class="card-panel">
-			<div class="section-title">📋 現有分類清單</div>
+			<div class="section-title">現有分類清單</div>
 			<table class="custom-table">
 				<thead>
 					<tr>
@@ -35,7 +35,7 @@
 							class="action-link edit-link"
 							th:onclick="|editCategory(${cat.categoryId})|">修改</a> <a
 							href="javascript:void(0)" class="action-link del-link"
-							th:onclick="deleteCategory([[${cat.categoryId}]])">刪除</a></td>
+							th:onclick="deleteCategory([[${cat.categoryId}]], [[${cat.productCount}]])">刪除</a></td>
 					</tr>
 				</tbody>
 			</table>
@@ -62,9 +62,16 @@
 						}
 					});
 		}
-		function deleteCategory(id) {
-			if (!confirm("確定要刪除嗎？🐾"))
-				return;
+		function deleteCategory(id,count) {
+			if (count > 0) {
+		        alert("⚠️ 無法刪除！\n\n此分類下還有 " + count + " 個商品，請先移動或刪除該分類下的商品。");
+		        return; // 直接攔截，不會執行下面的 AJAX
+		    }
+
+		    // 數量為 0 才詢問是否刪除
+		    if (!confirm("確定要永久刪除這個空分類嗎？")) {
+		        return;
+		    }
 			$
 					.ajax({
 						url : /*[[@{/innerCategory/delete}]]*/'/innerCategory/delete',

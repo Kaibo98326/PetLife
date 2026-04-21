@@ -2,6 +2,7 @@
    PetLife 後台 商品 樣式表
    更新日期: 2026.04.15
    		   2026.04.18 - 新增商品圖片css、移除進入動畫
+   		   2026.04.20 - 新增商品名稱css、商品Detail頁面css
    ======================================================================== */
 
 
@@ -395,4 +396,122 @@
 tr:hover .product-id-tag {
     color: var(--primary-orange);
     background-color: #fff2e6;
+}
+
+/* 1. 平時的樣子：沒有底線 */
+.product-detail-link {
+    color: #e67e22;            
+    text-decoration: none;     /* 先把底線拿掉，畫面比較乾淨 */
+    font-weight: 600;          /* 稍微加粗一點點 */
+    transition: all 0.2s ease; /* 增加變色時的平滑感 */
+    cursor: pointer;           /* 確保滑鼠移上去會變小手手 */
+}
+
+/* 2. 滑鼠移上去的樣子：顏色變深，出現底線 */
+.product-detail-link:hover {
+    color: #1a5276;            /* 變深藍色 */
+    text-decoration: underline; /* 出現底線 */
+}
+
+/* 3. 如果你的標籤內有 span，也要確保顏色繼承 */
+.product-detail-link .main-name-text {
+    color: inherit; 
+}
+
+/* =================================================================================== 商品Detail 頁面用 */
+
+/* 讓 Fieldset 邊框更精緻 */
+.detail-fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background: white;
+}
+
+.detail-fieldset legend {
+    font-weight: bold;
+    color: var(--primary-orange);
+    padding: 0 10px;
+    font-size: 1.05rem;
+}
+
+/* 強化詳情表格的左右標籤感 */
+.view-table {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.view-table .label-cell {
+    background-color: #fff9f0; /* 淡淡的橘黃色底 */
+    color: var(--text-dark);
+    font-weight: 600;
+    width: 150px;
+    text-align: right;
+    border-right: 1px solid #ffe0b2;
+}
+
+/* 圖片顯示盒 */
+.detail-img-box {
+    text-align: center;
+    padding: 10px;
+    background: #fff;
+}
+
+.detail-img-box img {
+    max-width: 100%;
+    max-height: 350px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border: 3px solid #fff;
+}
+
+/* 描述文字盒 */
+.detail-desc-box {
+    padding: 20px;
+    line-height: 1.8;
+    color: #5d4037;
+    background-color: #fffdf5;
+    border-radius: 10px;
+    border: 1px solid #fff3e0;
+    height: 350px;
+    overflow-y: auto;  /*內容太多，出現滾動條*/
+    box-sizing: border-box;
+    display: block;
+}
+
+/* 商品內容的滾輪 */
+.detail-desc-box::-webkit-scrollbar {
+    width: 6px;
+}
+.detail-desc-box::-webkit-scrollbar-thumb {
+    background-color: #ffe0b2;
+    border-radius: 10px;
+}
+
+/* 底部按鈕區 */
+.action-footer {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* 讓 Flex 佈局在小螢幕也能正常 */
+.detail-flex-layout {
+    display: flex;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .detail-flex-layout {
+        flex-direction: column;
+    }
+    
+/* =================================================================================== 我是分隔線 */
+
+
 }
