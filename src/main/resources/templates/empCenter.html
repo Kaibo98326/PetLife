@@ -209,12 +209,7 @@
 
       if (url === '#') {
         showPlaceholder(title, module);
-      } else if (type === 'iframe') {
-        document.getElementById('contentBody').style.display = 'none';
-        const frame = document.getElementById('mainFrame');
-        frame.style.display = 'block';
-        frame.src = url;
-      } else {
+      }else {
         document.getElementById('mainFrame').style.display = 'none';
         document.getElementById('contentBody').style.display = 'block';
         loadContentViaAjax(url, title, module);
