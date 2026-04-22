@@ -10,10 +10,15 @@
 var tableData = []; 
 
 // 紀錄目前網頁上的篩選狀態，包含關鍵字、活動狀態、類型與會員資格
+//同時「輸入搜尋字」又「點擊進行中按鈕」
 var filterState = {
+//	紀錄使用者在搜尋框輸入的「活動名稱」關鍵字
     keyword: '',
+//	紀錄使用者選取的「活動狀態」
     status: 'all',
+//	紀錄使用者選取的「活動類型
     type: 'all',
+//	紀錄是否限會員
     member: 'all'
 };
 
@@ -21,7 +26,10 @@ var filterState = {
 
 // 取得新增/修改表單的 Modal 實體；若已存在則直接取得，不存在則新建一個
 function getFormModal() {
+//	抓取html網頁新增formModal卡片
     var el = document.getElementById('formModal');
+//	Bootstrap中，如果你對同一個HTML元素執行兩次 new bootstrap.Modal()，記憶體裡會產生兩個控制器去搶同一個框框
+//	先用 getInstance 檢查，有舊的就用舊的，沒舊的才建新的
     return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
 }
 
@@ -35,24 +43,27 @@ function getViewModal() {
 // ==================== 啟動 SPA 頁面監聽雷達 (SPA Listener) ====================
 
 // 標記位：紀錄使用者目前是否正停留在「優惠活動管理」的畫面上
+//現在是不是已經在處理優惠頁面了?
 var isDiscountPageActive = false; 
 
 // 設定定時器，每 0.3 秒掃描一次 DOM 結構
 setInterval(function() {
     // 檢查頁面上是否存在 discount_tableBody 這個表格元素
+//	利用getElementById去DOM Tree（網頁結構樹裡面搜尋tbody就會有值,使用者在別的頁面（例如員工中心），tbody 就會是 null
+
     var tbody = document.getElementById('discount_tableBody');
     
     // 如果找到了表格，但雷達顯示「尚未啟動」，代表使用者剛切換過來
     if (tbody && !isDiscountPageActive) {
-        isDiscountPageActive = true; // 啟動雷達
-        // 立即向後端請求折扣類型與完整清單
-        fetchDiscountTypes();
-        fetchDiscountList();
+		isDiscountPageActive = true; // 啟動雷達
+		    fetchDiscountTypes();        // 立即向後端請求折扣類型
+		    fetchDiscountList();         // 立即向後端請求完整清單
     } 
     // 如果表格消失了，但雷達顯示「啟動中」，代表使用者切換到其他功能選單了
     else if (!tbody && isDiscountPageActive) {
         isDiscountPageActive = false; // 關閉雷達，重置狀態
     }
+//	設定一個每 0.3 秒
 }, 300); 
 
 
@@ -425,7 +436,35 @@ function viewAndEditActivity(id, isOngoing, isLocked) {
     // 依據是否鎖定切換標題與按鈕
     document.getElementById('formModalTitle').innerHTML = isLocked ? '📜 查看活動歷史 (唯讀)' : '📁 查看與修改活動';
     
-    // 此處需補上將 data 資料填入表單 input 的程式碼 (例如 document.getElementById('discount_name').value = data.name; 等)
+    // ==================== 【精準修復】：將資料真正填入表單中 ====================
+    var form = document.getElementById('activityForm');
+    
+    // 1. 先清除殘留的紅框
+    if(form) form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    
+    // 2. 依序填入基本資料
+    document.getElementById('discount_name').value = data.name;
+    document.getElementById('status').value = data.status;
+    document.getElementById('start_date').value = data.start;
+    document.getElementById('end_date').value = data.end;
+    document.getElementById('discount_description').value = data.desc;
+    document.getElementById('minimum_purchase_amount').value = data.min;
+    document.getElementById('is_member').value = data.isMember.toString();
+    
+    // 3. 填入折扣類型，並手動觸發 UI 切換 (% 或 元)
+    var typeSelect = document.getElementById('discount_type_id');
+    typeSelect.value = data.type;
+    renderDynamicFields(); // 🌟 這一行超重要，有呼叫它下面的格子才會正確跑出來！
+
+    // 4. 填入折扣值 (處理打折的數學轉換：後端 0.85 -> 前端顯示 85)
+    var selectedKeyword = typeSelect.selectedOptions[0] ? typeSelect.selectedOptions[0].getAttribute('data-keyword') : '';
+    if (selectedKeyword === 'PERCENT') {
+        // 百分比要乘回 100
+        document.getElementById('discount_value').value = Math.round(data.val * 100);
+    } else {
+        document.getElementById('discount_value').value = data.val;
+    }
+    // =========================================================================
 
     setFormDisabled(true); 
     setupFooterButtons('view', isLocked); 
