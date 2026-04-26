@@ -54,29 +54,30 @@
 
 		<div class="total-section" th:if="${not #lists.isEmpty(cartItems)}">
 			總計金額：<span class="price-text" th:text="'$' + ${totalAmount}">$0</span>
-
-			<div
-				style="display: flex; justify-content: flex-end; gap: 10px; align-items: center; margin-top: 15px;">
-
-				<button type="button" class="btn-orange"
-					th:onclick="|location.href='@{/shop/index}'|"
-					style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
-					<i class="fa-solid fa-house" style="margin-right: 8px;"></i>返回首頁
-				</button>
-
-				<form th:action="@{/api/checkout/page}" method="GET"
-					style="margin: 0; display: flex;">
-
-					<input type="hidden" name="cartId"
-						th:value="${cartItems[0].cartId}">
-
-					<button type="submit" class="btn-orange"
-						style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
-						<i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i>前往結帳
-					</button>
-				</form>
-			</div>
 		</div>
+
+		<div
+			style="display: flex; justify-content: flex-end; gap: 10px; align-items: center; margin-top: 15px;">
+
+			<button type="button" class="btn-orange"
+				th:onclick="|location.href='@{/shop/index}'|"
+				style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
+				<i class="fa-solid fa-house" style="margin-right: 8px;"></i>返回首頁
+			</button>
+
+			<form th:action="@{/api/checkout/page}" method="GET"
+				style="margin: 0; display: flex;"
+				th:if="${not #lists.isEmpty(cartItems)}">
+
+				<input type="hidden" name="cartId" th:value="${cartItems[0].cartId}">
+
+				<button type="submit" class="btn-orange"
+					style="margin: 0; display: flex; align-items: center; justify-content: center; width: 145px; height: 42px; box-sizing: border-box; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: bold; border: none; color: white;">
+					<i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i>前往結帳
+				</button>
+			</form>
+		</div>
+	</div>
 	</div>
 
 	<form id="actionForm" th:action="@{/api/cart/update}" method="POST"
