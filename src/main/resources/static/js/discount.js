@@ -18,8 +18,7 @@ var filterState = {
     status: 'all',
 //	紀錄使用者選取的「活動類型
     type: 'all',
-//	紀錄是否限會員
-    member: 'all'
+
 };
 
 // ==================== 2. 安全取得 Modal (Bootstrap 互動視窗) ====================
@@ -97,7 +96,9 @@ function fetchDiscountTypes() {
 
 // 發送 Ajax 請求向後端獲取所有折扣活動的 JSON 清單
 function fetchDiscountList() {
+//	使用瀏覽器內建的fetch API向後端URL /api/discounts發送一個HTTP GET請求
     fetch('/api/discounts')
+//	當後端回傳回應（Response）時，這行會將原始的資料流（Stream）轉換成 JavaScript 能夠理解的 JSON 物件格式
         .then(res => res.json())
         .then(data => {
             // 將後端回傳的原始資料映射(Map)成前端更易讀的物件格式
@@ -105,6 +106,7 @@ function fetchDiscountList() {
                 id: item.discountId,
                 status: item.status,
                 name: item.discountName,
+				// 這裡使用了三元運算子進行「防呆」處理
                 type: item.discountType ? item.discountType.discountTypeId : '',
                 typeName: item.discountType ? item.discountType.discountTypeName : '未指定',
                 start: item.startDate,
@@ -112,7 +114,7 @@ function fetchDiscountList() {
                 desc: item.discountDescription,
                 val: item.discountValue,
                 min: item.minimumPurchaseAmount,
-                isMember: item.isMember
+                
             }));
             // 資料載入完畢後，執行過濾邏輯並渲染表格
             runAllFilters(); 
@@ -145,7 +147,7 @@ function applyFilter(btn, value) {
 // 清除所有篩選條件並重置 UI 狀態
 function clearFilters() {
     // 重置篩選狀態，但保留目前的搜尋關鍵字
-    filterState = { keyword: document.getElementById('searchInput').value.toLowerCase(), status: 'all', type: 'all', member: 'all' };
+    filterState = { keyword: document.getElementById('searchInput').value.toLowerCase(), status: 'all', type: 'all',  };
     
     // 將所有篩選群組的按鈕狀態重置回「全部」
     document.querySelectorAll('.filter-group').forEach(group => {
@@ -191,7 +193,7 @@ function runAllFilters() {
 
         // C. 類型與會員比對
         var matchType = (filterState.type === 'all' || item.type.toString() === filterState.type);
-        var matchMember = (filterState.member === 'all' || item.isMember.toString() === filterState.member);
+        
 
         // D. 日期範圍比對
         var matchDate = true;
@@ -207,15 +209,14 @@ function runAllFilters() {
         }
 
         // 回傳所有條件皆符合的資料
-        return matchKeyword && matchStatus && matchType && matchMember && matchDate;
+        return matchKeyword && matchStatus && matchType  && matchDate;
     });
 
     // 檢查是否有任何進階篩選條件被啟動
     var filterStartEl = document.getElementById('filter_start_date');
     var filterEndEl = document.getElementById('filter_end_date');
     var isFiltered = filterState.status !== 'all' || 
-                     filterState.type !== 'all' || 
-                     filterState.member !== 'all' || 
+                     filterState.type !== 'all' ||                     
                      (filterStartEl && filterStartEl.value !== '') || 
                      (filterEndEl && filterEndEl.value !== '');
                      
@@ -352,7 +353,7 @@ var currentIsLocked = false;
 
 // 切換表單欄位是否為唯讀(Disabled)狀態
 function setFormDisabled(disabled) {
-    var fields = ['discount_name', 'status', 'start_date', 'end_date', 'discount_type_id', 'discount_description', 'is_member', 'minimum_purchase_amount', 'discount_value'];
+    var fields = ['discount_name', 'status', 'start_date', 'end_date', 'discount_type_id', 'discount_description', , 'minimum_purchase_amount', 'discount_value'];
     fields.forEach(f => {
         var el = document.getElementById(f);
         if(el) {
@@ -449,7 +450,7 @@ function viewAndEditActivity(id, isOngoing, isLocked) {
     document.getElementById('end_date').value = data.end;
     document.getElementById('discount_description').value = data.desc;
     document.getElementById('minimum_purchase_amount').value = data.min;
-    document.getElementById('is_member').value = data.isMember.toString();
+    
     
     // 3. 填入折扣類型，並手動觸發 UI 切換 (% 或 元)
     var typeSelect = document.getElementById('discount_type_id');
@@ -493,7 +494,7 @@ function enableEditMode() {
         form.prepend(alertDiv);
 
         // 針對特定欄位進行隱藏，並以純文字 Span 替代顯示
-        var lockedFields = ['start_date', 'discount_type_id', 'discount_value', 'minimum_purchase_amount', 'is_member'];
+        var lockedFields = ['start_date', 'discount_type_id', 'discount_value', 'minimum_purchase_amount', ];
         lockedFields.forEach(fid => {
             var el = document.getElementById(fid);
             if (!el) return;
@@ -587,7 +588,6 @@ function saveActivity() {
         discountDescription: document.getElementById('discount_description').value,
         discountValue: parseFloat(document.getElementById('discount_value').value) || 0,
         minimumPurchaseAmount: parseFloat(document.getElementById('minimum_purchase_amount').value) || 0,
-        isMember: document.getElementById('is_member').value === 'true',
         discountType: { discountTypeId: parseInt(document.getElementById('discount_type_id').value) }
     };
 
